@@ -1,7 +1,0 @@
-surprise
-flask
-flask-cors
-pymongo
-pandas
-psycopg2-binary
-python-dotenv

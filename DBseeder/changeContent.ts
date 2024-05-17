@@ -5,8 +5,8 @@ configDotenv({ path: newPath })
 import mongoose from "mongoose"
 import { v4 as uuidv4 } from "uuid"
 
-import Blog from "../../models/blog"
-import connectDB from "../../db/connect"
+import Blog from "../models/blog"
+import connectDB from "../db/connect"
 
 const changeContent = async () => {
     try {
