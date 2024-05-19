@@ -14,8 +14,8 @@ const IsVendor = ({ handleChange, signUpValues }: Props) => {
         name: "isVendor",
         value: e.target.id === "vendor" ? "true" : "false",
       },
-    });
-  };
+    })
+  }
 
   return (
     <ul className="grid w-full grid-cols-2 gap-4 text-white">
@@ -55,12 +55,13 @@ const IsVendor = ({ handleChange, signUpValues }: Props) => {
           className="inline-flex items-center justify-between w-full p-2 px-4 bg-white border border-gray-500 text-gray-500 rounded-lg cursor-pointer peer-checked:border-highlight peer-checked:text-highlight"
         >
           <p>
-            I am a <span className="font-semibold">Host/Guest</span> organizing/attending an event
+            I am a <span className="font-semibold">Host/Guest</span>{" "}
+            organizing/attending an event
           </p>
         </label>
       </li>
     </ul>
-  );
-};
+  )
+}
 
-export default IsVendor;
+export default IsVendor

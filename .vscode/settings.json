@@ -6,9 +6,12 @@
         "cloudinary",
         "Creativerse",
         "editorjs",
+        "loadash",
         "maxlength",
         "POSTHOG",
+        "reduxjs",
         "Reqs",
+        "socketio",
         "Unfollow",
         "uuidv",
         "webp"

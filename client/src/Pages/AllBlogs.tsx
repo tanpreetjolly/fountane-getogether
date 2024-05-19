@@ -20,11 +20,7 @@ const AllBlogs = () => {
   //     .finally(() => setLoading(false))
   // }, [])
 
-  return (
-    <div>
-     
-    </div>
-  )
+  return <div></div>
 }
 
 export default AllBlogs

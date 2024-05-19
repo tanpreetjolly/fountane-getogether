@@ -85,6 +85,19 @@ UserSchema.methods.generateToken = function () {
         },
     )
 }
+UserSchema.methods.generateSocketToken = function () {
+    return jwt.sign(
+        {
+            userId: this._id,
+            userName: this.name,
+            isVendor: this.vendorProfile ? true : false,
+        },
+        process.env.JWT_SOCKET_SECRET as jwt.Secret,
+        {
+            expiresIn: process.env.JWT_LIFETIME,
+        },
+    )
+}
 
 UserSchema.methods.comparePassword = async function (
     password: IUser["password"],

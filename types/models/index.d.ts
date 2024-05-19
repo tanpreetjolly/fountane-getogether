@@ -18,6 +18,7 @@ export interface IUser extends Document {
     createdAt: Date
     updatedAt: Date
     generateToken: () => string
+    generateSocketToken: () => string
     comparePassword: (password: string) => boolean
 }
 
@@ -81,7 +82,8 @@ export interface IEvent extends Document {
     updatedAt: Date
 }
 
-export interface IChatMessage {
+export interface IChatMessage extends Document {
+    _id?: Schema.Types.ObjectId
     userId: Schema.Types.ObjectId
     channelId: Schema.Types.ObjectId
     message: string

@@ -28,6 +28,7 @@
     },
     "homepage": "https://github.com/aslezar/BlogMinds#readme",
     "dependencies": {
+        "@socket.io/admin-ui": "^0.5.1",
         "axios": "^1.6.8",
         "bcryptjs": "^2.4.3",
         "cloudinary": "^2.0.3",
@@ -38,11 +39,13 @@
         "express-rate-limit": "^6.11.2",
         "helmet": "^7.1.0",
         "http-status-codes": "^2.3.0",
+        "joi": "^17.13.1",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.2.2",
         "morgan": "^1.10.0",
         "multer": "1.4.5-lts.1",
         "nodemailer": "^6.9.12",
+        "socket.io": "^4.7.5",
         "uuid": "^9.0.1"
     },
     "devDependencies": {
@@ -52,6 +55,7 @@
         "@types/cors": "^2.8.17",
         "@types/express": "^4.17.21",
         "@types/jsonwebtoken": "^9.0.6",
+        "@types/lodash": "^4.17.4",
         "@types/morgan": "^1.9.9",
         "@types/multer": "^1.4.11",
         "@types/node": "^20.11",
@@ -59,6 +63,7 @@
         "@types/uuid": "^9.0.8",
         "dotenv": "^16.4.5",
         "google-auth-library": "^9.9.0",
+        "lodash": "^4.17.21",
         "node-cache": "^5.1.2",
         "nodemon": "^3.1.0",
         "prettier": "^3.2.5",

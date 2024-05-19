@@ -12,6 +12,10 @@ export default defineConfig({
         target: "http://localhost:8000",
         changeOrigin: true,
       },
+      "/socket.io": {
+        target: "http://localhost:8000",
+        ws: true,
+      },
     },
   },
 })
