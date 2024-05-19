@@ -8,6 +8,8 @@ export interface SignUpType {
   lastName: string
   email: string
   password: string
+  phoneNo : string | undefined
+  isVendor: boolean
 }
 
 export interface ForgotPasswordType {
@@ -72,8 +74,11 @@ export interface BlogFullType extends BlogShortType {
 interface User {
   name: string
   email: string
-  bio?: string
+  // bio?: string
   profileImage?: string
+  isVendor?: boolean
+  vendorProfile?: any
+  phoneNo : string | undefined
 }
 
 export interface UserType extends User {

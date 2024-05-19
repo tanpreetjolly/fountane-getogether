@@ -24,6 +24,7 @@ const getMe = async (req: Request, res: Response) => {
         userId: user._id,
         name: user.name,
         email: user.email,
+        phoneNo: user.phoneNo,
         profileImage: user.profileImage,
         isVendor: user.vendorProfile ? true : false,
         vendorProfile: user.vendorProfile,

@@ -5,6 +5,7 @@ import img from "../assets/img/Auth/signup.webp"
 import { SignUpType } from "../definitions"
 import { register } from "../features/userSlice"
 import ContinueWithGoogleButton from "../components/ContinueWithGoogleButton"
+import IsVendor from "../components/IsVendor"
 
 export default function SignUp() {
   const dispatch = useAppDispatch()
@@ -17,13 +18,15 @@ export default function SignUp() {
     lastName: "",
     email: "",
     password: "",
+    phoneNo: "",
+    isVendor: false,
   })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
     setSignUpValues((prevValues) => ({
       ...prevValues,
-      [name]: value,
+      [name]: value === "true" ? true : value === "false" ? false : value,
     }))
   }
 
@@ -63,7 +66,7 @@ export default function SignUp() {
             Register with us!
           </h1>
           <h1 className="text-sm font-semibold mb-6 text-gray-500 text-center">
-            Join to Our Community with all time access and free{" "}
+            Join to Our Community with all time access and free
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4 ">
             <div className="grid grid-cols-2 gap-3 mt-4">
@@ -102,22 +105,41 @@ export default function SignUp() {
                 />
               </div>
             </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="ml-3 block text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
-              <input
-                type="text"
-                id="email"
-                name="email"
-                value={signUpValues.email}
-                onChange={handleChange}
-                placeholder="johndoe@example.com"
-                className="mt-1 p-2.5 px-4 w-full border rounded-3xl focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
-              />
+            <div className="flex gap-3">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="ml-3 block text-sm font-medium text-gray-700"
+                >
+                  Email
+                </label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  value={signUpValues.email}
+                  onChange={handleChange}
+                  placeholder="johndoe@example.com"
+                  className="mt-1 p-2.5 px-4 w-full border rounded-3xl focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="phoneNo"
+                  className="ml-3 block text-sm font-medium text-gray-700"
+                >
+                  Phone No.
+                </label>
+                <input
+                  type="tel"
+                  id="phoneNo"
+                  name="phoneNo"
+                  value={signUpValues.phoneNo}
+                  onChange={handleChange}
+                  placeholder="0123456"
+                  className="mt-1 p-2.5 px-4 w-full border rounded-3xl focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                />
+              </div>
             </div>
             <div>
               <label
@@ -136,10 +158,11 @@ export default function SignUp() {
                 className="mt-1 p-2.5 px-4 w-full border rounded-3xl focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
               />
             </div>
+            <IsVendor handleChange={handleChange} signUpValues={signUpValues} />
             <div>
               <button
                 type="submit"
-                className="w-full bg-dark text-white p-2.5 px-4 font-medium rounded-3xl hover:bg-highlight  focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                className="w-full bg-dark text-white p-2.5 px-4 font-medium rounded-3xl hover:bg-highlight focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
               >
                 Register
               </button>

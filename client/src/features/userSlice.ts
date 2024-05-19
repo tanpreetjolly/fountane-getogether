@@ -62,9 +62,6 @@ export const userSlice = createSlice({
     UPDATE_NAME: (state, action) => {
       if (state.user) state.user.name = action.payload
     },
-    UPDATE_BIO: (state, action) => {
-      if (state.user) state.user.bio = action.payload
-    },
     SET_VERIFICATION_REQUIRED: (state, action) => {
       state.verificationUserID = action.payload
       state.verificationRequired = true
@@ -117,7 +114,8 @@ export const register =
         // console.log(_res)
 
         const id = _res.data.userId
-        dispatch(userSlice.actions.SET_VERIFICATION_REQUIRED(id))
+        const data = dispatch(userSlice.actions.SET_VERIFICATION_REQUIRED(id))
+        console.log(data)
         toast.success("Email Sent", { id: "register" })
       })
       .catch((err) => {
