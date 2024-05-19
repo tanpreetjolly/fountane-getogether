@@ -1,4 +1,4 @@
-import { Schema, model, Types } from "mongoose"
+import { Schema, model } from "mongoose"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { IUser } from "../types/models"
@@ -20,49 +20,22 @@ const UserSchema = new Schema<IUser>(
             ],
             unique: true,
         },
+        phoneNo: {
+            type: String,
+            match: [
+                /(\+?\d{1,3}[- ]?)?\d{10}/,
+                "Please provide valid phone number.",
+            ],
+        },
         password: {
             type: String,
             minlength: 8,
-        },
-        bio: {
-            type: String,
-            maxlength: 150,
         },
         profileImage: {
             type: String,
             default:
                 "https://res.cloudinary.com/dzvci8arz/image/upload/v1715358550/iaxzl2ivrkqklfvyasy1.jpg",
         },
-        blogs: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Blog",
-            },
-        ],
-        myInterests: [
-            {
-                type: String,
-                maxlength: 20,
-            },
-        ],
-        readArticles: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Blog",
-            },
-        ],
-        following: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
-        followers: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
         status: {
             type: String,
             enum: ["active", "inactive", "blocked"],
@@ -76,17 +49,16 @@ const UserSchema = new Schema<IUser>(
                 type: Date,
             },
         },
-        myAssests: [
-            {
-                type: String,
-                default: [],
-            },
-        ],
+        vendorProfile: {
+            type: Schema.Types.ObjectId,
+            ref: "VendorProfile",
+            default: null,
+        },
     },
-    { timestamps: true },
+    {
+        timestamps: true,
+    },
 )
-
-UserSchema.index({ name: 1 })
 
 const preSave = async function (this: any, next: (err?: Error) => void) {
     if (!this.isModified("password")) {
@@ -104,10 +76,6 @@ const preSave = async function (this: any, next: (err?: Error) => void) {
 
 UserSchema.pre("save", preSave)
 
-UserSchema.path("myInterests").validate(function (value: any) {
-    return value.length <= 8 // Change 5 to your desired maximum length
-}, "myInterests array exceeds the maximum allowed length")
-
 UserSchema.methods.generateToken = function () {
     return jwt.sign(
         { userId: this._id },
@@ -118,8 +86,10 @@ UserSchema.methods.generateToken = function () {
     )
 }
 
-UserSchema.methods.comparePassword = async function (pswrd: IUser["password"]) {
-    const isMatch = await bcrypt.compare(pswrd, this.password)
+UserSchema.methods.comparePassword = async function (
+    password: IUser["password"],
+) {
+    const isMatch = await bcrypt.compare(password, this.password)
     return isMatch
 }
 const User = model<IUser>("User", UserSchema)

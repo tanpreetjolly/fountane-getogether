@@ -1,50 +1,80 @@
 import { Schema, Types, Model } from "mongoose"
 
-export interface IBlog {
-    title: string
-    description: string
-    content: string
-    img?: string
-    author: Schema.Types.ObjectId
-    tags: Types.Array<string>
-    views: number
-    likes: Types.Array<Types.ObjectId>
-    likesCount: number
-    comments: Types.Array<Schema.Types.ObjectId>
-    commentsCount: number
-    createdAt: Date
-    updatedAt: Date
-}
-
-export interface IComment {
-    message: string
-    author: Types.ObjectId
-    createdAt?: Date
-    updatedAt?: Date
-}
-
 export interface OTP {
     value: string
     expires: Date
 }
 
-export interface IUser {
+export interface IUser extends Document {
     _id?: Types.ObjectId
     name: string
     email: string
+    phoneNo: string
     password: string
-    bio?: string
     profileImage: string
-    blogs: Types.Array<Schema.Types.ObjectId>
-    myInterests: Types.Array<string>
-    readArticles: Types.Array<Schema.Types.ObjectId>
-    following: Types.Array<Types.ObjectId>
-    followers: Types.Array<Types.ObjectId>
-    createdAt: Date
-    updatedAt: Date
     status: string
     otp: OTP | undefined
-    myAssests: Types.Array<string>
+    vendorProfile: Schema.Types.ObjectId
+    createdAt: Date
+    updatedAt: Date
     generateToken: () => string
-    comparePassword: (pswrd: string) => boolean
+    comparePassword: (password: string) => boolean
+}
+
+export interface IVendorProfile extends Document {
+    services: [
+        {
+            serviceName: string
+            serviceDescription: string
+            price: number
+        },
+    ]
+    createdAt: Date
+    updatedAt: Date
+}
+
+export interface IGuestListEvent extends Document {
+    guestId: Schema.Types.ObjectId
+    subEvent: Schema.Types.ObjectId
+    status: string
+    createdAt: Date
+    updatedAt: Date
+}
+
+export interface IPayment {
+    amount: number
+    status: string
+    createdAt: Date
+    updatedAt: Date
+}
+
+export interface IVendorListEvent extends Document {
+    vendorId: Schema.Types.ObjectId
+    subEvents: Schema.Types.ObjectId
+    status: string
+    serviceOffering: string
+    paymentStatus: IPayment
+    createdAt: Date
+    updatedAt: Date
+}
+
+export interface ISubEvent {
+    name: string
+    startDate: Date
+    endDate: Date
+    venue: string
+    createdAt: Date
+    updatedAt: Date
+}
+export interface IEvent extends Document {
+    name: string
+    host: Schema.Types.ObjectId
+    startDate: Date
+    endDate: Date
+    budget: number
+    vendorsList: Types.Array<Schema.Types.ObjectId>
+    guestsList: Types.Array<Schema.Types.ObjectId>
+    subEvents: Types.Array<ISubEvent>
+    createdAt: Date
+    updatedAt: Date
 }
