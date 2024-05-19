@@ -25,6 +25,8 @@ import paginateMW from "./middleware/paginator"
 //Import Error Handler
 import errorHandler from "./middleware/error-handler"
 
+import socketIo from "./socketio"
+
 //Start Express App
 const app: Express = express()
 const server: http.Server = http.createServer(app)
@@ -32,11 +34,15 @@ const server: http.Server = http.createServer(app)
 //Setting Environment
 const PORT: string | number = process.env.PORT || 5000
 app.set("trust proxy", 1)
+
 const allowedOrigins = [
     process.env.NODE_ENV === "production"
         ? (process.env.RENDER_EXTERNAL_URL as string)
         : "http://localhost:5173",
 ]
+if (process.env.NODE_ENV === "development")
+    allowedOrigins.push("https://admin.socket.io" as string)
+
 const corsOptions = {
     origin: function (origin: string | undefined, callback: any) {
         if (!origin) return callback(null, true)
@@ -66,6 +72,9 @@ app.use(cors(corsOptions)) //enable CORS
 
 //Logger
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"))
+
+//Socket.io
+socketIo(server, { cors: { origin: allowedOrigins } })
 
 const logDir: string = path.join(__dirname, "./log")
 //create dir if not exist

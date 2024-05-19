@@ -8,7 +8,7 @@ export interface SignUpType {
   lastName: string
   email: string
   password: string
-  phoneNo : string | undefined
+  phoneNo: string | undefined
   isVendor: boolean
 }
 
@@ -78,7 +78,8 @@ interface User {
   profileImage?: string
   isVendor?: boolean
   vendorProfile?: any
-  phoneNo : string | undefined
+  phoneNo: string | undefined
+  socketToken: string
 }
 
 export interface UserType extends User {

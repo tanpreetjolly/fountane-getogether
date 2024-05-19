@@ -9,6 +9,7 @@ import {
     uploadAssetsImages as cloudinaryUploadAssetsImages,
     deleteAssetImages as cloudinaryDeleteAssetImages,
 } from "../utils/imageHandlers/cloudinary"
+import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
 
 const getMe = async (req: Request, res: Response) => {
     const user = await User.findById(req.user.userId)
@@ -18,7 +19,9 @@ const getMe = async (req: Request, res: Response) => {
     if (user.status === "inactive")
         throw new UnauthenticatedError("User is inactive.")
 
-    // setTokenCookies(res, user)
+    setAuthTokenCookie(res, user)
+
+    const socketToken = user.generateSocketToken()
 
     const sendUser = {
         userId: user._id,
@@ -28,6 +31,7 @@ const getMe = async (req: Request, res: Response) => {
         profileImage: user.profileImage,
         isVendor: user.vendorProfile ? true : false,
         vendorProfile: user.vendorProfile,
+        socketToken,
     }
 
     res.status(StatusCodes.CREATED).json({

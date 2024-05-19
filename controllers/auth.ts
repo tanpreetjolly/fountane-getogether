@@ -4,42 +4,10 @@ import { BadRequestError, UnauthenticatedError } from "../errors"
 import { OTP, IUser } from "../types/models"
 import { Request, Response } from "express"
 import SendMail from "../utils/sendMail"
-const { OAuth2Client } = require("google-auth-library")
+import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
+import { OAuth2Client } from "google-auth-library"
 
 const client = new OAuth2Client()
-
-const setTokenCookies = (res: Response, user: IUser) => {
-    //refresh token
-    const token = user.generateToken()
-
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        expires: new Date(
-            Date.now() +
-                parseInt(process.env.JWT_LIFETIME as string) *
-                    1000 *
-                    24 *
-                    60 *
-                    60,
-        ),
-    })
-
-    //to indicate frontend that user is logged in
-    res.cookie("userId", user._id, {
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        expires: new Date(
-            Date.now() +
-                parseInt(process.env.JWT_LIFETIME as string) *
-                    1000 *
-                    24 *
-                    60 *
-                    60,
-        ),
-    })
-}
 
 const register = async (req: Request, res: Response) => {
     const {
@@ -141,7 +109,7 @@ const login = async (req: Request, res: Response) => {
 
     if (!isPasswordCorrect) throw new UnauthenticatedError("Invalid Password.")
 
-    setTokenCookies(res, user)
+    setAuthTokenCookie(res, user)
     res.status(StatusCodes.CREATED).json({
         success: true,
         msg: "User Login Successfully",
@@ -179,7 +147,7 @@ const continueWithGoogle = async (req: Request, res: Response) => {
             status: "active",
         })
     }
-    setTokenCookies(res, user)
+    setAuthTokenCookie(res, user)
     res.status(StatusCodes.CREATED).json({
         success: true,
         msg: "Google Login Successfully",
@@ -227,7 +195,7 @@ const forgotPasswordVerifyOtp = async (req: Request, res: Response) => {
     user.otp = undefined
     user.password = password
     await user.save()
-    setTokenCookies(res, user)
+    setAuthTokenCookie(res, user)
     res.status(StatusCodes.CREATED).json({
         success: true,
         msg: "Password Changed Successfully",
@@ -260,7 +228,7 @@ const verifyEmail = async (req: Request, res: Response) => {
     user.status = "active"
     user.otp = undefined
     await user.save()
-    setTokenCookies(res, user)
+    setAuthTokenCookie(res, user)
     res.status(StatusCodes.CREATED).json({
         success: true,
         msg: "User Registered Successfully",
@@ -272,6 +240,10 @@ const signOut = async (req: Request, res: Response) => {
     for (const cookie in req.cookies) {
         res.clearCookie(cookie)
     }
+
+    //close all socket connection
+    console.log("Close the Socket Connection...")
+
     res.status(StatusCodes.OK).json({
         success: true,
         msg: "User Logout Successfully",

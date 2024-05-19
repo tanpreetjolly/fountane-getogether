@@ -15,7 +15,9 @@ const Hero: React.FC<Props> = () => {
           href="#"
           className="inline-flex justify-between items-center py-1.5 px-4 mb-6 text-sm text-white bg-highlight rounded-full"
         >
-          <span className="text-sm font-medium">Revolutionize Event Planning!</span>
+          <span className="text-sm font-medium">
+            Revolutionize Event Planning!
+          </span>
           <svg
             className="ml-2 w-5 h-5"
             fill="currentColor"
@@ -32,7 +34,10 @@ const Hero: React.FC<Props> = () => {
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl">
           Getogether: Your Event Planning Companion
         </h1>
-        <p className="mb-4 text-lg font-normal text-gray-500 lg:text-xl md:px-16 xl:px-48">Whether it's a luxury wedding or a grand birthday party, our app streamlines communication and coordination, bringing everyone involved into one  digital space.
+        <p className="mb-4 text-lg font-normal text-gray-500 lg:text-xl md:px-16 xl:px-48">
+          Whether it's a luxury wedding or a grand birthday party, our app
+          streamlines communication and coordination, bringing everyone involved
+          into one digital space.
         </p>
         <div className="flex mb-4 lg:mb-7 flex-col items-center gap-2 md:flex-row justify-center">
           {/* Try our platform button */}
@@ -63,8 +68,6 @@ const Hero: React.FC<Props> = () => {
                   clipRule="evenodd"
                 ></path>
               </svg>
-
-
             </Link>
           )}
         </div>
