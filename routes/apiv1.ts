@@ -4,7 +4,6 @@ import AuthRouter from "./auth"
 import BlogPublicRouter from "./blogPublic"
 import BlogUpdateRouter from "./blogUpdate"
 import UserRouter from "./user"
-import AIRouter from "./ai"
 import SearchRouter from "./search"
 import ProfileRouter from "./profile"
 
@@ -15,8 +14,6 @@ router.use("/auth", AuthRouter)
 router.use("/public/search", SearchRouter)
 router.use("/public/profile", ProfileRouter)
 router.use("/public/blog", BlogPublicRouter)
-
-router.use("/public/ai", AIRouter)
 
 router.use(AuthMiddleware)
 
