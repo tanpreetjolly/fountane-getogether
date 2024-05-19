@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 
 export interface UserPayload {
     userId: mongoose.Types.ObjectId
+    isVendor: boolean
 }
 
 declare global {

@@ -7,6 +7,7 @@ import { UserPayload } from "../types/express"
 
 interface TempUserPayload {
     userId: string
+    isVendor: boolean
 }
 
 const getId = (id: string) => {
@@ -31,6 +32,7 @@ const authenticate = async (
     ) as TempUserPayload
     const userPayload: UserPayload = {
         userId: getId(tempUserPayload.userId),
+        isVendor: tempUserPayload.isVendor,
     }
     // Type assertion to convert req object to Request
     ;(req as Request).user = userPayload
