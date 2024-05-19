@@ -17,7 +17,7 @@ router.use("/public/blog", BlogPublicRouter)
 
 router.use(AuthMiddleware)
 
-router.use("/blog", BlogUpdateRouter)
 router.use("/user", UserRouter)
+router.use("/blog", BlogUpdateRouter)
 
 export default router

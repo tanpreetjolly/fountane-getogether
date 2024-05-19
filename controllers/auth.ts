@@ -1,14 +1,15 @@
 import User from "../models/user"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError } from "../errors"
-import { IUser } from "../types/models"
+import { OTP, IUser } from "../types/models"
 import { Request, Response } from "express"
 import SendMail from "../utils/sendMail"
-import { OTP } from "../types/models"
 const { OAuth2Client } = require("google-auth-library")
+
 const client = new OAuth2Client()
 
 const setTokenCookies = (res: Response, user: IUser) => {
+    //refresh token
     const token = user.generateToken()
 
     res.cookie("token", token, {
@@ -40,32 +41,22 @@ const setTokenCookies = (res: Response, user: IUser) => {
     })
 }
 
-const sendUserData = (user: IUser, res: Response, msg: String) => {
-    setTokenCookies(res, user)
-
-    const sendUser = {
-        userId: user._id,
-        name: user.name,
-        email: user.email,
-        bio: user.bio,
-        profileImage: user.profileImage,
-        myInterests: user.myInterests,
-        followingCount: user.following.length,
-        followersCount: user.followers.length,
-    }
-
-    res.status(StatusCodes.CREATED).json({
-        data: sendUser,
-        success: true,
-        msg,
-    })
-}
-
 const register = async (req: Request, res: Response) => {
-    const { firstName, lastName, email, password } = req.body
+    const {
+        firstName,
+        lastName,
+        email,
+        phoneNo,
+        password,
+        profileImage,
+        isVendor,
+    } = req.body
+
+    //data validation
     const name = firstName + " " + lastName
     if (!name || !email) throw new BadRequestError("Please provide all details")
     if (!password) throw new BadRequestError("Please provide password")
+
     const userExist: IUser | null = await User.findOne({ email }) // Using findOne
 
     if (userExist && userExist.status === "active") {
@@ -88,31 +79,33 @@ const register = async (req: Request, res: Response) => {
         expires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
     }
 
+    const newUser = {
+        name,
+        email,
+        phoneNo,
+        password,
+        profileImage,
+        status: "inactive",
+        otp,
+        vendorProfile: isVendor ? {} : null,
+    }
+
     let user: IUser | null = null
 
     if (userExist && userExist.status === "inactive") {
-        user = await User.findByIdAndUpdate(userExist._id, {
-            name,
-            email,
-            password,
-            otp,
+        user = await User.findByIdAndUpdate(userExist._id, newUser, {
+            new: true,
         })
     } else {
-        user = await User.create({
-            name,
-            email,
-            password,
-            status: "inactive",
-            otp,
-        })
+        user = await User.create(newUser)
     }
 
     await SendMail({
         from: process.env.SMTP_EMAIL_USER,
         to: email,
         subject: "Blogmind: Email Verification",
-        text: `Thank you for registering with Blogmind! Your OTP (One-Time Password) is ${otpCode}. Please use this code to verify your email.`,
-        html: `<h1>Thank you for registering with Blogmind!</h1><p>Your OTP (One-Time Password) is <strong>${otpCode}</strong>. Please use this code to verify your email.</p>`,
+        text: `Thank you for registering with Blogmind! Your OTP (One-Time Password) is ${otpCode}. Please use this code to verify your email. ${isVendor ? "You are registering as a vendor." : ""}`,
+        html: `<h1>Thank you for registering with Blogmind!</h1><p>Your OTP (One-Time Password) is <strong>${otpCode}</strong>. Please use this code to verify your email.</p> ${isVendor ? "<p>You are registering as a vendor.</p>" : ""}`,
     })
 
     res.status(StatusCodes.CREATED).json({
@@ -121,6 +114,75 @@ const register = async (req: Request, res: Response) => {
         },
         success: true,
         msg: "OTP sent to your email. Please verify your email.",
+    })
+}
+
+const login = async (req: Request, res: Response) => {
+    const { email, password } = req.body
+    if (!email && !password)
+        throw new BadRequestError("Please provide email and password")
+    else if (!email) throw new BadRequestError("Please provide email")
+    else if (!password) throw new BadRequestError("Please provide password")
+
+    const user = await User.findOne({ email })
+
+    if (!user) throw new UnauthenticatedError("Email Not Registered.")
+    if (user.status === "inactive")
+        throw new UnauthenticatedError("User is inactive.")
+    if (user.status === "blocked")
+        throw new UnauthenticatedError("User is blocked.")
+
+    if (!user.password)
+        throw new UnauthenticatedError(
+            "Please login with Google.\nOr Reset Password.",
+        )
+
+    const isPasswordCorrect = await user.comparePassword(password)
+
+    if (!isPasswordCorrect) throw new UnauthenticatedError("Invalid Password.")
+
+    setTokenCookies(res, user)
+    res.status(StatusCodes.CREATED).json({
+        success: true,
+        msg: "User Login Successfully",
+    })
+}
+
+const continueWithGoogle = async (req: Request, res: Response) => {
+    const tokenId = req.body.tokenId
+    const isVendor = req.body.isVendor
+
+    let payload: any = null
+
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: tokenId,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        })
+        payload = ticket.getPayload()
+    } catch (error) {
+        console.log(error)
+        throw new BadRequestError("Invalid Token")
+    }
+
+    const { email, name, picture } = payload
+    let user = await User.findOne({ email })
+    if (user) {
+        if (user.status === "blocked")
+            throw new UnauthenticatedError("User is blocked.")
+    } else {
+        user = await User.create({
+            name,
+            email,
+            profileImage: picture,
+            vendorProfile: isVendor ? {} : null,
+            status: "active",
+        })
+    }
+    setTokenCookies(res, user)
+    res.status(StatusCodes.CREATED).json({
+        success: true,
+        msg: "Google Login Successfully",
     })
 }
 
@@ -193,7 +255,7 @@ const verifyEmail = async (req: Request, res: Response) => {
 
     if (user.otp && user.otp.expires < new Date()) {
         user.otp = undefined
-        throw new UnauthenticatedError("OTP Expired.Please register again.")
+        throw new UnauthenticatedError("OTP Expired. Please register again.")
     }
     user.status = "active"
     user.otp = undefined
@@ -205,46 +267,6 @@ const verifyEmail = async (req: Request, res: Response) => {
     })
 }
 
-const login = async (req: Request, res: Response) => {
-    const { email, password } = req.body
-    if (!email && !password)
-        throw new BadRequestError("Please provide email and password")
-    else if (!email) throw new BadRequestError("Please provide email")
-    else if (!password) throw new BadRequestError("Please provide password")
-
-    const user = await User.findOne({ email })
-
-    if (!user) throw new UnauthenticatedError("Email Not Registered.")
-    if (user.status === "inactive")
-        throw new UnauthenticatedError("User is inactive.")
-    if (user.status === "blocked")
-        throw new UnauthenticatedError("User is blocked.")
-
-    if (!user.password)
-        throw new UnauthenticatedError(
-            "Please login with Google.\nOr Reset Password.",
-        )
-
-    const isPasswordCorrect = await user.comparePassword(password)
-
-    if (!isPasswordCorrect) throw new UnauthenticatedError("Invalid Password.")
-
-    setTokenCookies(res, user)
-    res.status(StatusCodes.CREATED).json({
-        success: true,
-        msg: "User Login Successfully",
-    })
-}
-const tokenLogin = async (req: Request, res: Response) => {
-    const user = await User.findById(req.user.userId)
-    if (!user) throw new UnauthenticatedError("User Not Found")
-    if (user.status === "blocked")
-        throw new UnauthenticatedError("User is blocked.")
-    if (user.status === "inactive")
-        throw new UnauthenticatedError("User is inactive.")
-
-    sendUserData(user, res, "User Login Successfully")
-}
 const signOut = async (req: Request, res: Response) => {
     //clear all cookies
     for (const cookie in req.cookies) {
@@ -256,49 +278,12 @@ const signOut = async (req: Request, res: Response) => {
     })
 }
 
-const continueWithGoogle = async (req: Request, res: Response) => {
-    const tokenId = req.body.tokenId
-
-    let payload: any = null
-
-    try {
-        const ticket = await client.verifyIdToken({
-            idToken: tokenId,
-            audience: process.env.GOOGLE_CLIENT_ID,
-        })
-        payload = ticket.getPayload()
-    } catch (error) {
-        console.log(error)
-        throw new BadRequestError("Invalid Token")
-    }
-
-    const { email, name, picture } = payload
-    let user = await User.findOne({ email })
-    if (user) {
-        if (user.status === "blocked")
-            throw new UnauthenticatedError("User is blocked.")
-    } else {
-        user = await User.create({
-            email,
-            name,
-            profileImage: picture,
-            status: "active",
-        })
-    }
-    setTokenCookies(res, user)
-    res.status(StatusCodes.CREATED).json({
-        success: true,
-        msg: "Google Login Successfully",
-    })
-}
-
 export {
     register,
     login,
     continueWithGoogle,
-    verifyEmail,
-    tokenLogin,
-    signOut,
     forgotPasswordSendOtp,
     forgotPasswordVerifyOtp,
+    verifyEmail,
+    signOut,
 }

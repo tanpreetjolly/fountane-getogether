@@ -10,6 +10,32 @@ import {
     deleteAssetImages as cloudinaryDeleteAssetImages,
 } from "../utils/imageHandlers/cloudinary"
 
+const getMe = async (req: Request, res: Response) => {
+    const user = await User.findById(req.user.userId)
+    if (!user) throw new UnauthenticatedError("User Not Found")
+    if (user.status === "blocked")
+        throw new UnauthenticatedError("User is blocked.")
+    if (user.status === "inactive")
+        throw new UnauthenticatedError("User is inactive.")
+
+    // setTokenCookies(res, user)
+
+    const sendUser = {
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        profileImage: user.profileImage,
+        isVendor: user.vendorProfile ? true : false,
+        vendorProfile: user.vendorProfile,
+    }
+
+    res.status(StatusCodes.CREATED).json({
+        data: sendUser,
+        success: true,
+        msg: "User Fetched Successfully",
+    })
+}
+
 const updateUser = async (
     userId: mongoose.Types.ObjectId,
     key: string,
@@ -200,6 +226,7 @@ const isFollowing = async (req: Request, res: Response) => {
 }
 
 export {
+    getMe,
     updateCompleteProfile,
     updateProfileImage,
     deleteProfileImage,

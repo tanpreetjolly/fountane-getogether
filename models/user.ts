@@ -78,7 +78,7 @@ UserSchema.pre("save", preSave)
 
 UserSchema.methods.generateToken = function () {
     return jwt.sign(
-        { userId: this._id },
+        { userId: this._id, isVendor: this.vendorProfile ? true : false },
         process.env.JWT_SECRET as jwt.Secret,
         {
             expiresIn: process.env.JWT_LIFETIME,
