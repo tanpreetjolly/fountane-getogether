@@ -3,6 +3,11 @@ import { IVendorProfile } from "../types/models"
 
 const VendorProfileSchema = new Schema<IVendorProfile>(
     {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: [true, "User is required."],
+        },
         services: [
             {
                 serviceName: {

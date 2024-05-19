@@ -19,6 +19,10 @@ const SubEventSchema = new Schema<ISubEvent>(
             type: String,
             required: [true, "Please Provide Venue."],
         },
+        channels: {
+            type: [Schema.Types.ObjectId],
+            ref: "Channel",
+        },
     },
     { timestamps: true },
 )
