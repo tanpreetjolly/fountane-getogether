@@ -31,6 +31,7 @@ import SearchResults from "./Pages/SearchResults"
 import PublicProfilePage from "./Pages/PublicProfile"
 import ProfilePage from "./Pages/ProfilePage"
 import FeaturesPage from "./components/Features"
+import CreateEvent from "./components/CreateEvent"
 
 const Layout = () => {
   const location = useLocation()
@@ -114,8 +115,12 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "blog/:id",
+        path: "events/:id",
         element: <Blog />,
+      },
+      {
+        path: "events/create",
+        element: <CreateEvent />,
       },
       {
         path: "about",

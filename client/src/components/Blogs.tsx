@@ -5,7 +5,7 @@ import { useAppSelector } from "../hooks.tsx"
 import InfiniteScroll from "react-infinite-scroll-component"
 
 import { useSearchParams } from "react-router-dom"
-import BlogCard from "./BlogCard"
+import BlogCard from "./EventCard.tsx"
 import BlogLoader from "./BlogLoader"
 
 const Blogs = () => {

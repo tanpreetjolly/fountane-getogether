@@ -8,7 +8,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 import { search } from "../api/index"
 
-import BlogCard from "../components/BlogCard"
+import BlogCard from "../components/EventCard"
 
 const categories: string[] = ["blog", "user"]
 const SearchResults: React.FC = () => {
