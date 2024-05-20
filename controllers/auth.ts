@@ -55,18 +55,49 @@ const register = async (req: Request, res: Response) => {
         profileImage,
         status: "inactive",
         otp,
-        vendorProfile: isVendor ? {} : null,
     }
 
-    let user: IUser | null = null
+    let userId
 
-    if (userExist && userExist.status === "inactive") {
-        user = await User.findByIdAndUpdate(userExist._id, newUser, {
-            new: true,
-        })
+    if (userExist) {
+        switch (userExist.status) {
+            case "inactive":
+                const user = await User.findByIdAndUpdate(
+                    userExist._id,
+                    newUser,
+                    {
+                        new: true,
+                    },
+                )
+                if (user && isVendor && !user.vendorProfile)
+                    await user.makeVendor()
+                else if (user && !isVendor && user.vendorProfile)
+                    await user.removeVendor()
+
+                userId = user?._id
+                break
+
+            case "blocked":
+                return res.status(StatusCodes.FORBIDDEN).json({
+                    success: false,
+                    msg: "User with this email is blocked.",
+                }) // Forbidden status
+
+            case "active":
+                return res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    msg: "User with this email already exists",
+                }) // Conflict status
+
+            default:
+                break
+        }
     } else {
-        user = await User.create(newUser)
+        const user = await User.create(newUser)
+        if (isVendor === true) await user.makeVendor()
+        userId = user._id
     }
+    if (!userId) throw new BadRequestError("User not created.")
 
     await SendMail({
         from: process.env.SMTP_EMAIL_USER,
@@ -78,7 +109,7 @@ const register = async (req: Request, res: Response) => {
 
     res.status(StatusCodes.CREATED).json({
         data: {
-            userId: user?._id,
+            userId: userId,
         },
         success: true,
         msg: "OTP sent to your email. Please verify your email.",
@@ -143,9 +174,9 @@ const continueWithGoogle = async (req: Request, res: Response) => {
             name,
             email,
             profileImage: picture,
-            vendorProfile: isVendor ? {} : null,
             status: "active",
         })
+        if (isVendor === true) await user.makeVendor()
     }
     setAuthTokenCookie(res, user)
     res.status(StatusCodes.CREATED).json({

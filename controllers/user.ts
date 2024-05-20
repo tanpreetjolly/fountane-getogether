@@ -108,4 +108,26 @@ const deleteProfileImage = async (req: Request, res: Response) => {
     })
 }
 
-export { getMe, updateCompleteProfile, updateProfileImage, deleteProfileImage }
+const makeMeVendor = async (req: Request, res: Response) => {
+    const userId = req.user.userId
+    const user = await User.findById(userId)
+    if (!user) throw new UnauthenticatedError("User Not Found")
+    if (user.vendorProfile)
+        throw new BadRequestError("User is already a vendor.")
+    const vendorProfile = await user.makeVendor()
+    if (!vendorProfile)
+        throw new BadRequestError("Failed to make user a vendor.")
+    res.status(StatusCodes.CREATED).json({
+        data: { vendorProfile },
+        success: true,
+        msg: "User is now a vendor.",
+    })
+}
+
+export {
+    getMe,
+    updateCompleteProfile,
+    updateProfileImage,
+    deleteProfileImage,
+    makeMeVendor,
+}

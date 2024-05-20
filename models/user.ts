@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { IUser } from "../types/models"
+import VendorProfile from "./vendorProfile"
 
 const UserSchema = new Schema<IUser>(
     {
@@ -105,5 +106,23 @@ UserSchema.methods.comparePassword = async function (
     const isMatch = await bcrypt.compare(password, this.password)
     return isMatch
 }
+
+UserSchema.methods.makeVendor = async function (this) {
+    if (this.vendorProfile) return false
+    const vendorProfile = await VendorProfile.create({ userId: this._id })
+    this.vendorProfile = vendorProfile._id
+    await this.save()
+    return vendorProfile
+}
+
+UserSchema.methods.removeVendor = async function (this) {
+    //this function is not intended to user is verified and operating as vendor
+    //use it only when user is not verified
+    if (!this.vendorProfile) return
+    await VendorProfile.findByIdAndDelete(this.vendorProfile)
+    this.vendorProfile = null
+    await this.save()
+}
+
 const User = model<IUser>("User", UserSchema)
 export default User

@@ -13,7 +13,7 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   )
 
   useEffect(() => {
-    if (loading && !isAuthenticated)
+    if (loading || !isAuthenticated)
       return () => {
         socket?.disconnect()
       }
