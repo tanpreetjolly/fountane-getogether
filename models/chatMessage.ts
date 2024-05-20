@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose"
 import { IChatMessage } from "../types/models"
+import { io } from "../socketio/index"
 
 const chatMessageSchema = new Schema<IChatMessage>(
     {
@@ -18,6 +19,10 @@ const chatMessageSchema = new Schema<IChatMessage>(
     },
     { timestamps: true },
 )
+
+chatMessageSchema.post("save", function (doc) {
+    io?.to(doc.channelId.toString()).emit("channel:newMessage", doc.toJSON())
+})
 
 chatMessageSchema.index({ channelId: 1, createdAt: 1 })
 

@@ -1,11 +1,7 @@
-import loadash from "lodash"
 import { Server as SocketIOServer, Socket } from "socket.io"
 import Joi from "joi"
 import Channel from "../models/channel"
 import ChatMessage from "../models/chatMessage"
-import { IChatMessage } from "../types/models"
-
-const messages: IChatMessage[] = []
 
 const payloadSchema = Joi.object({
     channelId: Joi.string().hex().length(24),
@@ -25,26 +21,8 @@ const errorHandler = (socket: Socket, data: any, cb: any) => {
     return false
 }
 
-const insertMessages = async () => {
-    try {
-        const chatMessagesIds = await ChatMessage.insertMany(messages, {
-            ordered: false,
-        })
-        console.log(`Inserted ${chatMessagesIds.length} messages`)
-        console.log(chatMessagesIds)
-        messages.slice(0, chatMessagesIds.length)
-    } catch (error) {
-        console.log(error)
-    }
-}
-const debouncedInsertMessages = loadash.debounce(insertMessages, 5000)
-
-const saveMessage = (newMessage: IChatMessage) => {
-    messages.push(newMessage)
-    debouncedInsertMessages()
-}
-
-export default (io: SocketIOServer, socket: Socket) => {
+export default (io: SocketIOServer | null, socket: Socket) => {
+    if (!io) return
     console.log(`${socket.id} connected`)
     const userId = socket.user.userId
 
@@ -106,9 +84,7 @@ export default (io: SocketIOServer, socket: Socket) => {
                 channelId,
                 message,
             })
-            saveMessage(newMessage)
-
-            socket.broadcast.to(channelId).emit("chat:message", newMessage)
+            newMessage.save()
 
             cb({ msg: "Server: Message created", success: true })
 
@@ -123,7 +99,6 @@ export default (io: SocketIOServer, socket: Socket) => {
     const disconnect = (data: any, cb: any) => {
         try {
             console.log(`${socket.id} disconnected`)
-
             socket.removeAllListeners()
         } catch (error) {
             console.log(error)

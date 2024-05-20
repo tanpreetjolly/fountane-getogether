@@ -5,10 +5,12 @@ import onConnection from "./socket-room"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import { TempUserPayload, UserPayload } from "../types/express"
-import { Request, Response, NextFunction } from "express"
+
+export let io: SocketIOServer | null = null
 
 export default (server: HttpServer, options: Partial<ServerOptions>) => {
-    const io = new SocketIOServer(server, options)
+    if (io) io.close()
+    io = new SocketIOServer(server, options)
     if (process.env.NODE_ENV === "development")
         instrument(io, { auth: false, mode: "development" })
 

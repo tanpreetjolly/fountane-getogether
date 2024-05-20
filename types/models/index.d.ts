@@ -19,7 +19,9 @@ export interface IUser extends Document {
     updatedAt: Date
     generateToken: () => string
     generateSocketToken: () => string
-    comparePassword: (password: string) => boolean
+    comparePassword: (password: string) => Promise<boolean>
+    makeVendor: () => Promise<Schema.Types.ObjectId | false>
+    removeVendor: () => Promise<void>
 }
 
 export interface IVendorProfile extends Document {
