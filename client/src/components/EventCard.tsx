@@ -9,7 +9,7 @@ const EventCard = () => {
 
   return (
     <button
-      className="container p-5 flex flex-col gap-0.5 text-left bg-white w-full border border-gray-300 my-4 rounded-lg shadow-sm  font-inter"
+      className="container p-5 flex flex-col gap-0.5 text-left bg-white w-full border border-gray-300 my-4 rounded-lg shadow-sm  !font-inter"
       onClick={() => {
         navigate("/events/1");
       }}
