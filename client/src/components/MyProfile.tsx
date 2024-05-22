@@ -1,12 +1,9 @@
 import { useState } from "react"
-import ClearIcon from "@mui/icons-material/Clear"
-import AddIcon from "@mui/icons-material/Add"
 import { UserType } from "../definitions"
 import Loader from "./Loader"
 import { updateProfile, updateImage, deleteProfileImage } from "../api"
 import toast from "react-hot-toast"
 import { CiEdit } from "react-icons/ci"
-import { IoIosAddCircleOutline } from "react-icons/io"
 import { useAppDispatch, useAppSelector } from "../hooks"
 import { updateUser } from "../features/userSlice"
 import { TbPhotoPlus } from "react-icons/tb"
@@ -21,14 +18,13 @@ const defUser: UserType = {
   myInterests: [],
   name: "",
   email: "",
-  bio: "",
   profileImage: "",
+  socketToken: "",
+  phoneNo: "",
 }
 
 const MyProfile = () => {
   const [edit, setEdit] = useState(false)
-  const [addInterest, setAddInterest] = useState(false)
-  const [newInterest, setNewInterest] = useState("")
   const [editedUser, setEditedUser] = useState<UserType>(defUser)
   const [loadingProfileImage, setLoadingProfileImage] = useState<boolean>(false)
 
@@ -44,8 +40,6 @@ const MyProfile = () => {
 
   const handleCancel = () => {
     // If new interest was being added but not confirmed, discard it
-    setAddInterest(false)
-    setNewInterest("")
     setEdit(false)
   }
   const handleUpdate = async () => {
@@ -66,26 +60,6 @@ const MyProfile = () => {
       ...prevUser,
       [name]: value,
     }))
-  }
-
-  const handleRemoveInterest = (indexToRemove: number) => {
-    setEditedUser((prevUser) => ({
-      ...prevUser,
-      myInterests: prevUser.myInterests.filter(
-        (_, index) => index !== indexToRemove,
-      ),
-    }))
-  }
-
-  const handleAddInterest = () => {
-    if (newInterest.trim() !== "") {
-      setEditedUser((prevUser) => ({
-        ...prevUser,
-        myInterests: [...prevUser.myInterests, newInterest],
-      }))
-      setNewInterest("") // Clear the input field after adding the interest
-      setAddInterest(false) // Hide the input field after adding the interest
-    }
   }
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -278,78 +252,6 @@ const MyProfile = () => {
               value={user.email}
               className="rounded-lg p-2 border"
             />
-            <label className="mt-6 text-slate-600">Profile bio</label>
-            <textarea
-              rows={4}
-              cols={50}
-              maxLength={150}
-              disabled={!edit}
-              name="bio"
-              value={user.bio}
-              onChange={handleChange}
-              className={`rounded-lg p-2 border ${edit ? "text-black" : ""}`}
-            ></textarea>
-          </form>
-        </section>
-        <section className="sm:w-100 xs:w-3/4 lg:w-1/2 py-5 mx-auto">
-          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col ">
-            <h3 className="text-lg font-medium mb-3">My Interests</h3>
-
-            <div className="flex sm:flex-col flex-wrap gap-3">
-              <div className="flex flex-wrap gap-2">
-                {!edit && user.myInterests.length === 0 && (
-                  <span className="text-gray-500">No interests added yet</span>
-                )}
-                {user.myInterests.map((item, index) => {
-                  return (
-                    <span
-                      className="flex rounded-xl border w-fit p-2 hover:border-highlight duration-200"
-                      key={index}
-                    >
-                      <span>{item}</span>
-                      <button
-                        className={`${!edit && "hidden"} `}
-                        onClick={() => handleRemoveInterest(index)}
-                      >
-                        <ClearIcon fontSize="small" />
-                      </button>
-                    </span>
-                  )
-                })}
-                <button
-                  className={`${!edit && "hidden"} border p-2 rounded-xl text-gray-700 hover:bg-gray-100  duration-150`}
-                  onClick={() => setAddInterest(true)}
-                >
-                  <AddIcon />{" "}
-                </button>
-              </div>
-              {addInterest && (
-                <div className="flex flex-col gap-2 xs:flex-row mx-auto xs:mx-0">
-                  <input
-                    type="text"
-                    placeholder="Type to add interest"
-                    disabled={!edit}
-                    value={newInterest}
-                    maxLength={20}
-                    onChange={(e) => setNewInterest(e.target.value)}
-                    className="rounded-lg p-2 border"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault()
-                        handleAddInterest()
-                      }
-                    }}
-                  />
-                  <button
-                    className="flex justify-center gap-0.5 border hover:border-highlight py-2 rounded-xl px-5 text-gray-700 hover:bg-gray-50  duration-150 hover:scale-105"
-                    onClick={handleAddInterest}
-                  >
-                    <IoIosAddCircleOutline className="my-auto" />
-                    Add
-                  </button>
-                </div>
-              )}
-            </div>
           </form>
         </section>
       </main>
