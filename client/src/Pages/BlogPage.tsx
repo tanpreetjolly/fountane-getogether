@@ -1,11 +1,9 @@
-import React from 'react'
+import React from "react"
 
 type Props = {}
 
 const BlogPage = (props: Props) => {
-  return (
-    <div>BlogPage</div>
-  )
+  return <div>BlogPage</div>
 }
 
 export default BlogPage

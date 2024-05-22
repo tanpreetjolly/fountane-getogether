@@ -11,7 +11,6 @@ import connectDB from "../db/connect"
 const changeContent = async () => {
     // try {
     //     const db = await connectDB(process.env.MONGO_URL as string)
-
     //     const blogs = await Blog.find({}).select("content")
     //     for (let blog of blogs) {
     //         if (blog._id.toString().slice(0, 8) !== "bbbbbbbb") continue

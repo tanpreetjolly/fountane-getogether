@@ -15,7 +15,11 @@ const AllBlogs = () => {
 
   return (
     <div className="px-4 mx-auto">
-      <Button text="Create an Event" icon={<FaPlus/>} onClick={()=>navigate("/events/create")}/>
+      <Button
+        text="Create an Event"
+        icon={<FaPlus />}
+        onClick={() => navigate("/events/create")}
+      />
       <div>
         <EventCard />
       </div>

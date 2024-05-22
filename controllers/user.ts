@@ -1,6 +1,6 @@
 import User from "../models/user"
 import { StatusCodes } from "http-status-codes"
-import { BadRequestError, UnauthenticatedError,NotFoundError } from "../errors"
+import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
 import mongoose from "mongoose"
 import {

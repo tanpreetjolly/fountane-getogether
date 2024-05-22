@@ -37,7 +37,7 @@ export interface IVendorProfile extends Document {
     updatedAt: Date
 }
 
-export interface IGuestListEvent extends Document {
+export interface IGuest extends Document {
     guestId: Schema.Types.ObjectId
     subEvent: Schema.Types.ObjectId
     status: string
@@ -52,7 +52,7 @@ export interface IPayment {
     updatedAt: Date
 }
 
-export interface IVendorListEvent extends Document {
+export interface IVendor extends Document {
     vendorId: Schema.Types.ObjectId
     subEvents: Schema.Types.ObjectId
     status: string
@@ -79,18 +79,26 @@ export interface ITask extends Document {
     createdAt: Date
     updatedAt: Date
 }
+
+export interface IUserList {
+    userId: Schema.Types.ObjectId
+    role: string
+    permission: string
+    createdAt: Date
+    updatedAt: Date
+}
 export interface IEvent extends Document {
     name: string
     host: Schema.Types.ObjectId
     startDate: Date
     endDate: Date
     budget: number
-    vendorsList: Types.Array<Schema.Types.ObjectId>
-    guestsList: Types.Array<Schema.Types.ObjectId>
+    userList: Types.Array<IUserList>
     subEvents: Types.Array<ISubEvent>
     checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
+    generateToken: (userId: Schema.Types.ObjectId) => string
 }
 
 export interface IChatMessage extends Document {

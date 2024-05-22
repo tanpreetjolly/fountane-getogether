@@ -1,27 +1,28 @@
 import { Schema, model } from "mongoose"
-import { IGuestListEvent } from "../types/models"
+import { IGuest } from "../types/models"
 
-const GuestListEventSchema = new Schema<IGuestListEvent>(
+const GuestSchema = new Schema<IGuest>(
     {
         guestId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-        subEvent: {
-            type: Schema.Types.ObjectId,
-            ref: "SubEvent",
-            required: true,
-        },
-        status: {
-            type: String,
-            enum: ["accepted", "rejected", "pending"],
-            default: "pending",
-        },
+        subEvent: [
+            {
+                subEventId: {
+                    type: Schema.Types.ObjectId,
+                    ref: "SubEvent",
+                    required: true,
+                },
+                status: {
+                    type: String,
+                    enum: ["accepted", "rejected", "pending"],
+                    default: "pending",
+                },
+            },
+        ],
     },
     { timestamps: true },
 )
 
-GuestListEventSchema.index({ guestId: 1 })
+GuestSchema.index({ guestId: 1 })
 
-const GuestListEvent = model<IGuestListEvent>(
-    "GuestListEvent",
-    GuestListEventSchema,
-)
-export default GuestListEvent
+const Guest = model<IGuest>("Guest", GuestSchema)
+export default Guest

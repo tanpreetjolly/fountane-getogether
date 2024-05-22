@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose"
-import { IVendorListEvent, IPayment } from "../types/models"
+import { IVendor, IPayment } from "../types/models"
 
 const PaymentSchema = new Schema<IPayment>(
     {
@@ -17,33 +17,34 @@ const PaymentSchema = new Schema<IPayment>(
     { timestamps: true },
 )
 
-const VendorListEventSchema = new Schema<IVendorListEvent>(
+const VendorSchema = new Schema<IVendor>(
     {
         vendorId: {
             type: Schema.Types.ObjectId,
             ref: "VendorProfile",
             required: true,
         },
-        subEvents: {
-            type: Schema.Types.ObjectId,
-            ref: "SubEvent",
-            required: true,
-        },
-        status: {
-            type: String,
-            enum: ["accepted", "rejected", "pending"],
-            default: "pending",
-        },
-        serviceOffering: { type: String, required: true },
-        paymentStatus: { type: PaymentSchema, required: true },
+        subEvents: [
+            {
+                subEventId: {
+                    type: Schema.Types.ObjectId,
+                    ref: "SubEvent",
+                    required: true,
+                },
+                status: {
+                    type: String,
+                    enum: ["accepted", "rejected", "pending"],
+                    default: "pending",
+                },
+                serviceOffering: { type: String, required: true },
+                paymentStatus: { type: PaymentSchema, required: true },
+            },
+        ],
     },
     { timestamps: true },
 )
 
-VendorListEventSchema.index({ vendorId: 1 })
+VendorSchema.index({ vendorId: 1 })
 
-const VendorListEvent = model<IVendorListEvent>(
-    "VendorListEvent",
-    VendorListEventSchema,
-)
-export default VendorListEvent
+const Vendor = model<IVendor>("Vendor", VendorSchema)
+export default Vendor
