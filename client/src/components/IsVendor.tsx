@@ -18,7 +18,7 @@ const IsVendor = ({ handleChange, signUpValues }: Props) => {
   }
 
   return (
-    <ul className="grid w-full grid-cols-2 gap-4 text-white">
+    <ul className="grid w-full grid-cols-2 gap-4 text-white text-sm">
       <li className="h-full">
         <input
           type="radio"

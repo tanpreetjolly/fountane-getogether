@@ -20,7 +20,6 @@ import VerifyOTP from "./Pages/VerifyOTP"
 import ForgotPassword from "./Pages/ForgotPasswordPage"
 import DashBoard from "./Pages/DashBoardPage"
 import BlogEditor from "./Pages/BlogEditorPage"
-import Blog from "./Pages/BlogPage"
 import About from "./Pages/AboutPage"
 import ErrorPage from "./Pages/ErrorPage"
 import { useAppDispatch, useAppSelector } from "./hooks"
@@ -32,6 +31,7 @@ import PublicProfilePage from "./Pages/PublicProfile"
 import ProfilePage from "./Pages/ProfilePage"
 import FeaturesPage from "./components/Features"
 import CreateEvent from "./components/CreateEvent"
+import EventPage from "./Pages/BlogPage"
 
 const Layout = () => {
   const location = useLocation()
@@ -115,7 +115,7 @@ const router = createBrowserRouter([
 
       {
         path: "events/:id",
-        element: <Blog />,
+        element: <EventPage />,
       },
       {
         path: "events/create",
