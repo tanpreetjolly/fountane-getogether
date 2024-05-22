@@ -7,17 +7,15 @@ import {
     deleteProfileImage,
     makeMeVendor,
 } from "../controllers/user"
-// import userBlogRouter from "./userBlog"
 
 const router = Router()
 
 router.route("/me").get(getMe)
-// router.use("/blog", userBlogRouter)
+router.patch("/make-me-vendor", makeMeVendor)
 router.patch("/update-profile", updateCompleteProfile)
 router
     .route("/image")
     .post(upload.single("profileImage"), updateProfileImage)
     .delete(deleteProfileImage)
-router.patch("/make-me-vendor", makeMeVendor)
 
 export default router

@@ -1,7 +1,9 @@
-import { Schema, model } from "mongoose"
+import { Schema, model, Types } from "mongoose"
 import { ISubEvent, IEvent, IUserList } from "../types/models"
 import jwt from "jsonwebtoken"
 import { NotFoundError } from "../errors"
+import { EventPayload } from "../types/express"
+import permissions from "../permissions"
 
 const SubEventSchema = new Schema<ISubEvent>(
     {
@@ -42,7 +44,7 @@ const UserList = new Schema<IUserList>(
         },
         permission: {
             type: String,
-            enum: ["editTask", "viewTask", "editEvent", "viewEvent"],
+            enum: permissions,
         },
     },
     { timestamps: true },
@@ -78,7 +80,19 @@ const EventSchema = new Schema<IEvent>(
     { timestamps: true },
 )
 
-EventSchema.methods.generateToken = function (userId: Schema.Types.ObjectId) {
+EventSchema.pre("save", function (next) {
+    if (this.isNew === true) {
+        //assign host to user list with all permissions
+        this.userList.push({
+            userId: this.host,
+            role: "Host",
+            permission: Array.from(Object.values(permissions)),
+        })
+    }
+    next()
+})
+
+EventSchema.methods.generateToken = function (userId: Types.ObjectId) {
     const isHost = this.host.toString() === userId.toString()
     const user = this.userList.find(
         (user: IUserList) => user.userId.toString() === userId.toString(),
@@ -90,11 +104,11 @@ EventSchema.methods.generateToken = function (userId: Schema.Types.ObjectId) {
 
     return jwt.sign(
         {
-            userId: this._id,
+            eventId: this._id,
             role,
             isHost,
             permission,
-        },
+        } as EventPayload,
         process.env.JWT_SECRET as jwt.Secret,
         {
             expiresIn: process.env.JWT_LIFETIME,

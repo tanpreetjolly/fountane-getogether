@@ -8,7 +8,7 @@ const setEventTokenCookie = (
     //refresh token
     const token = event.generateToken(userId)
 
-    res.cookie("eventToken", token, {
+    res.cookie(`event:${event._id}`, token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
@@ -21,5 +21,6 @@ const setEventTokenCookie = (
                     60,
         ),
     })
+    return token
 }
 export default setEventTokenCookie

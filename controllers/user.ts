@@ -53,15 +53,13 @@ const updateUser = async (
 }
 
 const updateCompleteProfile = async (req: Request, res: Response) => {
-    const { name, phoneNo } = req.body
+    const { name } = req.body
     const userId = req.user.userId
 
-    if (!name || !phoneNo)
-        throw new BadRequestError("Name or Phone Number are required")
+    if (!name) throw new BadRequestError("Name or Phone Number are required")
 
     const user = await User.findByIdAndUpdate(userId, {
         name,
-        phoneNo,
     })
 
     res.status(StatusCodes.OK).json({

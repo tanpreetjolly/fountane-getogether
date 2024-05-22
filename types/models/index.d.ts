@@ -6,7 +6,7 @@ export interface OTP {
 }
 
 export interface IUser extends Document {
-    _id?: Types.ObjectId
+    _id: Types.ObjectId
     name: string
     email: string
     phoneNo: string
@@ -88,6 +88,7 @@ export interface IUserList {
     updatedAt: Date
 }
 export interface IEvent extends Document {
+    _id: Schema.Types.ObjectId
     name: string
     host: Schema.Types.ObjectId
     startDate: Date
@@ -98,7 +99,7 @@ export interface IEvent extends Document {
     checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
-    generateToken: (userId: Schema.Types.ObjectId) => string
+    generateToken: (userId: Types.ObjectId) => string
 }
 
 export interface IChatMessage extends Document {
