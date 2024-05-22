@@ -6,7 +6,7 @@ export interface OTP {
 }
 
 export interface IUser extends Document {
-    _id?: Types.ObjectId
+    _id: Types.ObjectId
     name: string
     email: string
     phoneNo: string
@@ -37,7 +37,7 @@ export interface IVendorProfile extends Document {
     updatedAt: Date
 }
 
-export interface IGuestListEvent extends Document {
+export interface IGuest extends Document {
     guestId: Schema.Types.ObjectId
     subEvent: Schema.Types.ObjectId
     status: string
@@ -52,7 +52,7 @@ export interface IPayment {
     updatedAt: Date
 }
 
-export interface IVendorListEvent extends Document {
+export interface IVendor extends Document {
     vendorId: Schema.Types.ObjectId
     subEvents: Schema.Types.ObjectId
     status: string
@@ -71,17 +71,35 @@ export interface ISubEvent {
     createdAt: Date
     updatedAt: Date
 }
+
+export interface ITask extends Document {
+    eventId: Schema.Types.ObjectId
+    name: string
+    completed: boolean
+    createdAt: Date
+    updatedAt: Date
+}
+
+export interface IUserList {
+    userId: Schema.Types.ObjectId
+    role: string
+    permission: string
+    createdAt: Date
+    updatedAt: Date
+}
 export interface IEvent extends Document {
+    _id: Schema.Types.ObjectId
     name: string
     host: Schema.Types.ObjectId
     startDate: Date
     endDate: Date
     budget: number
-    vendorsList: Types.Array<Schema.Types.ObjectId>
-    guestsList: Types.Array<Schema.Types.ObjectId>
+    userList: Types.Array<IUserList>
     subEvents: Types.Array<ISubEvent>
+    checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
+    generateToken: (userId: Types.ObjectId) => string
 }
 
 export interface IChatMessage extends Document {
@@ -95,7 +113,6 @@ export interface IChatMessage extends Document {
 
 export interface IChannel extends Document {
     name: string
-    // chat: Types.Array<Schema.Types.ObjectId>
     allowedUsers: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date

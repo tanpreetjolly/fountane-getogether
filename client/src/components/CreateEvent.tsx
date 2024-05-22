@@ -14,7 +14,6 @@ import Button from "./Button"
 import { FaRegCalendarPlus } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
 
-
 const RoundedTextField = styled(TextField)(({}) => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: 10,
@@ -27,7 +26,7 @@ const RoundedSelect = styled(Select)(() => ({
   },
 }))
 
-const CreateEvent = ( ) => {
+const CreateEvent = () => {
   const [eventType, setEventType] = React.useState("")
   const navigate = useNavigate()
 

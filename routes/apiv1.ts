@@ -1,23 +1,19 @@
 import { Router } from "express"
 import AuthMiddleware from "../middleware/auth"
 import AuthRouter from "./auth"
-// import BlogPublicRouter from "./blogPublic"
-// import BlogUpdateRouter from "./blogUpdate"
 import UserRouter from "./user"
-// import SearchRouter from "./search"
-// import ProfileRouter from "./profile"
+import SearchRouter from "./search"
+import EventRouter from "./event"
 
 const router = Router()
 
 router.use("/auth", AuthRouter)
 
-// router.use("/public/search", SearchRouter)
-// router.use("/public/profile", ProfileRouter)
-// router.use("/public/blog", BlogPublicRouter)
+router.use("/public/search", SearchRouter)
 
 router.use(AuthMiddleware)
 
 router.use("/user", UserRouter)
-// router.use("/blog", BlogUpdateRouter)
+router.use("/event/:eventId", EventRouter)
 
 export default router

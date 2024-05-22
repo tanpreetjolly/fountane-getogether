@@ -1,17 +1,17 @@
-import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { format } from "date-fns"
+import { useNavigate } from "react-router-dom"
 
 const EventCard = () => {
-  const navigate = useNavigate();
-  const formatDate = (date:string) => {
-    return format(new Date(date), "dd MMMM yyyy");
-  };
+  const navigate = useNavigate()
+  const formatDate = (date: string) => {
+    return format(new Date(date), "dd MMMM yyyy")
+  }
 
   return (
     <button
       className="container p-5 flex flex-col gap-0.5 text-left bg-white w-full border border-gray-300 my-4 rounded-lg shadow-sm  !font-inter"
       onClick={() => {
-        navigate("/events/1");
+        navigate("/events/1")
       }}
     >
       <span className="text-2xl font-bold text-gray-700">
@@ -27,7 +27,7 @@ const EventCard = () => {
         {formatDate("2024-05-26")} - {formatDate("2024-05-31")}
       </span>
     </button>
-  );
-};
+  )
+}
 
-export default EventCard;
+export default EventCard

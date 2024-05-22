@@ -1,6 +1,6 @@
 import User from "../models/user"
 import { StatusCodes } from "http-status-codes"
-import { BadRequestError, UnauthenticatedError } from "../errors"
+import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
 import mongoose from "mongoose"
 import {
@@ -13,7 +13,7 @@ import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
 
 const getMe = async (req: Request, res: Response) => {
     const user = await User.findById(req.user.userId)
-    if (!user) throw new UnauthenticatedError("User Not Found")
+    if (!user) throw new NotFoundError("User Not Found")
     if (user.status === "blocked")
         throw new UnauthenticatedError("User is blocked.")
     if (user.status === "inactive")
@@ -47,21 +47,19 @@ const updateUser = async (
     value: any,
 ) => {
     const user = await User.findById(userId)
-    if (!user) throw new UnauthenticatedError("User Not Found")
+    if (!user) throw new NotFoundError("User Not Found")
     user.set({ [key]: value })
     await user.save()
 }
 
 const updateCompleteProfile = async (req: Request, res: Response) => {
-    const { name, phoneNo } = req.body
+    const { name } = req.body
     const userId = req.user.userId
 
-    if (!name || !phoneNo)
-        throw new BadRequestError("Name or Phone Number are required")
+    if (!name) throw new BadRequestError("Name or Phone Number are required")
 
     const user = await User.findByIdAndUpdate(userId, {
         name,
-        phoneNo,
     })
 
     res.status(StatusCodes.OK).json({
@@ -111,7 +109,7 @@ const deleteProfileImage = async (req: Request, res: Response) => {
 const makeMeVendor = async (req: Request, res: Response) => {
     const userId = req.user.userId
     const user = await User.findById(userId)
-    if (!user) throw new UnauthenticatedError("User Not Found")
+    if (!user) throw new NotFoundError("User Not Found")
     if (user.vendorProfile)
         throw new BadRequestError("User is already a vendor.")
     const vendorProfile = await user.makeVendor()
