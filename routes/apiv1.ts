@@ -6,6 +6,7 @@ import AuthRouter from "./auth"
 import UserRouter from "./user"
 import SearchRouter from "./search"
 // import ProfileRouter from "./profile"
+import TaskRouter from "./task"
 
 const router = Router()
 
@@ -19,5 +20,8 @@ router.use(AuthMiddleware)
 
 router.use("/user", UserRouter)
 // router.use("/blog", BlogUpdateRouter)
+
+//Behind a middleware that ensure that only host can access
+router.use("/task/:eventId", TaskRouter)
 
 export default router

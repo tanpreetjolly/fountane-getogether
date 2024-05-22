@@ -71,6 +71,14 @@ export interface ISubEvent {
     createdAt: Date
     updatedAt: Date
 }
+
+export interface ITask extends Document {
+    eventId: Schema.Types.ObjectId
+    name: string
+    completed: boolean
+    createdAt: Date
+    updatedAt: Date
+}
 export interface IEvent extends Document {
     name: string
     host: Schema.Types.ObjectId
@@ -80,6 +88,7 @@ export interface IEvent extends Document {
     vendorsList: Types.Array<Schema.Types.ObjectId>
     guestsList: Types.Array<Schema.Types.ObjectId>
     subEvents: Types.Array<ISubEvent>
+    checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
 }
@@ -95,7 +104,6 @@ export interface IChatMessage extends Document {
 
 export interface IChannel extends Document {
     name: string
-    // chat: Types.Array<Schema.Types.ObjectId>
     allowedUsers: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
