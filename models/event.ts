@@ -1,5 +1,7 @@
 import { Schema, model } from "mongoose"
-import { ISubEvent, IEvent } from "../types/models"
+import { ISubEvent, IEvent, IUserList } from "../types/models"
+import jwt from "jsonwebtoken"
+import { NotFoundError } from "../errors"
 
 const SubEventSchema = new Schema<ISubEvent>(
     {
@@ -22,6 +24,25 @@ const SubEventSchema = new Schema<ISubEvent>(
         channels: {
             type: [Schema.Types.ObjectId],
             ref: "Channel",
+        },
+    },
+    { timestamps: true },
+)
+const UserList = new Schema<IUserList>(
+    {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "user",
+            required: [true, "Please Provide User."],
+        },
+        role: {
+            type: String,
+            enum: ["Guest", "Vendor"],
+            required: [true, "Please Provide Role."],
+        },
+        permission: {
+            type: String,
+            enum: ["editTask", "viewTask", "editEvent", "viewEvent"],
         },
     },
     { timestamps: true },
@@ -50,29 +71,36 @@ const EventSchema = new Schema<IEvent>(
             type: Number,
             required: [true, "Please Provide Budget."],
         },
-        //this is referenced document
-        vendorsList: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "VendorListEvent",
-            },
-        ],
-        //this is referenced document
-        guestsList: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "GuestListEvent",
-            },
-        ],
-        //this is embedded document
-        subEvents: [
-            {
-                type: SubEventSchema,
-            },
-        ],
+        //these are embedded documents
+        userList: [UserList],
+        subEvents: [SubEventSchema],
     },
     { timestamps: true },
 )
+
+EventSchema.methods.generateToken = function (userId: Schema.Types.ObjectId) {
+    const isHost = this.host.toString() === userId.toString()
+    const user = this.userList.find(
+        (user: IUserList) => user.userId.toString() === userId.toString(),
+    )
+    if (!user && !isHost)
+        throw new NotFoundError("User is not part of this event.")
+    const permission = user?.permission
+    const role = user?.role
+
+    return jwt.sign(
+        {
+            userId: this._id,
+            role,
+            isHost,
+            permission,
+        },
+        process.env.JWT_SECRET as jwt.Secret,
+        {
+            expiresIn: process.env.JWT_LIFETIME,
+        },
+    )
+}
 
 const Event = model<IEvent>("Event", EventSchema)
 export default Event
