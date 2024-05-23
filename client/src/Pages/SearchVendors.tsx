@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import  { useState } from "react"
 import VendorCard from "../components/VendorCard"
 
 type Props = {}
@@ -9,26 +9,32 @@ const vendorData = [
     name: "Shivam Caterers",
     type: "food",
     status: "invite",
+    events : ["100", "200", "300", "400"]
   },
   {
     id: "21",
     name: "Vanish Caterings",
     type: "food",
     status: "invite",
+    events : ["100", "200", "300", "400"]
   },
   {
     id: "31",
     name: "Event Managers Inc.",
     type: "event management",
     status: "invited",
+    events : ["100", "200", "300", "400"]
   },
   {
     id: "41",
     name: "Dhillon Managers Inc.",
     type: "event management",
     status: "invited",
+    events : ["100", "200", "300", "400"]
   },
+
 ]
+
 
 const SearchVendors = (props: Props) => {
   const [searchQuery, setSearchQuery] = useState("")
