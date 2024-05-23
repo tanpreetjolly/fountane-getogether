@@ -40,7 +40,7 @@ const data = [
         <Button
           text="Budgets and Payments"
           icon={<FaCreditCard />}
-          onClick={() => navigate("/create-festivity")}
+          onClick={() => navigate("payments-budget")}
         />
         <div className="flex justify-around gap-3">
           <button

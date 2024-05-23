@@ -41,6 +41,7 @@ import AssignVendors from "./Pages/AssignVendors"
 import InviteGuests from "./Pages/InviteGuests"
 import ManageGuests from "./Pages/ManageGuests"
 import CreateFestivityPage from "./Pages/CreateFestivityPage"
+import BudgetsandPayment from "./Pages/BudgetsandPayment"
 
 const Layout = () => {
   const location = useLocation()
@@ -162,6 +163,10 @@ const router = createBrowserRouter([
       {
         path: "events/:id",
         element: <EventPage />,
+      },
+      {
+        path: "events/:id/payments-budget",
+        element: <BudgetsandPayment />,
       },
       {
         path: "events/create",
