@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar"
 import { useEffect, useRef, useState } from "react"
 import { logout } from "../features/userSlice"
 import confirm from "./ConfirmationComponent"
+import { MdEventNote } from "react-icons/md"
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -46,7 +47,7 @@ const Navbar = () => {
       <nav className="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-3 py-4">
           <NavLink
-            to={`${!loading && isAuthenticated ? "/feed" : "/"}`}
+            to={`${!loading && isAuthenticated ? "/events" : "/"}`}
             className="flex items-center space-x-2"
           >
             <svg
@@ -70,10 +71,10 @@ const Navbar = () => {
             <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-white">
               <li>
                 <NavLink
-                  to="/feed"
+                  to="/events"
                   className="block py-2 px-3 text-dark rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-highlight md:p-0"
                 >
-                  Blogs
+                  My Events
                 </NavLink>
               </li>
 
@@ -131,20 +132,12 @@ const Navbar = () => {
             <div className="flex items-center gap-2 md:gap-4">
               <SearchBar />
               <NavLink
-                to={"/write/new_blog"}
+                to="/events"
                 className="bg-dark px-2 md:px-6 hover:bg-highlight transition-all py-2  md:py-3 flex items-end justify-center gap-1 rounded-full md:text-sm duration-200"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="white"
-                  className="w-4 md:w-5 aspect-square inline"
-                >
-                  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
-                  <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
-                </svg>
+                <MdEventNote className="text-white w-4 md:w-5 aspect-square inline" />
                 <span className="hidden md:inline text-white font-medium">
-                  Write
+                  Events
                 </span>
               </NavLink>
               <button

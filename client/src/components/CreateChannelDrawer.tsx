@@ -7,7 +7,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar"
 import Avatar from "@mui/material/Avatar"
 import Checkbox from "@mui/material/Checkbox"
 import Button from "../components/Button"
-import {  FaPlus } from "react-icons/fa"
+import { FaPlus } from "react-icons/fa"
 import { IoIosCloseCircle } from "react-icons/io"
 // Sample user data
 const users = [
@@ -34,7 +34,7 @@ const users = [
 ]
 
 type Props = {
-  toggleDrawer: (arg: boolean) => (arg2 : any) => void
+  toggleDrawer: (arg: boolean) => (arg2: any) => void
 }
 
 const CreateChannelDrawer = (props: Props) => {
@@ -67,8 +67,11 @@ const CreateChannelDrawer = (props: Props) => {
 
   return (
     <div className="min-h-[90vh] px-3 py-2 ">
-      <button onClick={props.toggleDrawer(false)} className="flex w-full justify-end ">
-        <IoIosCloseCircle className="text-3xl text-red-600"/>
+      <button
+        onClick={props.toggleDrawer(false)}
+        className="flex w-full justify-end "
+      >
+        <IoIosCloseCircle className="text-3xl text-red-600" />
       </button>
       <TextField
         label="Search Vendors, Guests"

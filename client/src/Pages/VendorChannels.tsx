@@ -1,11 +1,11 @@
-import { useState } from "react"
-import { FaPeopleCarry } from "react-icons/fa"
-import Button from "../components/Button"
+// import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { BsFillPeopleFill } from "react-icons/bs"
-import SwipeableDrawer from "@mui/material/SwipeableDrawer"
-import { AddCircleOutline } from "@mui/icons-material"
-import CreateChannelDrawer from "../components/CreateChannelDrawer"
+// import { FaPeopleCarry } from "react-icons/fa"
+// import Button from "../components/Button"
+// import { BsFillPeopleFill } from "react-icons/bs"
+// import SwipeableDrawer from "@mui/material/SwipeableDrawer"
+// import { AddCircleOutline } from "@mui/icons-material"
+// import CreateChannelDrawer from "../components/CreateChannelDrawer"
 
 const channelData = [
   {
@@ -16,7 +16,6 @@ const channelData = [
     id: "2",
     name: "Vendors Only",
   },
-  
 ]
 
 const lightShades = [
@@ -43,23 +42,22 @@ const Channel = ({ name, colorIndex, id }: any) => {
 }
 
 const VendorChannels = () => {
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false) // New state variable to track drawer type
-  const toggleDrawer = (open: boolean) => (event: any) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return
-    }
+  // const [drawerOpen, setDrawerOpen] = useState<boolean>(false) // New state variable to track drawer type
+  // const toggleDrawer = (open: boolean) => (event: any) => {
+  //   if (
+  //     event &&
+  //     event.type === "keydown" &&
+  //     (event.key === "Tab" || event.key === "Shift")
+  //   ) {
+  //     return
+  //   }
 
-    setDrawerOpen(open)
-  }
-  
+  //   setDrawerOpen(open)
+  // }
+
   return (
     <div className="px-4 flex flex-col justify-between h-full min-h-[90vh] pb-8">
       <div>
-        
         <div className="p-1 text-lg text-gray-600 mb-1">Text Channels</div>
         <div className="flex flex-col">
           {channelData?.map((channel, index) => (

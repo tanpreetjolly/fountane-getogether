@@ -1,11 +1,8 @@
 import { addDays } from "date-fns"
 import { useState } from "react"
 import { DateRange } from "react-date-range"
-import { format } from "date-fns"
-import { useNavigate } from "react-router-dom"
 
 const DatePicker = () => {
-  const navigate = useNavigate()
   const [state, setState] = useState([
     {
       startDate: new Date(),

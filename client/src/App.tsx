@@ -7,10 +7,14 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom"
+import { useAppDispatch, useAppSelector } from "./hooks"
+import { loadUser } from "./features/userSlice"
 
 //Components
 import Navbar from "./components/Navbar"
-// import Footer from "./components/Footer"
+import Loader from "./components/Loader"
+import FeaturesPage from "./components/Features"
+import CreateEvent from "./components/CreateEvent"
 
 //Pages
 import HomePage from "./Pages/HomePage"
@@ -18,20 +22,12 @@ import SignIn from "./Pages/SignInPage"
 import SignUp from "./Pages/SignUpPage"
 import VerifyOTP from "./Pages/VerifyOTP"
 import ForgotPassword from "./Pages/ForgotPasswordPage"
-import DashBoard from "./Pages/DashBoardPage"
-import BlogEditor from "./Pages/BlogEditorPage"
 import About from "./Pages/AboutPage"
 import ErrorPage from "./Pages/ErrorPage"
-import { useAppDispatch, useAppSelector } from "./hooks"
-import { loadUser } from "./features/userSlice"
-import AllBlogs from "./Pages/AllBlogs"
-import Loader from "./components/Loader"
+import AllEvent from "./Pages/AllEvent"
 import SearchResults from "./Pages/SearchResults"
-import PublicProfilePage from "./Pages/PublicProfile"
 import ProfilePage from "./Pages/ProfilePage"
-import FeaturesPage from "./components/Features"
-import CreateEvent from "./components/CreateEvent"
-import EventPage from "./Pages/BlogPage"
+import EventPage from "./Pages/EventPage"
 import SubEventChannels from "./Pages/SubEventPage"
 import ChannelChat from "./Pages/ChannelChat"
 import ManageVendors from "./Pages/ManageVendors"
@@ -41,7 +37,7 @@ import AssignVendors from "./Pages/AssignVendors"
 import InviteGuests from "./Pages/InviteGuests"
 import ManageGuests from "./Pages/ManageGuests"
 import CreateFestivityPage from "./Pages/CreateFestivityPage"
-import BudgetsandPayment from "./Pages/BudgetsandPayment"
+import BudgetsAndPayment from "./Pages/BudgetsAndPayment"
 import VendorHome from "./Pages/VendorHome"
 import VendorSubEvents from "./Pages/VendorSubEvents"
 import VendorChannels from "./Pages/VendorChannels"
@@ -74,144 +70,76 @@ const ProtectedRoute = () => {
   return <Outlet />
 }
 
+const ProtectedRouteVendor = () => {
+  const { loading, isAuthenticated, user } = useAppSelector(
+    (state) => state.user,
+  )
+
+  if (loading) return <Loader />
+  if (!isAuthenticated || !user) return <Navigate to="/sign-in" />
+  if (user.isVendor === false) return <Navigate to="/events" />
+  return <Outlet />
+}
+
 const router = createBrowserRouter([
-  {
-    path: "embed/blog/:id",
-  },
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
+      { index: true, element: <HomePage /> },
+      { path: "features", element: <FeaturesPage /> },
+      { path: "search", element: <SearchResults /> },
+      { path: "sign-in", element: <SignIn /> },
+      { path: "sign-up", element: <SignUp /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "verify", element: <VerifyOTP /> },
+      { path: "about", element: <About /> },
       {
-        path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "/",
         element: <ProtectedRoute />,
         children: [
+          { path: "profile", element: <ProfilePage /> },
+          { path: "events", element: <AllEvent /> },
+          { path: "events/create", element: <CreateEvent /> },
           {
-            path: "dashboard",
-            element: <DashBoard />,
+            path: "events/:eventId",
+            children: [
+              { index: true, element: <EventPage /> },
+              { path: "manage-vendors", element: <ManageVendors /> },
+              { path: "manage-guests", element: <ManageGuests /> },
+              { path: "payments-budget", element: <BudgetsAndPayment /> },
+              { path: "create-festivity", element: <CreateFestivityPage /> },
+              {
+                path: "festivities/:subEventId",
+                children: [
+                  { index: true, element: <SubEventChannels /> },
+                  { path: "assign-vendors", element: <AssignVendors /> },
+                  { path: "invite-guests", element: <InviteGuests /> },
+                  { path: "channels/:channelId", element: <ChannelChat /> },
+                ],
+              },
+            ],
           },
-          {
-            path: "profile",
-            element: <ProfilePage />,
-          },
+          { path: "search-vendors/:id", element: <SearchVendors /> },
+          { path: "vendor-chat/:id", element: <VendorChat /> },
         ],
       },
       {
-        path: "write/:id",
-        element: <BlogEditor />,
-      },
-      {
-        path: "features",
-        element: <FeaturesPage />,
-      },
-      { path: "search", element: <SearchResults /> },
-      { path: "sign-in", element: <SignIn /> },
-      {
-        path: "sign-up",
-        element: <SignUp />,
-      },
-      {
-        path: "forgot-password",
-        element: <ForgotPassword />,
-      },
-      {
-        path: "verify",
-        element: <VerifyOTP />,
-      },
-      {
-        path: "feed",
-        element: <AllBlogs />,
-      },
-
-      {
-        path: "events/:id",
-        element: <EventPage />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId",
-        element: <SubEventChannels />,
-      },
-      {
-        path: "vendor-home/events/:id/festivities/:subEventId/channels/:channelId",
-        element: <VendorChat />,
-      },
-      {
-        path: "vendor-home/events/:id/festivities/:subEventId",
-        element: <VendorChannels />,
-      },
-      {
-        path: "events/:id/manage-vendors",
-        element: <ManageVendors />,
-      },
-      {
-        path: "events/:id/manage-guests",
-        element: <ManageGuests />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId/assign-vendors",
-        element: <AssignVendors />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId/invite-guests",
-        element: <InviteGuests />,
-      },
-
-      {
-        path: "search-vendors/:id",
-        element: <SearchVendors />,
-      },
-
-      {
-        path: "vendor-home/edit-services",
-        element: <EditVendorServices />,
-      },
-      {
         path: "vendor-home",
-        element: <VendorHome />,
-      },
-      {
-        path: "vendor-chat/:id",
-        element: <VendorChat />,
-      },
-      {
-        path: "vendor-home/events/:id",
-        element: <VendorSubEvents />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId/channels/:channelId",
-        element: <ChannelChat />,
-      },
-      {
-        path: "events/:id",
-        element: <EventPage />,
-      },
-      {
-        path: "events/:id/payments-budget",
-        element: <BudgetsandPayment />,
-      },
-      {
-        path: "events/create",
-        element: <CreateEvent />,
-      },
-      {
-        path: "events/:id/create-festivity",
-        element: <CreateFestivityPage />,
-      },
-      {
-        path: "about",
-        element: <About />,
-      },
-      {
-        path: "user/:id",
-        element: <PublicProfilePage />,
-      },
-      {
-        path: "/*",
-        element: <ErrorPage />,
+        element: <ProtectedRouteVendor />,
+        children: [
+          { index: true, element: <VendorHome /> },
+          { path: "edit-services", element: <EditVendorServices /> },
+          { path: "events/:id", element: <VendorSubEvents /> },
+          {
+            path: "events/:id/festivities/:subEventId",
+            element: <VendorChannels />,
+          },
+          {
+            path: "events/:id/festivities/:subEventId/channels/:channelId",
+            element: <VendorChat />,
+          },
+        ],
       },
     ],
   },

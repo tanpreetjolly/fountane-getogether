@@ -15,6 +15,8 @@ const errorHandlerMiddleware = (
     if (process.env.NODE_ENV === "development")
         console.error("ERROR: " + err.message)
 
+    // console.log(err)
+
     //These all are known error that why there is no need to log them
 
     // Custom Error

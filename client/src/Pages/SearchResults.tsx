@@ -8,7 +8,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 import { search } from "../api/index"
 
-import BlogCard from "../components/EventCard"
+import EventCard from "../components/EventCard"
 
 const categories: string[] = ["blog", "user"]
 const SearchResults: React.FC = () => {
@@ -109,7 +109,7 @@ const SearchResults: React.FC = () => {
             {category === "blog" && (
               <div>
                 {data?.map((item: any, index: number) => (
-                  <BlogCard blog={item} key={index} />
+                  <EventCard event={item} key={index} />
                 ))}
               </div>
             )}

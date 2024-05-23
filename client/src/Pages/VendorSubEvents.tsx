@@ -27,9 +27,8 @@ const data = [
     date: "12th August 2022",
     venue: "Mumbai",
   },
-
 ]
-const VendorSubEvents = (props: Props) => {
+const VendorSubEvents = (_props: Props) => {
   const navigate = useNavigate()
   return (
     <div className="px-4">

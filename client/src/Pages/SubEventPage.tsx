@@ -60,7 +60,7 @@ const SubEventChannels = () => {
     setDrawerOpen(open)
   }
   // const {id, subEventId} = useParams()
-  
+
   return (
     <div className="px-4 flex flex-col justify-between h-full min-h-[90vh] pb-8">
       <div>

@@ -1,48 +1,48 @@
-import React, { useState } from 'react';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import CloseIcon from '@mui/icons-material/Close';
-import TextField from '@mui/material/TextField';
+import { useState } from "react"
+import SwipeableDrawer from "@mui/material/SwipeableDrawer"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemText from "@mui/material/ListItemText"
+import IconButton from "@mui/material/IconButton"
+import EditIcon from "@mui/icons-material/Edit"
+import CloseIcon from "@mui/icons-material/Close"
+import TextField from "@mui/material/TextField"
 
 interface Service {
-  id: string;
-  type: string;
-  price: number;
+  id: string
+  type: string
+  price: number
 }
 
 const serviceData: Service[] = [
-  { id: '1', type: 'Catering', price: 500 },
-  { id: '2', type: 'Decor', price: 1000 },
-  { id: '3', type: 'Photography', price: 2000 },
-];
+  { id: "1", type: "Catering", price: 500 },
+  { id: "2", type: "Decor", price: 1000 },
+  { id: "3", type: "Photography", price: 2000 },
+]
 
-type Props = {};
+type Props = {}
 
-const EditVendorServices = (props: Props) => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+const EditVendorServices = (_props: Props) => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+  const [selectedService, setSelectedService] = useState<Service | null>(null)
 
   const handleServiceEdit = (service: Service) => {
-    setSelectedService(service);
-    setIsDrawerOpen(true);
-  };
+    setSelectedService(service)
+    setIsDrawerOpen(true)
+  }
 
   const closeDrawer = () => {
-    setIsDrawerOpen(false);
-    setSelectedService(null);
-  };
+    setIsDrawerOpen(false)
+    setSelectedService(null)
+  }
 
   const handleServiceUpdate = (updatedService: Service) => {
     // Implement your logic to update the service data here
-    console.log('Updated Service:', updatedService);
-    closeDrawer();
-  };
+    console.log("Updated Service:", updatedService)
+    closeDrawer()
+  }
 
   return (
     <div className="px-4">
@@ -76,7 +76,7 @@ const EditVendorServices = (props: Props) => {
         onClose={closeDrawer}
         onOpen={() => setIsDrawerOpen(true)}
       >
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ p: 2, display: "flex", justifyContent: "space-between" }}>
           <Typography variant="h6">Edit Service</Typography>
           <IconButton onClick={closeDrawer}>
             <CloseIcon />
@@ -109,11 +109,11 @@ const EditVendorServices = (props: Props) => {
               fullWidth
               margin="normal"
             />
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
               <IconButton
                 onClick={() => handleServiceUpdate(selectedService)}
                 color="primary"
-                size='small'
+                size="small"
               >
                 Save
               </IconButton>
@@ -122,7 +122,7 @@ const EditVendorServices = (props: Props) => {
         )}
       </SwipeableDrawer>
     </div>
-  );
-};
+  )
+}
 
-export default EditVendorServices;
+export default EditVendorServices

@@ -1,4 +1,5 @@
 import User from "../models/user"
+import Event from "../models/event"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
@@ -23,6 +24,13 @@ const getMe = async (req: Request, res: Response) => {
 
     const socketToken = user.generateSocketToken()
 
+    const events = await Event.find({ "userList.user": user._id })
+        .select("name startDate endDate host")
+        .populate({
+            path: "host",
+            select: "name profileImage",
+        })
+
     const sendUser = {
         userId: user._id,
         name: user.name,
@@ -31,10 +39,11 @@ const getMe = async (req: Request, res: Response) => {
         profileImage: user.profileImage,
         isVendor: user.vendorProfile ? true : false,
         vendorProfile: user.vendorProfile,
+        events: events,
         socketToken,
     }
 
-    res.status(StatusCodes.CREATED).json({
+    res.status(StatusCodes.OK).json({
         data: sendUser,
         success: true,
         msg: "User Fetched Successfully",

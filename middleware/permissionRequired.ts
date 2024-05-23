@@ -5,7 +5,7 @@ import setEventTokenCookie from "../utils/setCookie/setEventToken"
 import Event from "../models/event"
 import { EventPayload } from "../types/express"
 
-const permissionRequired = (...roles: string[]) => {
+const permissionRequired = (permissionReq: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         const eventId = req.params.eventId
         if (!eventId)
@@ -14,7 +14,8 @@ const permissionRequired = (...roles: string[]) => {
             )
 
         let eventToken = req.cookies[`event:${eventId}`]
-        if (eventToken) {
+
+        if (!eventToken) {
             const event = await Event.findById(eventId)
             if (!event)
                 throw new BadRequestError(`Event not found with id ${eventId}`)
@@ -28,6 +29,15 @@ const permissionRequired = (...roles: string[]) => {
 
         // Type assertion to convert req object to Request
         ;(req as Request).event = eventPayload
+
+        //verify permission
+        if (
+            eventPayload.role !== "host" &&
+            !eventPayload.permission.includes(permissionReq)
+        )
+            throw new BadRequestError(
+                `You don't have permission to access this route`,
+            )
         next()
     }
 }

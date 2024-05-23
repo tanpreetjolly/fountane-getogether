@@ -1,15 +1,14 @@
 {
-    "name": "fountane",
+    "name": "Getogether",
     "version": "1.0.0",
-    "description": "fountane",
+    "description": "Getogether- A social media platform for bloggers",
     "main": "server.js",
     "scripts": {
         "build": "npx tsc",
         "start": "node dist/server.js",
         "dev": "nodemon --ignore 'client/*' server.ts",
         "format": "prettier --write . && cd client && prettier --write .",
-        "seeder": "node DBseeder/seeder.js",
-        "get-blogs-by-each-user": "ts-node ./DBseeder/dev-utils/get-blogs-by-each-user.ts"
+        "seeder": "ts-node ./seeder.ts"
     },
     "repository": {
         "type": "git",

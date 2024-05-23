@@ -1,13 +1,6 @@
 import "react-date-range/dist/styles.css" // main style file
 import "react-date-range/dist/theme/default.css" // theme css file
-import React from "react"
-import {
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-} from "@mui/material"
+import { TextField } from "@mui/material"
 import { styled } from "@mui/system"
 import { FaRegCalendarPlus } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
@@ -20,11 +13,11 @@ const RoundedTextField = styled(TextField)(({}) => ({
   },
 }))
 
-const RoundedSelect = styled(Select)(() => ({
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 10,
-  },
-}))
+// const RoundedSelect = styled(Select)(() => ({
+//   "& .MuiOutlinedInput-root": {
+//     borderRadius: 10,
+//   },
+// }))
 
 const CreateFestivity = () => {
   const navigate = useNavigate()

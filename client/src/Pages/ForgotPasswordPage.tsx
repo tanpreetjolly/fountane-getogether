@@ -45,7 +45,7 @@ const ForgotPasswordPage = () => {
   }
   React.useEffect(() => {
     if (!loading && isAuthenticated) {
-      navigate("/feed")
+      navigate("/events")
     }
   }, [loading, isAuthenticated])
   return (

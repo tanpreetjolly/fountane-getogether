@@ -14,6 +14,6 @@ router.use("/public/search", SearchRouter)
 router.use(AuthMiddleware)
 
 router.use("/user", UserRouter)
-router.use("/event/:eventId", EventRouter)
+router.use("/event", EventRouter)
 
 export default router

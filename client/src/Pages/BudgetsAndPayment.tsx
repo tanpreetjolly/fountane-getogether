@@ -9,7 +9,7 @@ import {
 import { FaEdit } from "react-icons/fa"
 import Button from "../components/Button"
 import { MdCancel } from "react-icons/md"
-import { SiTicktick } from "react-icons/si";
+import { SiTicktick } from "react-icons/si"
 interface Festivity {
   id: string
   name: string
@@ -38,12 +38,12 @@ const calculateAvailableBudget = (
 
 interface Props {}
 
-const BudgetsandPayment: React.FC<Props> = () => {
+const BudgetsAndPayment: React.FC<Props> = () => {
   const [totalBudget, setTotalBudget] = useState<number>(initialBudget)
   const [availableBudget, setAvailableBudget] = useState<number>(
     calculateAvailableBudget(initialBudget, initialFestivities),
   )
-  const [festivities, setFestivities] =
+  const [festivities, _setFestivities] =
     useState<Festivity[]>(initialFestivities)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [newTotalBudget, setNewTotalBudget] = useState<number>(totalBudget)
@@ -137,4 +137,4 @@ const BudgetsandPayment: React.FC<Props> = () => {
   )
 }
 
-export default BudgetsandPayment
+export default BudgetsAndPayment
