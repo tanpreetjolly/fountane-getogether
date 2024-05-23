@@ -3,8 +3,6 @@ import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
 import Typography from "@mui/material/Typography"
 import Box from "@mui/material/Box"
-import MyBlogs from "../components/MyBlogs"
-import MyAssets from "../components/MyAssets"
 import MyProfile from "../components/MyProfile"
 import { useSearchParams } from "react-router-dom"
 
@@ -48,16 +46,6 @@ const tabMap = [
     label: "Profile",
     value: "profile",
     component: <MyProfile />,
-  },
-  {
-    label: "Assets",
-    value: "assets",
-    component: <MyAssets />,
-  },
-  {
-    label: "Blogs",
-    value: "blogs",
-    component: <MyBlogs />,
   },
 ]
 const ProfilePage = () => {

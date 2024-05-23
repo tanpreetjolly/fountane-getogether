@@ -1,17 +1,9 @@
 import { useNavigate } from "react-router-dom"
 import Button from "../components/Button"
-// add icon from react-icons
 import { FaPlus } from "react-icons/fa"
 import EventCard from "../components/EventCard"
-const AllBlogs = () => {
+const AllEvent = () => {
   const navigate = useNavigate()
-  // useEffect(() => {
-  //   setLoading(true)
-  //   getTrendingBlog()
-  //     .then((res) => setTrending(res.data.blogs))
-  //     .catch((error) => console.log(error))
-  //     .finally(() => setLoading(false))
-  // }, [])
 
   return (
     <div className="px-4 mx-auto">
@@ -27,4 +19,4 @@ const AllBlogs = () => {
   )
 }
 
-export default AllBlogs
+export default AllEvent

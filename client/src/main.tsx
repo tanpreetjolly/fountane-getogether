@@ -8,7 +8,6 @@ import theme from "./theme.tsx"
 
 import { Provider } from "react-redux"
 import store from "./store"
-import { EditorContextProvider } from "./context/EditorContext"
 import { SocketContextProvider } from "./context/SocketContext"
 import { PostHogProvider } from "posthog-js/react"
 
@@ -24,13 +23,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       options={options}
     >
       <ThemeProvider theme={theme}>
-        <EditorContextProvider>
-          <Provider store={store}>
-            <SocketContextProvider>
-              <App />
-            </SocketContextProvider>
-          </Provider>
-        </EditorContextProvider>
+        <Provider store={store}>
+          <SocketContextProvider>
+            <App />
+          </SocketContextProvider>
+        </Provider>
         <Toaster />
       </ThemeProvider>
     </PostHogProvider>
