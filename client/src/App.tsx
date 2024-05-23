@@ -42,6 +42,10 @@ import InviteGuests from "./Pages/InviteGuests"
 import ManageGuests from "./Pages/ManageGuests"
 import CreateFestivityPage from "./Pages/CreateFestivityPage"
 import BudgetsandPayment from "./Pages/BudgetsandPayment"
+import VendorHome from "./Pages/VendorHome"
+import VendorSubEvents from "./Pages/VendorSubEvents"
+import VendorChannels from "./Pages/VendorChannels"
+import EditVendorServices from "./Pages/EditVendorServices"
 
 const Layout = () => {
   const location = useLocation()
@@ -132,6 +136,14 @@ const router = createBrowserRouter([
         element: <SubEventChannels />,
       },
       {
+        path: "vendor-home/events/:id/festivities/:subEventId/channels/:channelId",
+        element: <VendorChat />,
+      },
+      {
+        path: "vendor-home/events/:id/festivities/:subEventId",
+        element: <VendorChannels />,
+      },
+      {
         path: "events/:id/manage-vendors",
         element: <ManageVendors />,
       },
@@ -152,9 +164,22 @@ const router = createBrowserRouter([
         path: "search-vendors/:id",
         element: <SearchVendors />,
       },
+
+      {
+        path: "vendor-home/edit-services",
+        element: <EditVendorServices />,
+      },
+      {
+        path: "vendor-home",
+        element: <VendorHome />,
+      },
       {
         path: "vendor-chat/:id",
         element: <VendorChat />,
+      },
+      {
+        path: "vendor-home/events/:id",
+        element: <VendorSubEvents />,
       },
       {
         path: "events/:id/festivities/:subEventId/channels/:channelId",
