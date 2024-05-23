@@ -36,7 +36,7 @@ const vendorData = [
 ]
 
 
-const SearchVendors = (props: Props) => {
+const SearchVendors = (_props: Props) => {
   const [searchQuery, setSearchQuery] = useState("")
 
   const handleSearchChange = (event:any) => {

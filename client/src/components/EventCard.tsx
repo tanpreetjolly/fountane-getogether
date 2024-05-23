@@ -1,11 +1,24 @@
 import { format } from "date-fns"
 import { useNavigate } from "react-router-dom"
+import { FC } from "react"
 
-const EventCard = () => {
+interface EventCardProps {
+  event: {
+    title: string
+    host: string
+    budget: number
+    startDate: string
+    endDate: string
+  }
+}
+
+const EventCard: FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate()
   const formatDate = (date: string) => {
     return format(new Date(date), "dd MMMM yyyy")
   }
+
+  console.log(event)
 
   return (
     <button

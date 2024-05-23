@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -34,7 +34,7 @@ const vendorData = [
   },
 ];
 
-const AssignVendors = (props: Props) => {
+const AssignVendors = (_props: Props) => {
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
 
   const handleVendorChange = (vendorId: string) => {

@@ -105,11 +105,9 @@ export const uploadAssets = (assetFiles: File[]) => {
 }
 
 export const updateProfile = (userData: UserType) => {
-  const { name, bio, myInterests } = userData
+  const { name } = userData
   return API.patch("/user/update-profile", {
     name,
-    bio,
-    myInterests,
   })
 }
 
@@ -155,7 +153,6 @@ export const createBlog = (blog: BlogCreateType) =>
     description: blog.description,
     content: JSON.stringify(blog.content),
     img: blog.img,
-    tags: blog.tags,
   })
 
 export const updateBlog = (blog: BlogCreateType) =>
@@ -164,7 +161,6 @@ export const updateBlog = (blog: BlogCreateType) =>
     description: blog.description,
     content: JSON.stringify(blog.content),
     img: blog.img,
-    tags: blog.tags,
   })
 
 export const deleteBlog = (id: BlogShortType["_id"]) =>

@@ -10,17 +10,14 @@ import { TbPhotoPlus } from "react-icons/tb"
 import { MdDeleteOutline } from "react-icons/md"
 const defUser: UserType = {
   userId: "",
-  createdAt: "",
-  updatedAt: "",
-  blogs: [],
-  followingCount: 0,
-  followersCount: 0,
-  myInterests: [],
   name: "",
   email: "",
   profileImage: "",
   socketToken: "",
+  blogs: [],
   phoneNo: "",
+  createdAt: "",
+  updatedAt: "",
 }
 
 const MyProfile = () => {
@@ -212,21 +209,6 @@ const MyProfile = () => {
                   </button>
                 </span>
               )}
-            </div>
-
-            <div className="flex gap-5 my-4 text-sm w-fit mx-auto md:ml-0">
-              <span>
-                <span className="rounded-xl p-1 text-slate-700 px-1 font-bold">
-                  {user?.followersCount}
-                </span>
-                <span className="text-slate-500">Followers</span>
-              </span>
-              <span>
-                <span className="rounded-xl p-1 text-slate-700 px-1 font-bold">
-                  {user?.followingCount}
-                </span>
-                <span className="text-slate-500">Following</span>
-              </span>
             </div>
 
             <label className="mt-2 text-slate-600 font-light">Full name</label>

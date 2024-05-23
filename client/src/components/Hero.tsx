@@ -2,7 +2,6 @@ import React from "react"
 import { Link } from "react-router-dom"
 import { useAppSelector } from "../hooks"
 import { IoPeople } from "react-icons/io5"
-import { CiEdit } from "react-icons/ci"
 
 type Props = {}
 

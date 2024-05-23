@@ -18,26 +18,11 @@ export interface ForgotPasswordType {
   password: string
 }
 
-export interface Author {
-  _id: string
-  name: string
-  profileImage?: string
-}
-
-export interface CommentType {
-  _id: string
-  message: string
-  author: Author
-  createdAt: string
-}
-
 export interface BlogShortType {
   _id: string
   title: string
   description: string
-  author: Author
   img: string
-  tags: Category[]
 }
 
 export interface BlogCreateType {
@@ -45,7 +30,6 @@ export interface BlogCreateType {
   title: string
   description: string
   img: string
-  tags: Category[]
   content: {
     time: number
     blocks: { type: string; data: any }[]
@@ -68,7 +52,6 @@ export interface BlogFullType extends BlogShortType {
   createdAt: string
   updatedAt: string
   content: string
-  comments: CommentType[]
 }
 
 interface User {
@@ -87,28 +70,6 @@ export interface UserType extends User {
   createdAt: string
   updatedAt: string
   blogs?: BlogFullType[]
-  followingCount: number
-  followersCount: number
-  myInterests: string[]
-}
-
-export enum Category {
-  All = "_all",
-  Technology = "technology",
-  Science = "science",
-  Programming = "programming",
-  Health = "health",
-  Business = "business",
-  Entertainment = "entertainment",
-  Sports = "sports",
-  Education = "education",
-  Lifestyle = "lifestyle",
-}
-export interface TrendingType {
-  _id: string
-  title: string
-  totalScore: number
-  author: Author
 }
 
 export type ProfileBlogs = {
@@ -127,11 +88,6 @@ export type ProfileBlogs = {
 export type Profile = {
   _id: string
   name: string
-  followersCount: number
-  followingCount: number
-  myInterests: string[]
-  profileImage: string
-  bio: string | undefined
   createdAt: string
 }
 

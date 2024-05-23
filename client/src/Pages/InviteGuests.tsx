@@ -34,7 +34,7 @@ const vendorData = [
   },
 ];
 
-const InviteGuests = (props: Props) => {
+const InviteGuests = (_props: Props) => {
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
 
   const handleVendorChange = (vendorId: string) => {
