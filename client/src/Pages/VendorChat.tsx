@@ -1,7 +1,7 @@
 import { Input } from "@mui/material"
 import MessageComponent from "../components/MessageComponent"
 import { useState } from "react"
-import { MdMarkEmailRead } from "react-icons/md";
+import { MdMarkEmailRead } from "react-icons/md"
 // type Props = {}
 
 const randomChatData = [
@@ -36,7 +36,12 @@ const VendorChat = () => {
   return (
     <div className="px-4 flex  flex-col justify-between min-h-[90vh]">
       <div className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3">
-        <div className="text-lg bg-dark text-center py-1.5  justify-center  items-center gap-2 flex text-white  rounded-lg">Invited <span><MdMarkEmailRead/></span></div>
+        <div className="text-lg bg-dark text-center py-1.5  justify-center  items-center gap-2 flex text-white  rounded-lg">
+          Invited{" "}
+          <span>
+            <MdMarkEmailRead />
+          </span>
+        </div>
         {messages.map((msg, index) => (
           <MessageComponent
             key={index}

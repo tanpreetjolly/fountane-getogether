@@ -64,7 +64,11 @@ const ManageGuests = () => {
   const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false)
-  const [newGuest, setNewGuest] = useState<Partial<Guest>>({ name: "", email: "", phone: "" })
+  const [newGuest, setNewGuest] = useState<Partial<Guest>>({
+    name: "",
+    email: "",
+    phone: "",
+  })
 
   const handleGuestClick = (guest: Guest) => {
     setSelectedGuest(guest)
@@ -153,7 +157,11 @@ const ManageGuests = () => {
           <span className="px-3">
             Couldn't find your match, Click here to invite a new guest to app
           </span>
-          <Button text="Invite a Guest" onClick={handleInviteButtonClick} icon={<FaPlusCircle />} />
+          <Button
+            text="Invite a Guest"
+            onClick={handleInviteButtonClick}
+            icon={<FaPlusCircle />}
+          />
         </div>
       )}
       <SwipeableDrawer
@@ -201,7 +209,7 @@ const ManageGuests = () => {
           <Button text="Invite" onClick={closeDrawer} icon={<FaPlusCircle />} />
         </Box>
       </SwipeableDrawer>
-      <Dialog open={isInviteModalOpen} onClose={handleCloseInviteModal} >
+      <Dialog open={isInviteModalOpen} onClose={handleCloseInviteModal}>
         <DialogTitle>
           Invite a New Guest
           <IconButton
@@ -248,7 +256,11 @@ const ManageGuests = () => {
         </DialogContent>
         <DialogActions>
           <Button text="Cancel" onClick={handleCloseInviteModal} />
-          <Button text="Send Invite" onClick={handleInviteNewGuest} icon={<FaPlusCircle />} />
+          <Button
+            text="Send Invite"
+            onClick={handleInviteNewGuest}
+            icon={<FaPlusCircle />}
+          />
         </DialogActions>
       </Dialog>
     </div>

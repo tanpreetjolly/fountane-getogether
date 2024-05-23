@@ -9,30 +9,29 @@ const vendorData = [
     name: "Shivam Caterers",
     type: "food",
     status: "hired",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
   {
     id: "21",
     name: "Vanish Caterings",
     type: "food",
     status: "hired",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
   {
     id: "31",
     name: "Event Managers Inc.",
     type: "event management",
     status: "invited",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
   {
     id: "41",
     name: "Dhillon Managers Inc.",
     type: "event management",
     status: "invited",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
-
 ]
 
 const ManageVendors = () => {

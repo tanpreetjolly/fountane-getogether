@@ -1,4 +1,4 @@
-import  { useState } from "react"
+import { useState } from "react"
 import VendorCard from "../components/VendorCard"
 
 type Props = {}
@@ -9,37 +9,35 @@ const vendorData = [
     name: "Shivam Caterers",
     type: "food",
     status: "invite",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
   {
     id: "21",
     name: "Vanish Caterings",
     type: "food",
     status: "invite",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
   {
     id: "31",
     name: "Event Managers Inc.",
     type: "event management",
     status: "invited",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
   {
     id: "41",
     name: "Dhillon Managers Inc.",
     type: "event management",
     status: "invited",
-    events : ["100", "200", "300", "400"]
+    events: ["100", "200", "300", "400"],
   },
-
 ]
-
 
 const SearchVendors = (_props: Props) => {
   const [searchQuery, setSearchQuery] = useState("")
 
-  const handleSearchChange = (event:any) => {
+  const handleSearchChange = (event: any) => {
     setSearchQuery(event.target.value)
   }
 
@@ -62,7 +60,7 @@ const SearchVendors = (_props: Props) => {
 
             {vendorData
               .filter((vendor) =>
-                vendor.name.toLowerCase().includes(searchQuery.toLowerCase())
+                vendor.name.toLowerCase().includes(searchQuery.toLowerCase()),
               )
               .map((vendor) => (
                 <VendorCard key={vendor.id} vendor={vendor} />

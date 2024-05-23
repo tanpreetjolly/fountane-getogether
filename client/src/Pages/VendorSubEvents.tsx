@@ -27,7 +27,6 @@ const data = [
     date: "12th August 2022",
     venue: "Mumbai",
   },
-
 ]
 const VendorSubEvents = (_props: Props) => {
   const navigate = useNavigate()

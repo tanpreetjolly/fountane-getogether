@@ -37,7 +37,7 @@ const initialEvents: Event[] = [
     hostName: "Michael",
     paymentStatus: "Paid",
     inviteStatus: "Pending",
-  }
+  },
 ]
 
 type Props = {}
@@ -47,11 +47,19 @@ const VendorHome: React.FC<Props> = () => {
   const [events, setEvents] = useState<Event[]>(initialEvents)
 
   const handleAccept = (id: string) => {
-    setEvents(events.map(event => event.id === id ? { ...event, inviteStatus: "Accepted" } : event))
+    setEvents(
+      events.map((event) =>
+        event.id === id ? { ...event, inviteStatus: "Accepted" } : event,
+      ),
+    )
   }
 
   const handleDecline = (id: string) => {
-    setEvents(events.map(event => event.id === id ? { ...event, inviteStatus: "Declined" } : event))
+    setEvents(
+      events.map((event) =>
+        event.id === id ? { ...event, inviteStatus: "Declined" } : event,
+      ),
+    )
   }
 
   const handleNavigateToEvent = (id: string) => {
@@ -62,7 +70,9 @@ const VendorHome: React.FC<Props> = () => {
     return status === "Pending" ? "text-yellow-500" : "text-green-500"
   }
 
-  const getInviteStatusClassName = (status: "Pending" | "Accepted" | "Declined") => {
+  const getInviteStatusClassName = (
+    status: "Pending" | "Accepted" | "Declined",
+  ) => {
     if (status === "Accepted") return "text-green-500"
     if (status === "Declined") return "text-red-500"
     return "text-gray-500"
@@ -77,15 +87,21 @@ const VendorHome: React.FC<Props> = () => {
         }}
         icon={<CiEdit className="text-2xl" />}
       />
-      {events.map(event => (
+      {events.map((event) => (
         <div key={event.id} className="my-4">
           <div className="border rounded-md p-4 bg-white">
             <h2 className="text-xl font-semibold mb-2">{event.name}</h2>
-            <p className="text-gray-500">Event Date Range: <span>{event.dateRange}</span></p>
-            <p className="text-gray-500">Host Name: <span>{event.hostName}</span></p>
+            <p className="text-gray-500">
+              Event Date Range: <span>{event.dateRange}</span>
+            </p>
+            <p className="text-gray-500">
+              Host Name: <span>{event.hostName}</span>
+            </p>
             <p className="text-gray-500 mb-2">
-              Payment Status: 
-              <span className={`ml-1 ${getStatusClassName(event.paymentStatus)}`}>
+              Payment Status:
+              <span
+                className={`ml-1 ${getStatusClassName(event.paymentStatus)}`}
+              >
                 {event.paymentStatus}
               </span>
             </p>
@@ -113,11 +129,11 @@ const VendorHome: React.FC<Props> = () => {
                 </p>
                 {event.inviteStatus === "Accepted" && (
                   <button
-                  onClick={() => handleNavigateToEvent(event.id)}
-                  className="border border-blue-500 text-blue-500 rounded-md px-3 py-1"
-                >
-                  Go to Event
-                </button>
+                    onClick={() => handleNavigateToEvent(event.id)}
+                    className="border border-blue-500 text-blue-500 rounded-md px-3 py-1"
+                  >
+                    Go to Event
+                  </button>
                 )}
               </div>
             )}

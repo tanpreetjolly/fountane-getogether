@@ -9,7 +9,7 @@ import {
 import { FaEdit } from "react-icons/fa"
 import Button from "../components/Button"
 import { MdCancel } from "react-icons/md"
-import { SiTicktick } from "react-icons/si";
+import { SiTicktick } from "react-icons/si"
 interface Festivity {
   id: string
   name: string

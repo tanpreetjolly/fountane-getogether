@@ -7,10 +7,14 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom"
+import { useAppDispatch, useAppSelector } from "./hooks"
+import { loadUser } from "./features/userSlice"
 
 //Components
 import Navbar from "./components/Navbar"
-// import Footer from "./components/Footer"
+import Loader from "./components/Loader"
+import FeaturesPage from "./components/Features"
+import CreateEvent from "./components/CreateEvent"
 
 //Pages
 import HomePage from "./Pages/HomePage"
@@ -20,14 +24,9 @@ import VerifyOTP from "./Pages/VerifyOTP"
 import ForgotPassword from "./Pages/ForgotPasswordPage"
 import About from "./Pages/AboutPage"
 import ErrorPage from "./Pages/ErrorPage"
-import { useAppDispatch, useAppSelector } from "./hooks"
-import { loadUser } from "./features/userSlice"
-import AllBlogs from "./Pages/AllEvent"
-import Loader from "./components/Loader"
+import AllEvent from "./Pages/AllEvent"
 import SearchResults from "./Pages/SearchResults"
 import ProfilePage from "./Pages/ProfilePage"
-import FeaturesPage from "./components/Features"
-import CreateEvent from "./components/CreateEvent"
 import EventPage from "./Pages/EventPage"
 import SubEventChannels from "./Pages/SubEventPage"
 import ChannelChat from "./Pages/ChannelChat"
@@ -110,7 +109,7 @@ const router = createBrowserRouter([
       },
       {
         path: "feed",
-        element: <AllBlogs />,
+        element: <AllEvent />,
       },
 
       {
