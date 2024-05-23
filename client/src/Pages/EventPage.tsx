@@ -1,12 +1,14 @@
 import { BsFillCalendarEventFill, BsFillPeopleFill } from "react-icons/bs"
 import Button from "../components/Button"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { FaCreditCard, FaPeopleCarry } from "react-icons/fa"
 import SubEventCard from "./SubEventCard"
+import { useState, useEffect } from "react"
+import { EventFull } from "../definitions"
+import { getEvent } from "../api"
+import Loader from "../components/Loader"
 
-// type Props = {}
-// a data array to .map() SubeventCard on
-const data = [
+const subevents = [
   {
     id: "100",
     name: "Wedding",
@@ -33,7 +35,29 @@ const data = [
   },
 ]
 const EventPage = () => {
+  const [event, setEvent] = useState<EventFull | any>(null)
+  const [loading, setLoading] = useState(true)
+
   const navigate = useNavigate()
+
+  const { eventId } = useParams()
+
+  console.log(event)
+
+  useEffect(() => {
+    if (!eventId) return
+    getEvent(eventId)
+      .then((data) => {
+        setEvent(data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+      .finally(() => setLoading(false))
+  }, [eventId])
+
+  if (loading) return <Loader />
+
   return (
     <div className="px-4 space-y-2">
       <Button
@@ -69,7 +93,7 @@ const EventPage = () => {
       </div>
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3">
-          {data.map((event) => (
+          {subevents.map((event) => (
             <button
               onClick={() => {
                 navigate(`festivities/${event.id}`)

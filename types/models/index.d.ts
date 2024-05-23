@@ -14,7 +14,7 @@ export interface IUser extends Document {
     profileImage: string
     status: string
     otp: OTP | undefined
-    vendorProfile: Schema.Types.ObjectId
+    vendorProfile: Schema.Types.ObjectId | null
     createdAt: Date
     updatedAt: Date
     generateToken: () => string
@@ -81,9 +81,9 @@ export interface ITask extends Document {
 }
 
 export interface IUserList {
-    userId: Schema.Types.ObjectId
+    user: Schema.Types.ObjectId
     role: string
-    permission: string
+    permission: [string]
     createdAt: Date
     updatedAt: Date
 }
@@ -103,7 +103,7 @@ export interface IEvent extends Document {
 }
 
 export interface IChatMessage extends Document {
-    _id?: Schema.Types.ObjectId
+    _id: Schema.Types.ObjectId
     userId: Schema.Types.ObjectId
     channelId: Schema.Types.ObjectId
     message: string
@@ -112,6 +112,7 @@ export interface IChatMessage extends Document {
 }
 
 export interface IChannel extends Document {
+    _id: Schema.Types.ObjectId
     name: string
     allowedUsers: Types.Array<Schema.Types.ObjectId>
     createdAt: Date

@@ -122,3 +122,12 @@ export const search = (
       limit,
     },
   })
+
+/*
+ ************************ Event Host Requests ************************
+ */
+
+export const getEvent = (eventId: string) => API.get(`/event/${eventId}`)
+
+// export const createEvent = (eventData: FormData) =>
+//   API.post("/event/create", eventData)

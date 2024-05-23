@@ -32,20 +32,22 @@ const SubEventSchema = new Schema<ISubEvent>(
 )
 const UserList = new Schema<IUserList>(
     {
-        userId: {
+        user: {
             type: Schema.Types.ObjectId,
-            ref: "user",
+            ref: "User",
             required: [true, "Please Provide User."],
         },
         role: {
             type: String,
-            enum: ["Guest", "Vendor"],
+            enum: ["host", "guest", "vendor"],
             required: [true, "Please Provide Role."],
         },
-        permission: {
-            type: String,
-            enum: permissions,
-        },
+        permission: [
+            {
+                type: String,
+                enum: Array.from(Object.values(permissions)),
+            },
+        ],
     },
     { timestamps: true },
 )
@@ -80,12 +82,14 @@ const EventSchema = new Schema<IEvent>(
     { timestamps: true },
 )
 
+EventSchema.index({ "userList.userId": 1 }, { unique: true })
+
 EventSchema.pre("save", function (next) {
     if (this.isNew === true) {
         //assign host to user list with all permissions
         this.userList.push({
-            userId: this.host,
-            role: "Host",
+            user: this.host,
+            role: "host",
             permission: Array.from(Object.values(permissions)),
         })
     }
@@ -93,9 +97,13 @@ EventSchema.pre("save", function (next) {
 })
 
 EventSchema.methods.generateToken = function (userId: Types.ObjectId) {
+    console.log(userId)
+    console.log(this.host)
+    console.log(this.userList)
+
     const isHost = this.host.toString() === userId.toString()
     const user = this.userList.find(
-        (user: IUserList) => user.userId.toString() === userId.toString(),
+        (user: IUserList) => user.user.toString() === userId.toString(),
     )
     if (!user && !isHost)
         throw new NotFoundError("User is not part of this event.")
@@ -118,3 +126,4 @@ EventSchema.methods.generateToken = function (userId: Types.ObjectId) {
 
 const Event = model<IEvent>("Event", EventSchema)
 export default Event
+export { SubEventSchema, UserList }

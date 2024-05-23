@@ -71,11 +71,13 @@ const ProtectedRoute = () => {
 }
 
 const ProtectedRouteVendor = () => {
-  const { loading, isAuthenticated,user } = useAppSelector((state) => state.user)
+  const { loading, isAuthenticated, user } = useAppSelector(
+    (state) => state.user,
+  )
 
   if (loading) return <Loader />
   if (!isAuthenticated || !user) return <Navigate to="/sign-in" />
-  if(user.isVendor===false) return <Navigate to="/events" />
+  if (user.isVendor === false) return <Navigate to="/events" />
   return <Outlet />
 }
 
@@ -100,7 +102,7 @@ const router = createBrowserRouter([
           { path: "events", element: <AllEvent /> },
           { path: "events/create", element: <CreateEvent /> },
           {
-            path: "events/:id",
+            path: "events/:eventId",
             children: [
               { index: true, element: <EventPage /> },
               { path: "manage-vendors", element: <ManageVendors /> },
@@ -119,6 +121,7 @@ const router = createBrowserRouter([
             ],
           },
           { path: "search-vendors/:id", element: <SearchVendors /> },
+          { path: "vendor-chat/:id", element: <VendorChat /> },
         ],
       },
       {
@@ -128,15 +131,19 @@ const router = createBrowserRouter([
           { index: true, element: <VendorHome /> },
           { path: "edit-services", element: <EditVendorServices /> },
           { path: "events/:id", element: <VendorSubEvents /> },
-          { path: "events/:id/festivities/:subEventId", element: <VendorChannels /> },
-          { path: "events/:id/festivities/:subEventId/channels/:channelId", element: <VendorChat /> },
-          { path: "vendor-chat/:id", element: <VendorChat /> },
+          {
+            path: "events/:id/festivities/:subEventId",
+            element: <VendorChannels />,
+          },
+          {
+            path: "events/:id/festivities/:subEventId/channels/:channelId",
+            element: <VendorChat />,
+          },
         ],
       },
     ],
   },
-]);
-
+])
 
 function App() {
   const dispatch = useAppDispatch()

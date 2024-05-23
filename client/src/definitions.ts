@@ -24,9 +24,30 @@ export interface Service {
   price: number
 }
 
-export interface VendorProfile{
-  userId:string
-  services:Service[]
+export interface VendorProfile {
+  userId: string
+  services: Service[]
+}
+
+export interface Host {
+  _id: string
+  name: string
+  profileImage: string
+}
+
+export interface EventShort {
+  _id: string
+  name: string
+  startDate: string
+  endDate: string
+  host: Host
+  createdAt: string
+  updatedAt: string
+}
+
+export interface EventFull extends EventShort {
+  venue: string
+  // subEvents: SubEvent[]
 }
 
 export interface UserType {
@@ -38,6 +59,7 @@ export interface UserType {
   vendorProfile?: VendorProfile
   phoneNo: string | undefined
   socketToken: string
+  events: EventShort[]
   createdAt: string
   updatedAt: string
 }
