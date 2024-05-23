@@ -1,35 +1,11 @@
 import { Schema, model, Types } from "mongoose"
-import { ISubEvent, IEvent, IUserList } from "../types/models"
+import { IEvent, IUserList } from "../types/models"
 import jwt from "jsonwebtoken"
 import { NotFoundError } from "../errors"
 import { EventPayload } from "../types/express"
-import permissions from "../permissions"
+import Permissions from "../permissions"
+import Roles from "../roles"
 
-const SubEventSchema = new Schema<ISubEvent>(
-    {
-        name: {
-            type: String,
-            required: [true, "Please Provide Name."],
-        },
-        startDate: {
-            type: Date,
-            required: [true, "Please Provide Start Date."],
-        },
-        endDate: {
-            type: Date,
-            required: [true, "Please Provide End Date."],
-        },
-        venue: {
-            type: String,
-            required: [true, "Please Provide Venue."],
-        },
-        channels: {
-            type: [Schema.Types.ObjectId],
-            ref: "Channel",
-        },
-    },
-    { timestamps: true },
-)
 const UserList = new Schema<IUserList>(
     {
         user: {
@@ -39,13 +15,13 @@ const UserList = new Schema<IUserList>(
         },
         role: {
             type: String,
-            enum: ["host", "guest", "vendor"],
+            enum: Array.from(Object.values(Roles)),
             required: [true, "Please Provide Role."],
         },
         permission: [
             {
                 type: String,
-                enum: Array.from(Object.values(permissions)),
+                enum: Array.from(Object.values(Permissions)),
             },
         ],
     },
@@ -77,7 +53,10 @@ const EventSchema = new Schema<IEvent>(
         },
         //these are embedded documents
         userList: [UserList],
-        subEvents: [SubEventSchema],
+        subEvents: {
+            type: [Schema.Types.ObjectId],
+            ref: "SubEvent",
+        },
     },
     { timestamps: true },
 )
@@ -89,18 +68,14 @@ EventSchema.pre("save", function (next) {
         //assign host to user list with all permissions
         this.userList.push({
             user: this.host,
-            role: "host",
-            permission: Array.from(Object.values(permissions)),
+            role: Roles.HOST,
+            permission: Array.from(Object.values(Permissions)),
         })
     }
     next()
 })
 
 EventSchema.methods.generateToken = function (userId: Types.ObjectId) {
-    console.log(userId)
-    console.log(this.host)
-    console.log(this.userList)
-
     const isHost = this.host.toString() === userId.toString()
     const user = this.userList.find(
         (user: IUserList) => user.user.toString() === userId.toString(),
@@ -126,4 +101,3 @@ EventSchema.methods.generateToken = function (userId: Types.ObjectId) {
 
 const Event = model<IEvent>("Event", EventSchema)
 export default Event
-export { SubEventSchema, UserList }

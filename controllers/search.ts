@@ -1,5 +1,4 @@
-import User from "../models/user"
-import Vendor from "../models/vendorProfile"
+import { User, Vendor } from "../models"
 import { Request, Response } from "express"
 import { BadRequestError } from "../errors"
 import { StatusCodes } from "http-status-codes"

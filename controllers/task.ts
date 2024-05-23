@@ -1,4 +1,4 @@
-import Task from "../models/task"
+import {Task} from "../models"
 import { Request, Response } from "express"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, NotFoundError } from "../errors"

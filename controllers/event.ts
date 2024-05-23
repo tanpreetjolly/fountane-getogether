@@ -1,6 +1,7 @@
-import Event from "../models/event"
 import { Request, Response } from "express"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
+import { Event, SubEvent } from "../models"
+import { populate } from "dotenv"
 
 const getEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
@@ -21,7 +22,6 @@ const getEvent = async (req: Request, res: Response) => {
             path: "subEvents",
             populate: {
                 path: "channels",
-                select: "name allowedUsers",
                 populate: {
                     path: "allowedUsers",
                     select: "name email phoneNo profileImage",
@@ -35,6 +35,31 @@ const getEvent = async (req: Request, res: Response) => {
         data: event,
         success: true,
         msg: "Event Fetched Successfully",
+    })
+}
+
+const createSubEvent = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { name, startDate, endDate, venue } = req.body
+
+    const event = await Event.findById(eventId)
+
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    const subEvent = await SubEvent.create({
+        name,
+        startDate,
+        endDate,
+        venue,
+    })
+
+    event.subEvents.push(subEvent._id)
+    await event.save()
+
+    res.status(201).json({
+        data: subEvent,
+        success: true,
+        msg: "Sub Event Created Successfully",
     })
 }
 
