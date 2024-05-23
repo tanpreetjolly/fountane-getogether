@@ -32,11 +32,15 @@ import ProfilePage from "./Pages/ProfilePage"
 import FeaturesPage from "./components/Features"
 import CreateEvent from "./components/CreateEvent"
 import EventPage from "./Pages/BlogPage"
-import SubEventChannels from "./Pages/SubEventChannels"
+import SubEventChannels from "./Pages/SubEventPage"
 import ChannelChat from "./Pages/ChannelChat"
-import AssignVendors from "./Pages/AssignVendors"
+import ManageVendors from "./Pages/ManageVendors"
 import VendorChat from "./Pages/VendorChat"
 import SearchVendors from "./Pages/SearchVendors"
+import AssignVendors from "./Pages/AssignVendors"
+import InviteGuests from "./Pages/InviteGuests"
+import ManageGuests from "./Pages/ManageGuests"
+import CreateFestivityPage from "./Pages/CreateFestivityPage"
 
 const Layout = () => {
   const location = useLocation()
@@ -128,16 +132,21 @@ const router = createBrowserRouter([
       },
       {
         path: "events/:id/manage-vendors",
+        element: <ManageVendors />,
+      },
+      {
+        path: "events/:id/manage-guests",
+        element: <ManageGuests />,
+      },
+      {
+        path: "events/:id/festivities/:subEventId/assign-vendors",
         element: <AssignVendors />,
       },
       {
-        path: "assign-vendors/:id",
-        element: <AssignVendors />,
+        path: "events/:id/festivities/:subEventId/invite-guests",
+        element: <InviteGuests />,
       },
-        {
-          path: "assign-vendors/:id",
-          element: <AssignVendors />,
-        },
+
       {
         path: "search-vendors/:id",
         element: <SearchVendors />,
@@ -157,6 +166,10 @@ const router = createBrowserRouter([
       {
         path: "events/create",
         element: <CreateEvent />,
+      },
+      {
+        path: "events/:id/create-festivity",
+        element: <CreateFestivityPage />,
       },
       {
         path: "about",
