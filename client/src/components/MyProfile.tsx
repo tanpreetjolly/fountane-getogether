@@ -14,7 +14,6 @@ const defUser: UserType = {
   email: "",
   profileImage: "",
   socketToken: "",
-  blogs: [],
   phoneNo: "",
   createdAt: "",
   updatedAt: "",

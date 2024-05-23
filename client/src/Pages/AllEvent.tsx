@@ -4,6 +4,7 @@ import { FaPlus } from "react-icons/fa"
 import EventCard from "../components/EventCard"
 const AllEvent = () => {
   const navigate = useNavigate()
+  const event:any={}
 
   return (
     <div className="px-4 mx-auto">
@@ -13,7 +14,7 @@ const AllEvent = () => {
         onClick={() => navigate("/events/create")}
       />
       <div>
-        <EventCard />
+        <EventCard event={event} />
       </div>
     </div>
   )

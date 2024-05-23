@@ -3,10 +3,8 @@ import toast from "react-hot-toast"
 import {
   LoginType,
   SignUpType,
-  BlogShortType,
   UserType,
   ForgotPasswordType,
-  BlogCreateType,
 } from "../definitions"
 
 /*
@@ -93,16 +91,6 @@ export const signOut = () => API.post("/auth/sign-out")
 /*
  ********************** User Requests **********************
  */
-/* /my-profile */
-export const getAssets = () => API.get("/user/assets")
-export const deleteAsset = (assets: string) =>
-  API.delete("/user/assets", { data: { assets } })
-
-export const uploadAssets = (assetFiles: File[]) => {
-  const formData = new FormData()
-  assetFiles.forEach((file) => formData.append("assetFiles", file))
-  return API.post("/user/assets", formData)
-}
 
 export const updateProfile = (userData: UserType) => {
   const { name } = userData
@@ -111,115 +99,12 @@ export const updateProfile = (userData: UserType) => {
   })
 }
 
-/*
- *********************** User Requests ***********************
- */
-
-export const getUserProfile = (
-  id: UserType["userId"],
-  page: number = 1,
-  limit: number = 10,
-) =>
-  API.get(`/public/profile/${id}`, {
-    params: {
-      page,
-      limit,
-    },
-  })
-
 export const updateImage = (profileImage: File) => {
   const formData = new FormData()
   formData.append("profileImage", profileImage)
   return API.post("/user/image", formData)
 }
 export const deleteProfileImage = () => API.delete("/user/image")
-
-/*User Blog Req*/
-
-export const getUserBlogs = (page: number = 1, limit: number = 10) =>
-  API.get("/user/blog", {
-    params: {
-      page,
-      limit,
-    },
-  })
-
-export const getUserBlogById = (id: BlogShortType["_id"]) =>
-  API.get(`/user/blog/${id}`)
-
-export const createBlog = (blog: BlogCreateType) =>
-  API.post("/user/blog", {
-    title: blog.title,
-    description: blog.description,
-    content: JSON.stringify(blog.content),
-    img: blog.img,
-  })
-
-export const updateBlog = (blog: BlogCreateType) =>
-  API.patch(`/user/blog/${blog._id}`, {
-    title: blog.title,
-    description: blog.description,
-    content: JSON.stringify(blog.content),
-    img: blog.img,
-  })
-
-export const deleteBlog = (id: BlogShortType["_id"]) =>
-  API.delete(`/user/blog/${id}`)
-
-/*
- ************************ Blogs Requests ************************
- */
-export const getBlogs = (
-  category: string,
-  pageNo: number = 1,
-  limit: number = 10,
-) =>
-  API.get("/public/blog/category", {
-    params: {
-      tags: category.toLowerCase(),
-      page: pageNo,
-      limit: limit,
-    },
-  })
-
-export const getRecommendedBlogs = (
-  userId: BlogShortType["_id"],
-  pageNo: number = 1,
-  limit: number = 10,
-) =>
-  API.get("/public/blog/recommended", {
-    params: {
-      userId: userId,
-      page: pageNo,
-      limit: limit,
-    },
-  })
-
-export const getBlog = (id: BlogShortType["_id"]) =>
-  API.get(`/public/blog/${id}`)
-
-export const getOtherUserBlogs = (
-  userId: string,
-  page: number = 1,
-  limit: number = 10,
-) =>
-  API.get(`/public/blog/blogsByUser/${userId}`, {
-    params: {
-      page,
-      limit,
-    },
-  })
-export const getTrendingBlog = () => API.get("/public/blog/trending")
-
-/*
- ************************ Blogs Update Requests ************************
- */
-export const likeBlog = (id: BlogShortType["_id"]) =>
-  API.post(`/blog/like/${id}`)
-
-export const commentBlog = (id: BlogShortType["_id"], message: string) =>
-  API.post(`/blog/comment/${id}`, { message })
-
 /*
  ************************ Search Requests ************************
  */
@@ -237,21 +122,3 @@ export const search = (
       limit,
     },
   })
-/*
- ************************ AI Requests ************************
- */
-
-export const getAICompletion = (text: string) =>
-  API.get("/public/ai/suggest/text", { params: { text } })
-
-export const getAImage = (prompt: string) =>
-  API.get("/public/ai/suggest/image", {
-    params: { prompt },
-    responseType: "blob",
-  })
-
-export const followUnfollowUser = (userId: UserType["userId"]) =>
-  API.post("/user/follow-unfollow", { followId: userId })
-
-export const isFollowing = (userId: UserType["userId"]) =>
-  API.post("/user/is-following", { followId: userId })
