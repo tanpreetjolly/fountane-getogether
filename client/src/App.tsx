@@ -70,133 +70,73 @@ const ProtectedRoute = () => {
   return <Outlet />
 }
 
+const ProtectedRouteVendor = () => {
+  const { loading, isAuthenticated,user } = useAppSelector((state) => state.user)
+
+  if (loading) return <Loader />
+  if (!isAuthenticated || !user) return <Navigate to="/sign-in" />
+  if(user.isVendor===false) return <Navigate to="/events" />
+  return <Outlet />
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
+      { index: true, element: <HomePage /> },
+      { path: "features", element: <FeaturesPage /> },
+      { path: "search", element: <SearchResults /> },
+      { path: "sign-in", element: <SignIn /> },
+      { path: "sign-up", element: <SignUp /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "verify", element: <VerifyOTP /> },
+      { path: "about", element: <About /> },
       {
-        path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "/",
         element: <ProtectedRoute />,
         children: [
+          { path: "profile", element: <ProfilePage /> },
+          { path: "events", element: <AllEvent /> },
+          { path: "events/create", element: <CreateEvent /> },
           {
-            path: "profile",
-            element: <ProfilePage />,
+            path: "events/:id",
+            children: [
+              { index: true, element: <EventPage /> },
+              { path: "manage-vendors", element: <ManageVendors /> },
+              { path: "manage-guests", element: <ManageGuests /> },
+              { path: "payments-budget", element: <BudgetsAndPayment /> },
+              { path: "create-festivity", element: <CreateFestivityPage /> },
+              {
+                path: "festivities/:subEventId",
+                children: [
+                  { index: true, element: <SubEventChannels /> },
+                  { path: "assign-vendors", element: <AssignVendors /> },
+                  { path: "invite-guests", element: <InviteGuests /> },
+                  { path: "channels/:channelId", element: <ChannelChat /> },
+                ],
+              },
+            ],
           },
+          { path: "search-vendors/:id", element: <SearchVendors /> },
         ],
       },
       {
-        path: "features",
-        element: <FeaturesPage />,
-      },
-      { path: "search", element: <SearchResults /> },
-      { path: "sign-in", element: <SignIn /> },
-      {
-        path: "sign-up",
-        element: <SignUp />,
-      },
-      {
-        path: "forgot-password",
-        element: <ForgotPassword />,
-      },
-      {
-        path: "verify",
-        element: <VerifyOTP />,
-      },
-      {
-        path: "feed",
-        element: <AllEvent />,
-      },
-
-      {
-        path: "events/:id",
-        element: <EventPage />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId",
-        element: <SubEventChannels />,
-      },
-      {
-        path: "vendor-home/events/:id/festivities/:subEventId/channels/:channelId",
-        element: <VendorChat />,
-      },
-      {
-        path: "vendor-home/events/:id/festivities/:subEventId",
-        element: <VendorChannels />,
-      },
-      {
-        path: "events/:id/manage-vendors",
-        element: <ManageVendors />,
-      },
-      {
-        path: "events/:id/manage-guests",
-        element: <ManageGuests />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId/assign-vendors",
-        element: <AssignVendors />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId/invite-guests",
-        element: <InviteGuests />,
-      },
-
-      {
-        path: "search-vendors/:id",
-        element: <SearchVendors />,
-      },
-
-      {
-        path: "vendor-home/edit-services",
-        element: <EditVendorServices />,
-      },
-      {
         path: "vendor-home",
-        element: <VendorHome />,
-      },
-      {
-        path: "vendor-chat/:id",
-        element: <VendorChat />,
-      },
-      {
-        path: "vendor-home/events/:id",
-        element: <VendorSubEvents />,
-      },
-      {
-        path: "events/:id/festivities/:subEventId/channels/:channelId",
-        element: <ChannelChat />,
-      },
-      {
-        path: "events/:id",
-        element: <EventPage />,
-      },
-      {
-        path: "events/:id/payments-budget",
-        element: <BudgetsAndPayment />,
-      },
-      {
-        path: "events/create",
-        element: <CreateEvent />,
-      },
-      {
-        path: "events/:id/create-festivity",
-        element: <CreateFestivityPage />,
-      },
-      {
-        path: "about",
-        element: <About />,
-      },
-      {
-        path: "/*",
-        element: <ErrorPage />,
+        element: <ProtectedRouteVendor />,
+        children: [
+          { index: true, element: <VendorHome /> },
+          { path: "edit-services", element: <EditVendorServices /> },
+          { path: "events/:id", element: <VendorSubEvents /> },
+          { path: "events/:id/festivities/:subEventId", element: <VendorChannels /> },
+          { path: "events/:id/festivities/:subEventId/channels/:channelId", element: <VendorChat /> },
+          { path: "vendor-chat/:id", element: <VendorChat /> },
+        ],
       },
     ],
   },
-])
+]);
+
 
 function App() {
   const dispatch = useAppDispatch()

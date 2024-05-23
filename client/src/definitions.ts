@@ -18,34 +18,26 @@ export interface ForgotPasswordType {
   password: string
 }
 
-interface User {
+export interface Service {
+  serviceName: string
+  serviceDescription: string
+  price: number
+}
+
+export interface VendorProfile{
+  userId:string
+  services:Service[]
+}
+
+export interface UserType {
+  userId: string
   name: string
   email: string
   profileImage?: string
-  isVendor?: boolean
-  vendorProfile?: any
+  isVendor: boolean
+  vendorProfile?: VendorProfile
   phoneNo: string | undefined
   socketToken: string
-}
-
-export interface UserType extends User {
-  userId: string
   createdAt: string
   updatedAt: string
-}
-
-export type Profile = {
-  _id: string
-  name: string
-  createdAt: string
-}
-
-export type Comment = {
-  _id: string
-  message: string
-  author: {
-    _id: string
-    name: string
-    profileImage: string
-  }
 }
