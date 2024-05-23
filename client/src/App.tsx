@@ -32,6 +32,11 @@ import ProfilePage from "./Pages/ProfilePage"
 import FeaturesPage from "./components/Features"
 import CreateEvent from "./components/CreateEvent"
 import EventPage from "./Pages/BlogPage"
+import SubEventChannels from "./Pages/SubEventChannels"
+import ChannelChat from "./Pages/ChannelChat"
+import AssignVendors from "./Pages/AssignVendors"
+import VendorChat from "./Pages/VendorChat"
+import SearchVendors from "./Pages/SearchVendors"
 
 const Layout = () => {
   const location = useLocation()
@@ -113,6 +118,38 @@ const router = createBrowserRouter([
         element: <AllBlogs />,
       },
 
+      {
+        path: "events/:id",
+        element: <EventPage />,
+      },
+      {
+        path: "events/:id/festivities/:subEventId",
+        element: <SubEventChannels />,
+      },
+      {
+        path: "events/:id/manage-vendors",
+        element: <AssignVendors />,
+      },
+      {
+        path: "assign-vendors/:id",
+        element: <AssignVendors />,
+      },
+        {
+          path: "assign-vendors/:id",
+          element: <AssignVendors />,
+        },
+      {
+        path: "search-vendors/:id",
+        element: <SearchVendors />,
+      },
+      {
+        path: "vendor-chat/:id",
+        element: <VendorChat />,
+      },
+      {
+        path: "events/:id/festivities/:subEventId/channels/:channelId",
+        element: <ChannelChat />,
+      },
       {
         path: "events/:id",
         element: <EventPage />,
