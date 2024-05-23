@@ -1,79 +1,74 @@
-import { IoPeopleSharp } from "react-icons/io5"
-import Button from "../components/Button"
-import VendorCard from "../components/VendorCard"
-import { useNavigate, useParams } from "react-router-dom"
+import React, { useState } from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+
+type Props = {};
 
 const vendorData = [
   {
-    id: "11",
-    name: "Shivam Caterers",
-    type: "food",
-    status: "hired",
-    events : ["100", "200", "300", "400"]
+    id: '11',
+    name: 'Shivam Caterers',
+    type: 'food',
+    status: 'invite',
   },
   {
-    id: "21",
-    name: "Vanish Caterings",
-    type: "food",
-    status: "hired",
-    events : ["100", "200", "300", "400"]
+    id: '21',
+    name: 'Vanish Caterings',
+    type: 'food',
+    status: 'invite',
   },
   {
-    id: "31",
-    name: "Event Managers Inc.",
-    type: "event management",
-    status: "invited",
-    events : ["100", "200", "300", "400"]
+    id: '31',
+    name: 'Event Managers Inc.',
+    type: 'event management',
+    status: 'invited',
   },
   {
-    id: "41",
-    name: "Dhillon Managers Inc.",
-    type: "event management",
-    status: "invited",
-    events : ["100", "200", "300", "400"]
+    id: '41',
+    name: 'Dhillon Managers Inc.',
+    type: 'event management',
+    status: 'invited',
   },
+];
 
-]
+const AssignVendors = (props: Props) => {
+  const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
 
-const AssignVendors = () => {
-  const hiredVendors = vendorData.filter((vendor) => vendor.status === "hired")
-  const invitedVendors = vendorData.filter(
-    (vendor) => vendor.status === "invited",
-  )
-  const { id } = useParams()
-  const navigate = useNavigate()
+  const handleVendorChange = (vendorId: string) => {
+    setSelectedVendors((prevSelectedVendors) =>
+      prevSelectedVendors.includes(vendorId)
+        ? prevSelectedVendors.filter((id) => id !== vendorId)
+        : [...prevSelectedVendors, vendorId]
+    );
+  };
+
   return (
-    <div className="px-4 divide-y space-y-2">
-      <Button
-        text="Book a Vendor"
-        onClick={() => navigate(`/search-vendors/${id}`)}
-        icon={<IoPeopleSharp />}
-      />
-      <div className="pt-2">
-        <div className="font-medium text-gray-800 px-2 text-xl">
-          Hired Vendors
-        </div>
-        <div className="flex flex-col gap-2 py-2">
-          {hiredVendors.map((vendor) => (
-            <VendorCard key={vendor.id} vendor={vendor} />
-          ))}
-        </div>
-
-        <div className="font-medium text-gray-800 px-2 text-xl mt-4">
-          Invited Vendors
-        </div>
-        <div className="flex flex-col gap-2 py-2">
-          {invitedVendors.map((vendor) => (
-            <VendorCard
-              key={vendor.id}
-              vendor={vendor}
-              onClick={() => navigate(`/vendor-chat/${vendor.id}`)}
-            />
-          ))}
-        </div>
-      </div>
+    <div>
+      <Typography variant="h6" gutterBottom className='text-center'>
+        Assign Vendors for the Festivity
+      </Typography>
+      <List>
+        {vendorData.map((vendor) => (
+          <ListItem
+            key={vendor.id}
+            secondaryAction={
+              <Checkbox
+              color='secondary'
+                edge="end"
+                checked={selectedVendors.includes(vendor.id)}
+                onChange={() => handleVendorChange(vendor.id)}
+              />
+            }
+          >
+            <ListItemText primary={vendor.name} secondary={`Type: ${vendor.type}`} />
+          </ListItem>
+        ))}
+      </List>
     </div>
-  )
-}
+  );
+};
 
-export default AssignVendors
+export default AssignVendors;
