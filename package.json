@@ -1,7 +1,7 @@
 {
-    "name": "fountane",
+    "name": "Getogether",
     "version": "1.0.0",
-    "description": "fountane",
+    "description": "Getogether- A social media platform for bloggers",
     "main": "server.js",
     "scripts": {
         "build": "npx tsc",
