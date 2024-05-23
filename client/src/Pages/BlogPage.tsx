@@ -81,7 +81,7 @@ const data = [
         <Button
           text="Add a Festivity"
           icon={<BsFillCalendarEventFill />}
-          onClick={() => navigate("/create-festivity")}
+          onClick={() => navigate("create-festivity")}
         />
       </div>
     )
