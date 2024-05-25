@@ -63,6 +63,7 @@ export interface IVendor extends Document {
 }
 
 export interface ISubEvent {
+    _id: Schema.Types.ObjectId
     name: string
     startDate: Date
     endDate: Date
@@ -95,7 +96,7 @@ export interface IEvent extends Document {
     endDate: Date
     budget: number
     userList: Types.Array<IUserList>
-    subEvents: Types.Array<ISubEvent>
+    subEvents: Types.Array<Schema.Types.ObjectId>
     checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
@@ -115,6 +116,8 @@ export interface IChannel extends Document {
     _id: Schema.Types.ObjectId
     name: string
     allowedUsers: Types.Array<Schema.Types.ObjectId>
+    allowedRoles: [string]
+    type: string
     createdAt: Date
     updatedAt: Date
 }

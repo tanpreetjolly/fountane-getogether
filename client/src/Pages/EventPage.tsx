@@ -8,34 +8,8 @@ import { EventFull } from "../definitions"
 import { getEvent } from "../api"
 import Loader from "../components/Loader"
 
-const subevents = [
-  {
-    id: "100",
-    name: "Wedding",
-    date: "12th August 2022",
-    venue: "Mumbai",
-  },
-  {
-    id: "200",
-    name: "Birthday",
-    date: "12th August 2022",
-    venue: "Mumbai",
-  },
-  {
-    id: "300",
-    name: "Anniversary",
-    date: "12th August 2022",
-    venue: "Mumbai",
-  },
-  {
-    id: "400",
-    name: "Party",
-    date: "12th August 2022",
-    venue: "Mumbai",
-  },
-]
 const EventPage = () => {
-  const [event, setEvent] = useState<EventFull | any>(null)
+  const [event, setEvent] = useState<EventFull | null>(null)
   const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
@@ -48,7 +22,7 @@ const EventPage = () => {
     if (!eventId) return
     getEvent(eventId)
       .then((data) => {
-        setEvent(data)
+        setEvent(data.data)
       })
       .catch((err) => {
         console.log(err)
@@ -57,6 +31,7 @@ const EventPage = () => {
   }, [eventId])
 
   if (loading) return <Loader />
+  if (!event) return <div>Event not found</div>
 
   return (
     <div className="px-4 space-y-2">
@@ -93,13 +68,13 @@ const EventPage = () => {
       </div>
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3">
-          {subevents.map((event) => (
+          {event.subEvents.map((event) => (
             <button
               onClick={() => {
-                navigate(`festivities/${event.id}`)
+                navigate(`festivities/${event._id}`)
               }}
             >
-              <SubEventCard key={event.id} event={event} />
+              <SubEventCard key={event._id} subEvent={event} />
             </button>
           ))}
         </div>

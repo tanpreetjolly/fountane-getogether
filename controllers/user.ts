@@ -1,5 +1,4 @@
-import User from "../models/user"
-import Event from "../models/event"
+import { User, Event } from "../models"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"

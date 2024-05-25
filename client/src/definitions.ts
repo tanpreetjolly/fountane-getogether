@@ -45,9 +45,43 @@ export interface EventShort {
   updatedAt: string
 }
 
-export interface EventFull extends EventShort {
+export interface OtherUser {
+  _id: string
+  name: string
+  email: string
+  profileImage: string
+  phoneNo: string
+}
+
+export interface Channel {
+  _id: string
+  name: string
+  allowedUsers: OtherUser[]
+}
+
+export interface SubEvent {
+  _id: string
+  name: string
+  startDate: string
+  endDate: string
   venue: string
-  // subEvents: SubEvent[]
+  channels: Channel[]
+  updatedAt: string
+  createdAt: string
+}
+
+export interface UserList {
+  _id: string
+  user: OtherUser[]
+  role: string
+  permission: [string]
+}
+
+export interface EventFull extends EventShort {
+  budget: number
+  venue: string
+  subEvents: SubEvent[]
+  userList: UserList[]
 }
 
 export interface UserType {
