@@ -10,6 +10,7 @@ const AllEvent = () => {
   const { user, isAuthenticated, loading } = useAppSelector(
     (state) => state.user,
   )
+  console.log(user)
   if (loading) return <Loader />
   if (!isAuthenticated || !user)
     return <div>Please Login to view this page</div>
@@ -22,8 +23,8 @@ const AllEvent = () => {
         onClick={() => navigate("/events/create")}
       />
       {user.events.length === 0 ? (
-        <div className="text-center text-2xl font-bold text-gray-500">
-          No Events Found
+        <div className="text-center italic text-xl px-4  text-gray-500 h-[40vh] flex items-center justify-center">
+          No events to show, Create your first event
         </div>
       ) : (
         user.events.map((event) => (

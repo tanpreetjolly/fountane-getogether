@@ -14,6 +14,9 @@ export default {
       fontFamily: {
         playfair: ["Playfair Display", "serif"],
         inter: ["Inter", "sans-serif"],
+        railway : ["Railway", "sans-serif"],
+        lemon : ["Lemon", "sans-serif"],
+        roboto : ["Roboto", "sans-serif"],
       },
       screens: {
         xs: "475px",
