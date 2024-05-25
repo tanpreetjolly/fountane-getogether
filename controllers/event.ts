@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Event, SubEvent } from "../models"
-import { populate } from "dotenv"
+import { StatusCodes } from "http-status-codes"
 
 const getEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
@@ -38,6 +38,24 @@ const getEvent = async (req: Request, res: Response) => {
     })
 }
 
+const createEvent = async (req: Request, res: Response) => {
+    const { name, startDate, endDate, budget } = req.body
+    const host = req.user
+
+    const event = await Event.create({
+        name,
+        startDate,
+        endDate,
+        budget,
+        host: host.userId,
+    })
+
+    res.status(StatusCodes.CREATED).json({
+        data: event,
+        success: true,
+        msg: `Event ${name} Created`,
+    })
+}
 const createSubEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, venue } = req.body
@@ -63,4 +81,4 @@ const createSubEvent = async (req: Request, res: Response) => {
     })
 }
 
-export { getEvent }
+export { getEvent, createEvent, createSubEvent }
