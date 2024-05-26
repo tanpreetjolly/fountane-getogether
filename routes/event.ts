@@ -9,10 +9,12 @@ const router = Router()
 
 router.use("/task", TaskRouter)
 
-router.route("/:eventId").get(getEvent).post(createEvent)
+router.route("/").post(createEvent)
+
+router.route("/:eventId").get(getEvent)
 
 router.use(Protect(Permissions.HOST))
 
-router.route("/:eventId/subevent").post(createSubEvent)
+router.route("/:eventId/subEvent").post(createSubEvent)
 
 export default router

@@ -61,11 +61,13 @@ const EventSchema = new Schema<IEvent>(
     { timestamps: true },
 )
 
-EventSchema.index({ "userList.userId": 1 }, { unique: true })
+EventSchema.index({ "userList.user": 1 })
 
 EventSchema.pre("save", function (next) {
     if (this.isNew === true) {
         //assign host to user list with all permissions
+        console.log(this.host)
+
         this.userList.push({
             user: this.host,
             role: Roles.HOST,
