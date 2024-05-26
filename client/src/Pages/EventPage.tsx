@@ -5,6 +5,7 @@ import { FaCreditCard, FaPeopleCarry } from "react-icons/fa"
 import SubEventCard from "./SubEventCard"
 import Loader from "../components/Loader"
 import { useEventContext } from "../context/EventContext"
+import { SubEvent } from "../definitions"
 
 const EventPage = () => {
   const navigate = useNavigate()
@@ -15,7 +16,7 @@ const EventPage = () => {
   if (!event) return <div>Event not found</div>
 
   return (
-    <div className="px-4 flex flex-col gap-2 ">
+    <div className="px-4 flex flex-col gap-2 h-[87.5vh] overflow-hidden">
       {/* Event Name */}
       <div className="pl-1">
         <div className="text-2xl font-bold text-dark">{event.name}</div>
@@ -30,7 +31,7 @@ const EventPage = () => {
           onClick={() => {
             navigate("manage-vendors")
           }}
-          className="flex font-inter items-center  justify-around bg-indigo-500  text-white  rounded-xl w-1/2 px-4 py-6 gap-4"
+          className="flex font-inter items-center  justify-around bg-indigo-500  text-white  rounded-lg w-1/2 px-4 py-6 gap-4"
         >
           <div className="">
             <div className="text-gray-100 text-left text-sm">Manage</div>
@@ -42,7 +43,7 @@ const EventPage = () => {
           onClick={() => {
             navigate("manage-vendors")
           }}
-          className="flex font-inter items-center  justify-around bg-slate-800  text-white  rounded-xl w-1/2 px-4 py-6 gap-4"
+          className="flex font-inter items-center  justify-around bg-slate-800  text-white  rounded-lg w-1/2 px-4 py-6 gap-4"
         >
           <div className="">
             <div className="text-gray-200 text-left text-sm">Manage</div>
@@ -52,8 +53,8 @@ const EventPage = () => {
         </button>
       </div>
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[50dvh] overflow-y-auto">
-          {event.subEvents.map((subEvent) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[52.5dvh] overflow-y-auto">
+          {event.subEvents.map((subEvent: SubEvent) => (
             <SubEventCard
               key={subEvent._id}
               subEvent={subEvent}
@@ -63,16 +64,18 @@ const EventPage = () => {
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-2 items-center">
       <Button
-        text="Add a Festivity"
+        text="Add Festivity"
         icon={<BsFillCalendarEventFill />}
         onClick={() => navigate("create-festivity")}
       />
       <Button
-        text="Budgets and Payments"
+        text="Payments"
         icon={<FaCreditCard />}
         onClick={() => navigate("payments-budget")}
       />
+      </div>
     </div>
   )
 }
