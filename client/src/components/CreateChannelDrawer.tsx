@@ -9,6 +9,8 @@ import Checkbox from "@mui/material/Checkbox"
 import Button from "../components/Button"
 import { FaPlus } from "react-icons/fa"
 import { IoIosCloseCircle } from "react-icons/io"
+import { indigo } from "@mui/material/colors" // Import the indigo color
+
 // Sample user data
 const users = [
   {
@@ -66,12 +68,12 @@ const CreateChannelDrawer = (props: Props) => {
   )
 
   return (
-    <div className="min-h-[90vh] px-3 py-2 ">
+    <div className="h-[90vh] px-3 py-2 pb-8">
       <button
         onClick={props.toggleDrawer(false)}
         className="flex w-full justify-end "
       >
-        <IoIosCloseCircle className="text-3xl text-red-600" />
+        <IoIosCloseCircle className="text-3xl text-red-500" />
       </button>
       <TextField
         label="Search Vendors, Guests"
@@ -80,28 +82,53 @@ const CreateChannelDrawer = (props: Props) => {
         onChange={handleSearch}
         fullWidth
         className="!mb-3 !mt-2"
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: indigo[600],
+            },
+            "&:hover fieldset": {
+              borderColor: indigo[800],
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: indigo[900],
+            },
+          },
+        }}
       />
       <div className="mb-3 flex justify-center w-full gap-2 px-2">
         <button
           onClick={() => setFilterRole("all")}
-          className={`mr-2 w-1/3 ${filterRole === "all" ? "rounded-lg py-1.5 bg-highlight text-white" : "outlined"}`}
+          className={`mr-2 w-1/3 ${
+            filterRole === "all"
+              ? "rounded-full py-1.5 bg-indigo-500 text-white"
+              : "outlined"
+          }`}
         >
           All
         </button>
         <button
           onClick={() => setFilterRole("vendor")}
-          className={`mr-2 w-1/3 ${filterRole === "vendor" ? "rounded-lg py-1.5 bg-highlight text-white" : "outlined"}`}
+          className={`mr-2 w-1/3 ${
+            filterRole === "vendor"
+              ? "rounded-full py-1.5 bg-indigo-500 text-white"
+              : "outlined"
+          }`}
         >
           Vendors
         </button>
         <button
           onClick={() => setFilterRole("guest")}
-          className={`mr-2 w-1/3 ${filterRole === "guest" ? "rounded-lg py-1.5 bg-highlight text-white" : "outlined"}`}
+          className={`mr-2 w-1/3 ${
+            filterRole === "guest"
+              ? "rounded-full py-1.5 bg-indigo-500 text-white"
+              : "outlined"
+          }`}
         >
           Guests
         </button>
       </div>
-      <List className="h-[65vh] overflow-y-auto">
+      <List className="h-[60vh] overflow-y-auto">
         {filteredUsers.map((user) => (
           <ListItem
             key={user.email}
@@ -110,6 +137,12 @@ const CreateChannelDrawer = (props: Props) => {
                 edge="end"
                 checked={selectedUsers.includes(user.email)}
                 onChange={() => handleUserSelect(user.email)}
+                sx={{
+                  color: indigo[600],
+                  "&.Mui-checked": {
+                    color: indigo[600],
+                  },
+                }}
               />
             }
           >
