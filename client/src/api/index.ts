@@ -129,5 +129,19 @@ export const search = (
 
 export const getEvent = (eventId: string) => API.get(`/event/${eventId}`)
 
-// export const createEvent = (eventData: FormData) =>
-//   API.post("/event/create", eventData)
+export const createEvent = (eventData: {
+  name: string
+  startDate: string
+  endDate: string
+  budget: string
+}) => API.post("/event", eventData)
+
+export const createSubEvent = (
+  eventId: string,
+  subEventData: {
+    name: string
+    startDate: string
+    endDate: string
+    venue: string
+  },
+) => API.post(`/event/${eventId}/subEvent`, subEventData)

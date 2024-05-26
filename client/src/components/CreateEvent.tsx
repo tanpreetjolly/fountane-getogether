@@ -13,6 +13,7 @@ import DatePicker from "./DatePicker"
 import Button from "./Button"
 import { FaRegCalendarPlus } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
+import { createEvent } from "../api"
 
 const RoundedTextField = styled(TextField)(({}) => ({
   "& .MuiOutlinedInput-root": {
@@ -28,6 +29,7 @@ const RoundedSelect = styled(Select)(() => ({
 
 const CreateEvent = () => {
   const [eventType, setEventType] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
   const navigate = useNavigate()
 
   const handleEventTypeChange = (
@@ -36,7 +38,19 @@ const CreateEvent = () => {
     setEventType(event.target.value as string)
   }
   const handleCreateEvent = () => {
-    navigate("/events/1")
+    setLoading(true)
+    createEvent({
+      name: "Event Name",
+      startDate: new Date().toString(),
+      endDate: new Date().toString(),
+      budget: "1000",
+    })
+      .then((res) => {
+        console.log(res.data)
+        navigate(`/events/${res.data._id}`)
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false))
   }
   return (
     <div className="px-4 mx-auto flex flex-col min-h-[90vh]">
@@ -83,6 +97,7 @@ const CreateEvent = () => {
           text="Create Event"
           icon={<FaRegCalendarPlus />}
           onClick={handleCreateEvent}
+          disabled={loading}
         />
       </div>
       <style>

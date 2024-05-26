@@ -42,6 +42,9 @@ const createEvent = async (req: Request, res: Response) => {
     const { name, startDate, endDate, budget } = req.body
     const host = req.user
 
+    console.log(host);
+    
+
     const event = await Event.create({
         name,
         startDate,
@@ -51,7 +54,7 @@ const createEvent = async (req: Request, res: Response) => {
     })
 
     res.status(StatusCodes.CREATED).json({
-        data: event,
+        data: { _id: event._id },
         success: true,
         msg: `Event ${name} Created`,
     })

@@ -10,6 +10,9 @@ import {
 import { useAppDispatch, useAppSelector } from "./hooks"
 import { loadUser } from "./features/userSlice"
 
+//Context
+import { EventContextProvider } from "./context/EventContext"
+
 //Components
 import Navbar from "./components/Navbar"
 import Loader from "./components/Loader"
@@ -67,7 +70,11 @@ const ProtectedRoute = () => {
 
   if (loading) return <Loader />
   if (!isAuthenticated) return <Navigate to="/sign-in" />
-  return <Outlet />
+  return (
+    <EventContextProvider>
+      <Outlet />
+    </EventContextProvider>
+  )
 }
 
 const ProtectedRouteVendor = () => {
@@ -78,7 +85,11 @@ const ProtectedRouteVendor = () => {
   if (loading) return <Loader />
   if (!isAuthenticated || !user) return <Navigate to="/sign-in" />
   if (user.isVendor === false) return <Navigate to="/events" />
-  return <Outlet />
+  return (
+    <EventContextProvider>
+      <Outlet />
+    </EventContextProvider>
+  )
 }
 
 const router = createBrowserRouter([
