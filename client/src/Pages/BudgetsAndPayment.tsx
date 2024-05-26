@@ -10,6 +10,9 @@ import { FaEdit } from "react-icons/fa"
 import Button from "../components/Button"
 import { MdCancel } from "react-icons/md"
 import { SiTicktick } from "react-icons/si"
+import { CheckCheck, CircleDot, Ellipsis, SquarePen } from "lucide-react"
+import { useEventContext } from "../context/EventContext"
+import Loader from "../components/Loader"
 interface Festivity {
   id: string
   name: string
@@ -39,6 +42,7 @@ const calculateAvailableBudget = (
 interface Props {}
 
 const BudgetsAndPayment: React.FC<Props> = () => {
+  const { event , loadingEvent} = useEventContext()
   const [totalBudget, setTotalBudget] = useState<number>(initialBudget)
   const [availableBudget, setAvailableBudget] = useState<number>(
     calculateAvailableBudget(initialBudget, initialFestivities),
@@ -61,45 +65,57 @@ const BudgetsAndPayment: React.FC<Props> = () => {
     setAvailableBudget(calculateAvailableBudget(newTotalBudget, festivities))
     handleCloseModal()
   }
-
+  if(loadingEvent) return <div><Loader/></div>
+  if(event == null) return null
   return (
     <div className="px-4">
       <Box>
-        <h2 className="text-xl text-gray-900 px-2">Manage Budget</h2>
-        <div className="flex gap-2 my-4 items-center justify-end">
-          <div className=" border w-1/2 relative px-3 py-4 rounded-lg ">
-            <div className="text-gray-600">Total Budget</div>
-            <div className="text-2xl font-medium mt-0.5 text-slate-800">
-              ${totalBudget}
-            </div>
+        <h2 className="text-xl text-gray-900 px-1 font-medium">
+          Manage Budget
+        </h2>
+        <div className="flex gap-2 mt-2 mb-6 items-center justify-end font-roboto">
+          <div className="  w-1/2 relative  p-4 rounded-lg  bg-slate-800 text-white">
+            <div className="text-sm text-gray-200 pl-0.5">Total Budget</div>
+            <div className="text-2xl font-semibold mt-0.5 ">${event.budget}</div>
             <button
-              className="absolute top-2 right-2"
+              className="absolute top-3 right-3"
               onClick={handleOpenModal}
             >
-              <FaEdit />
+              <SquarePen size={18} />
             </button>
           </div>
-          <div className=" border w-1/2 relative px-3 py-4 rounded-lg ">
-            <div className="text-gray-600">Available Budget</div>
-            <div className="text-2xl font-medium mt-0.5 text-slate-800  ">
+          <div className=" border w-1/2 relative  p-4 rounded-lg bg-indigo-500 text-white">
+            <div className="text-sm text-gray-200 pl-0.5">Available Budget</div>
+            <div className="text-2xl font-medium mt-0.5  ">
               ${availableBudget}
             </div>
           </div>
         </div>
-        <h2 className="text-xl text-gray-900  px-2 mb-3">Manage Payments</h2>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+        <h2 className="text-xl text-gray-900 px-1 font-medium mb-2 ">
+          Manage Payments
+        </h2>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
           {festivities.map((festivity) => (
-            <div key={festivity.id} className="border p-4 rounded-xl">
+            <div
+              key={festivity.id}
+              className="border p-5  rounded-xl shadow-sm"
+            >
               <div className="flex justify-between items-start">
                 <Box>
-                  <div className="text-lg">{festivity.name}</div>
+                  <div className="text-lg font-medium">{festivity.name}</div>
                   <div className="text-gray-700 mt-1 ">
                     Payment: ${festivity.payment}
                   </div>
                 </Box>
                 <div
-                  className={`p-1 px-3 rounded-full text-gray-800 ${festivity.status.toLowerCase() == "paid" ? "bg-green-300" : "bg-yellow-300"}`}
+                  className={`p-1 px-3 rounded-full text-white font-medium flex items-center text-sm font-inter ${festivity.status.toLowerCase() == "paid" ? "bg-green-500" : "bg-amber-500"}`}
                 >
+                  {festivity.status == "Pending" ? (
+                    <CircleDot className="inline mr-1" size={16}/>
+                  ) : (
+                    <CheckCheck className="inline mr-1" size={16}/>
+                  )}
                   {festivity.status}
                 </div>
               </div>
