@@ -45,6 +45,7 @@ import VendorHome from "./Pages/VendorHome"
 import VendorSubEvents from "./Pages/VendorSubEvents"
 import VendorChannels from "./Pages/VendorChannels"
 import EditVendorServices from "./Pages/EditVendorServices"
+import BottomNav from "./components/BottomNavigation"
 
 const Layout = () => {
   const location = useLocation()
@@ -59,9 +60,10 @@ const Layout = () => {
     <div>
       {!shouldHideNavbar && <Navbar />}
       <ScrollRestoration />
-      <div className={`min-h-screen ${!shouldHideNavbar && "pt-20"}`}>
+      <div className={`min-h-screen ${!shouldHideNavbar && "pt-14 "}`}>
         <Outlet />
       </div>
+      <BottomNav />
     </div>
   )
 }
