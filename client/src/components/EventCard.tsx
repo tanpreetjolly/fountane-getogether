@@ -42,7 +42,7 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
 
   return (
     <>
-      <div className="py-2 pl-3 pr-2   flex flex-col   text-left bg-white w-full border border-gray-300 my-4 rounded-lg shadow-sm ">
+      <div className="py-2 pl-3 pr-2   flex flex-col   text-left bg-white w-full border border-gray-300  rounded-lg shadow-sm ">
         <div className="flex  justify-between ">
           <div className="pt-2">
             <span className="text-xs ml-0.5 bg-indigo-400 w-fit text-white font-medium px-3 rounded-full py-1 ">

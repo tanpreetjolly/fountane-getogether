@@ -33,7 +33,7 @@ const VendorSubEvents = (_props: Props) => {
   return (
     <div className="px-4">
       <div className="font-bold text-xl mb-3">X Weds Y</div>
-      <div className="mb-2">Host: Emily Jones</div>
+      <div className="mb-2">Host: Emily Jonets</div>
       <div className="mb-2">12th August 2022 - 23rd August 2024</div>
       <div className="font-bold mb-2">Sub Events</div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">

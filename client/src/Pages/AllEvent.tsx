@@ -28,7 +28,7 @@ const AllEvent = () => {
         </div>
       ) : (
         user.events.map((event) => (
-          <div>
+          <div className="mt-4 flex flex-col gap-2">
             <EventCard event={event} />
           </div>
         ))
