@@ -11,7 +11,7 @@ const Button = (props: Props) => {
     <button
       disabled={props.disabled}
       onClick={props.onClick}
-      className="flex items-center gap-2 justify-center w-full max-w-lg bg-dark text-white py-3 text-lg rounded-lg"
+      className="flex items-center gap-2 justify-center w-full max-w-lg bg-zinc-800 text-white py-2.5 text-lg rounded-lg"
     >
       <span>{props?.icon}</span>
       <span>{props.text}</span>

@@ -10,7 +10,7 @@ const ButtonSecondary = (props: Props) => {
   return (
     <button
       onClick={props.onClick}
-      className="w-fit   flex items-center text-base  px-3 rounded-2xl gap-2 mb-4 bg-slate-700 text-white py-1.5"
+      className="w-fit  font-medium flex items-center text-base  px-3 rounded-lg gap-2 mb-4 border border-dark text-dark py-1.5"
     >
       <span className={`${props.fontSize ? props.fontSize : ""}`}>
         {props.text}
