@@ -35,9 +35,8 @@ const BottomNav = () => {
   return (
     <div>
       <BottomNavigation
-        showLabels
         value={value}
-        onChange={(event, newValue) => {
+        onChange={(_event, newValue) => {
           setValue(newValue);
         }}
         className={classes.root}
@@ -77,7 +76,7 @@ const BottomNav = () => {
       <style>{`
         // selected mui button in bottom navigation should have indigo-700
         .Mui-selected {
-          color: #6366f1;
+          color: #6366f1 !important;
         }
       `}</style>
     </div>
