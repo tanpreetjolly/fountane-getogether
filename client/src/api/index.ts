@@ -134,6 +134,7 @@ export const createEvent = (eventData: {
   startDate: string
   endDate: string
   budget: string
+  eventType: string
 }) => API.post("/event", eventData)
 
 export const createSubEvent = (

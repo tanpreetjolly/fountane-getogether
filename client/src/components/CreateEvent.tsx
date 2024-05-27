@@ -1,49 +1,40 @@
-import "react-date-range/dist/styles.css" // main style file
-import "react-date-range/dist/theme/default.css" // theme css file
-import React from "react"
-import {
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-} from "@mui/material"
-import { styled } from "@mui/system"
-import DatePicker from "./DatePicker"
-import Button from "./Button"
+import * as React from "react"
+import { useState } from "react"
 import { FaRegCalendarPlus } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
 import { createEvent } from "../api"
+import { DatePickerWithRange } from "./ui/DatePickerWithRange"
+import { Select, SelectTrigger, SelectContent, SelectItem } from "./ui/select"
+import { Input } from "./ui/input"
+import Button from "./Button"
+import toast from "react-hot-toast"
 
-const RoundedTextField = styled(TextField)(({}) => ({
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 10,
-  },
-}))
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const RoundedSelect = styled(Select)(() => ({
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 10,
-  },
-}))
+Input.displayName = "Input"
 
 const CreateEvent = () => {
   const [eventType, setEventType] = React.useState("")
   const [loading, setLoading] = React.useState(false)
   const navigate = useNavigate()
+  const [startDate, setStartDate] = React.useState<Date | string>("")
+  const [endDate, setEndDate] = React.useState<Date | string>("")
+  const [eventName, setEventName] = useState("")
+  const [budget, setBudget] = useState("")
 
-  const handleEventTypeChange = (
-    event: React.ChangeEvent<{ value: unknown }>,
-  ) => {
-    setEventType(event.target.value as string)
+  const handleEventTypeChange = (value: string) => {
+    setEventType(value)
   }
+
   const handleCreateEvent = () => {
     setLoading(true)
     createEvent({
-      name: "Event Name",
-      startDate: new Date().toString(),
-      endDate: new Date().toString(),
-      budget: "1000",
+      name: eventName,
+      startDate: startDate.toString() as string,
+      endDate: endDate.toString() as string,
+      budget: budget,
+      eventType: eventType,
     })
       .then((res) => {
         console.log(res.data)
@@ -52,54 +43,56 @@ const CreateEvent = () => {
       .catch((err) => console.log(err))
       .finally(() => setLoading(false))
   }
+  if(loading) return toast.loading("Creating Event")
   return (
-    <div className="px-4 mx-auto flex flex-col min-h-[90vh]">
-      <RoundedTextField
+    <div className="px-4 mx-auto flex flex-col h-[85vh] mt-2 gap-4">
+      <Input
         id="eventName"
         name="eventName"
-        label="Your Event Name Here"
-        variant="outlined"
-        fullWidth
+        placeholder="Your Event Name Here"
+        value={eventName}
+        onChange={(e) => setEventName(e.target.value)}
+        className=""
+      />
+      <Input
+        id="budget"
+        name="budget"
+        type="number"
+        placeholder="Event budget"
+        value={budget}
+        onChange={(e) => setBudget(e.target.value)}
+        className=""
       />
 
-      <RoundedTextField
-        id="host"
-        name="host"
-        label="Event Host"
-        variant="outlined"
-        fullWidth
-        className="!mt-4"
-      />
-      <FormControl fullWidth variant="outlined" margin="normal">
-        <InputLabel id="eventtype-label">Event Type</InputLabel>
-        <RoundedSelect
-          labelId="eventtype-label"
-          id="eventtype"
-          name="eventtype"
-          value={eventType}
-          onChange={handleEventTypeChange as any}
-          label="Event Type"
-          className="!rounded-xl"
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value="wedding">Wedding</MenuItem>
-          <MenuItem value="conference">Conference</MenuItem>
-          <MenuItem value="party">Party</MenuItem>
-          <MenuItem value="concert">Concert</MenuItem>
-        </RoundedSelect>
-      </FormControl>
+      <Select value={eventType} onValueChange={handleEventTypeChange}>
+        <SelectTrigger>
+          <span className="text-muted-foreground">
+            {eventType || "Event Type"}
+          </span>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="wedding">Wedding</SelectItem>
+          <SelectItem value="conference">Conference</SelectItem>
+          <SelectItem value="party">Party</SelectItem>
+          <SelectItem value="concert">Concert</SelectItem>
+        </SelectContent>
+      </Select>
 
-      <DatePicker />
+      <DatePickerWithRange
+        startDate={startDate as any}
+        endDate={endDate as any}
+        setStartDate={setStartDate as any}
+        setEndDate={setEndDate as any}
+      />
+
       <div className="mt-auto mb-4">
         <Button
-          text="Create Event"
-          icon={<FaRegCalendarPlus />}
           onClick={handleCreateEvent}
-          disabled={loading}
+          icon={<FaRegCalendarPlus />}
+          text="Create Event"
         />
       </div>
+
       <style>
         {`
         .rdrCalendarWrapper{
@@ -107,7 +100,8 @@ const CreateEvent = () => {
         }
         .rdrDateDisplayWrapper{
           background-color: transparent;
-        }`}
+        }
+      `}
       </style>
     </div>
   )
