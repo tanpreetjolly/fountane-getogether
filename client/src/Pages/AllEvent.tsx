@@ -16,23 +16,28 @@ const AllEvent = () => {
     return <div>Please Login to view this page</div>
 
   return (
-    <div className="px-4 mx-auto">
-      <Button
-        text="Create an Event"
-        icon={<FaPlus />}
-        onClick={() => navigate("/events/create")}
-      />
-      {user.events.length === 0 ? (
-        <div className="text-center italic text-xl px-4  text-gray-500 h-[40vh] flex items-center justify-center">
-          No events to show, Create your first event
-        </div>
-      ) : (
-        user.events.map((event) => (
-          <div className="mt-4 flex flex-col gap-2">
-            <EventCard event={event} />
+    <div className="px-4 mx-auto flex flex-col justify-between h-[85vh]">
+      <div className="mt-2">
+        <div className="text-2xl pl-1 font-bold text-dark">Upcoming Events</div>
+        {user.events.length === 0 ? (
+          <div className="text-center italic text-xl px-4  text-gray-500 h-[40vh] flex items-center justify-center">
+            No events to show, Create your first event
           </div>
-        ))
-      )}
+        ) : (
+          user.events.map((event) => (
+            <div className="mt-2 flex flex-col gap-2">
+              <EventCard event={event} />
+            </div>
+          ))
+        )}
+      </div>
+      <div className="mt-auto">
+        <Button
+          text="Create an Event"
+          icon={<FaPlus />}
+          onClick={() => navigate("/events/create")}
+        />
+      </div>
     </div>
   )
 }

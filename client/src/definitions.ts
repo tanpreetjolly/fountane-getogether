@@ -43,6 +43,7 @@ export interface EventShort {
   host: Host
   createdAt: string
   updatedAt: string
+  eventType?: string
 }
 
 export interface OtherUser {

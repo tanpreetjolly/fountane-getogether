@@ -4,14 +4,13 @@ import { FC, useState } from "react"
 import { EventShort } from "../definitions"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Box from "@mui/material/Box"
-import Button from "@mui/material/Button"
-import TextField from "@mui/material/TextField"
-import {
-  ArrowRightToLine,
-  SquarePen,
-  Trash,
-} from "lucide-react"
+import { ArrowRightToLine, SquarePen, Trash, X } from "lucide-react"
 import ButtonSecondary from "./ButtonSecondary"
+import { Input } from "./ui/input"
+import Select from "@mui/material/Select"
+import MenuItem from "@mui/material/MenuItem"
+import IconButton from "@mui/material/IconButton"
+import Button from "./Button"
 
 interface EventCardProps {
   event: EventShort
@@ -42,10 +41,10 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
 
   return (
     <>
-      <div className="py-2 pl-3 pr-2   flex flex-col   text-left bg-white w-full border border-gray-300  rounded-lg shadow-sm ">
-        <div className="flex  justify-between ">
+      <div className="py-2 pl-3 pr-2 flex flex-col text-left bg-white w-full border border-gray-300 rounded-lg shadow-sm">
+        <div className="flex justify-between">
           <div className="pt-2">
-            <span className="text-xs ml-0.5 bg-indigo-400 w-fit text-white font-medium px-3 rounded-full py-1 ">
+            <span className="text-xs ml-0.5 bg-indigo-400 w-fit text-white font-medium px-3 rounded-full py-1">
               {formatDate(event.startDate)} - {formatDate(event.endDate)}
             </span>
             <div className="pt-2 text-gray-700 w-1/2 pl-2 mt-2">
@@ -81,19 +80,29 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
         open={isDrawerOpen}
         onClose={closeDrawer}
         onOpen={() => setIsDrawerOpen(true)}
+        className="outline"
       >
-        <Box sx={{ p: 2 }}>
-          <TextField
-            label="Event Name"
+        <Box className="!p-4  flex-col flex gap-1">
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-2xl font-bold  ">Edit Your Event</h2>
+            <IconButton onClick={closeDrawer}>
+              <X size={24} className="text-red-500" />
+            </IconButton>
+          </div>
+          <label htmlFor="eventName">Event Name</label>
+          <Input
+            id="eventName"
+            className="mb-3 ml-1"
             value={editedEvent.name}
             onChange={(e) =>
               setEditedEvent({ ...editedEvent, name: e.target.value })
             }
-            fullWidth
-            margin="normal"
+            placeholder="Event Name"
           />
-          <TextField
-            label="Event Host"
+          <label htmlFor="hostName">Host Name</label>
+          <Input
+            id="hostName"
+            className="mb-3 ml-1"
             value={editedEvent.host.name}
             onChange={(e) =>
               setEditedEvent({
@@ -101,40 +110,47 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
                 host: { ...editedEvent.host, name: e.target.value },
               })
             }
-            fullWidth
-            margin="normal"
+            placeholder="Host Name"
           />
-          <TextField
-            label="Start Date"
-            type="date"
+          <label htmlFor="startDate">Start Date</label>
+          <Input
+            id="startDate"
+            className="mb-3 ml-1"
             value={editedEvent.startDate}
             onChange={(e) =>
               setEditedEvent({ ...editedEvent, startDate: e.target.value })
             }
-            fullWidth
-            margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <TextField
-            label="End Date"
             type="date"
+            placeholder="Start Date"
+          />
+          <label htmlFor="endDate">End Date</label>
+          <Input
+            id="endDate"
+            className="mb-3 ml-1"
             value={editedEvent.endDate}
             onChange={(e) =>
               setEditedEvent({ ...editedEvent, endDate: e.target.value })
             }
-            fullWidth
-            margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            type="date"
+            placeholder="End Date"
           />
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
-            <Button onClick={handleSaveEvent} variant="contained">
-              Save
-            </Button>
-          </Box>
+          <label htmlFor="eventType">Event Type</label>
+          <Select
+            id="eventType"
+            className="mb-3 ml-1"
+            value={editedEvent.eventType}
+            onChange={(e) =>
+              setEditedEvent({ ...editedEvent, eventType: e.target.value })
+            }
+            size="small"
+            displayEmpty
+          >
+            <MenuItem value="wedding">Wedding</MenuItem>
+            <MenuItem value="conference">Conference</MenuItem>
+            <MenuItem value="party">Party</MenuItem>
+            <MenuItem value="concert">Concert</MenuItem>
+          </Select>
+          <Button onClick={handleSaveEvent} text="Update Event" />
         </Box>
       </SwipeableDrawer>
     </>

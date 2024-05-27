@@ -17,10 +17,8 @@ const EventPage = () => {
 
   return (
     <div className="px-4 flex flex-col gap-2 h-[87.5vh] overflow-hidden">
-      {/* Event Name */}
       <div className="pl-1">
         <div className="text-2xl font-bold text-dark">{event.name}</div>
-        {/* Event Host */}
         <div className="text-lg text-gray-700 mb-1">
           Hosted by{" "}
           <span className="font-semibold text-dark">{event.host.name}</span>
