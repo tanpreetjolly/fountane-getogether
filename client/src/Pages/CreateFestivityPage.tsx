@@ -6,29 +6,42 @@ import { useNavigate, useParams } from "react-router-dom"
 import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange"
 import Button from "../components/Button"
 import { createSubEvent } from "@/api"
-
+import toast from "react-hot-toast"
+import { useEventContext } from "@/context/EventContext"
 
 const CreateFestivity = () => {
-  const navigate = useNavigate()
-  const { eventId } = useParams()
-  console.log(eventId)
   const [festivityName, setFestivityName] = useState("")
   const [venue, setVenue] = useState("")
   const [startDate, setStartDate] = useState<string | any>("")
   const [endDate, setEndDate] = useState<string | any>("")
-  // console.log(startDate, endDate)
+
+  const navigate = useNavigate()
+  const { eventId } = useParams()
+
+  const { updateEvent } = useEventContext()
+  console.log(eventId)
 
   const handleCreateEvent = () => {
-    try {
+    toast.promise(
       createSubEvent(eventId as string, {
         name: festivityName,
         venue,
         startDate,
         endDate,
-      })
-    } catch (error) {
-      console.log(error)
-    } 
+      }),
+      {
+        loading: "Creating Festivity",
+        success: (data: { data: { subEventId: string } }) => {
+          updateEvent()
+          navigate(`${data.data.subEventId}`)
+          return "Festivity Created Successfully"
+        },
+        error: (err) => {
+          console.log(err)
+          return "Failed to create Festivity"
+        },
+      },
+    )
   }
 
   return (
@@ -56,9 +69,9 @@ const CreateFestivity = () => {
         setStartDate={setStartDate as any}
         setEndDate={setEndDate as any}
       />
-      <div className="mt-auto mb-4">
+      <div className="mt-4">
         <Button
-          text="Create Event"
+          text="Create Festivity"
           icon={<FaRegCalendarPlus />}
           onClick={handleCreateEvent}
         />

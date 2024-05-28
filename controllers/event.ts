@@ -85,7 +85,7 @@ export const createSubEvent = async (req: Request, res: Response) => {
     await event.save()
 
     res.status(201).json({
-        data: subEvent,
+        data: { subEventId: subEvent._id },
         success: true,
         msg: "Sub Event Created Successfully",
     })
