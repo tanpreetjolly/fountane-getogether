@@ -16,6 +16,8 @@ import DialogContent from "@mui/material/DialogContent"
 import DialogTitle from "@mui/material/DialogTitle"
 import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
+import ButtonSecondary from "@/components/ButtonSecondary"
+import { RsvpOutlined } from "@mui/icons-material"
 
 interface Guest {
   id: string
@@ -119,36 +121,42 @@ const ManageGuests = () => {
   }
 
   return (
-    <div className="px-4">
-      <Typography variant="h6" gutterBottom className="text-center">
-        Manage Guests
-      </Typography>
+    <div className="px-4 flex flex-col mt-1 gap-2">
+      <div className="text-2xl font-semibold text-gray-700">Manage Guests</div>
       <TextField
         fullWidth
         label="Search names"
         variant="outlined"
         value={searchQuery}
         onChange={handleSearchChange}
-        className="!mb-3"
+        className="!mb-2"
       />
       {filteredGuests.length > 0 ? (
         filteredGuests.map((guest) => (
           <div
             key={guest.id}
-            onClick={() => handleGuestClick(guest)}
             style={{ cursor: "pointer", marginBottom: "8px" }}
             className="border rounded-xl"
           >
             <CardContent>
-              <Typography variant="h6" component="div">
-                {guest.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {guest.email}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {guest.phone}
-              </Typography>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Typography variant="h6" component="div">
+                    {guest.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {guest.email}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {guest.phone}
+                  </Typography>
+                </div>
+                <ButtonSecondary
+                  text="Invite"
+                  onClick={() => handleGuestClick(guest)}
+                  icon = {<RsvpOutlined/>}
+                />
+              </div>
             </CardContent>
           </div>
         ))

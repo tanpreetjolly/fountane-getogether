@@ -27,7 +27,7 @@ const EventPage = () => {
       <div className="flex justify-around gap-2">
         <button
           onClick={() => {
-            navigate("manage-vendors")
+            navigate("manage-guests")
           }}
           className="flex font-inter items-center  justify-around bg-indigo-500  text-white  rounded-lg w-1/2 px-4 py-6 gap-4"
         >
