@@ -45,6 +45,8 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
   const handleSaveEvent = () => {
     if (updatingEvent) return
 
+    console.log(editedEvent)
+
     setUpdatingEvent(true)
     updateEvent(editedEvent)
       .then((res: { data: EventShortType }) => {
@@ -86,7 +88,7 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             <span className="text-xs ml-0.5 bg-indigo-400 w-fit text-white font-medium px-3 rounded-full py-1">
               {formatDate(event.startDate)} - {formatDate(event.endDate)}
             </span>
-            <div className="pt-2 text-gray-700 w-1/2 pl-2 mt-2">
+            <div className="pt-2 text-gray-700 pl-2 mt-2">
               <div className="text-sm">Event Name</div>
               <div className="text-2xl font-semibold text-gray-700">
                 {event.name}

@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 
 type DatePickerWithRangeProps = {
-  startDate: Date | null
-  endDate: Date | null
+  startDate: Date
+  endDate: Date
   setStartDate: (date: Date) => void
   setEndDate: (date: Date) => void
 }
@@ -20,19 +20,17 @@ export function DatePickerWithRange({
   setStartDate,
   setEndDate,
 }: React.HTMLAttributes<HTMLDivElement> & DatePickerWithRangeProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: startDate || new Date(),
-    to: endDate || addDays(new Date(), 1),
-  })
+  const date = { from: startDate, to: endDate }
 
-  React.useEffect(() => {
-    if (date?.from) {
+  const setDate = (date: DateRange | undefined) => {
+    if (date === undefined) return
+    if (date.from) {
       setStartDate(date.from)
     }
-    if (date?.to) {
+    if (date.to) {
       setEndDate(date.to)
     }
-  }, [date, setStartDate, setEndDate])
+  }
 
   return (
     <div className={cn("grid gap-2 ", className)}>
@@ -65,7 +63,7 @@ export function DatePickerWithRange({
         mode="range"
         defaultMonth={date?.from}
         selected={date}
-        onSelect={(range) => setDate(range)}
+        onSelect={setDate}
         numberOfMonths={1}
       />
     </div>
