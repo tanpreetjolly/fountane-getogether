@@ -1,46 +1,33 @@
 import { IoPeopleSharp } from "react-icons/io5"
 import Button from "../components/Button"
 import VendorCard from "../components/VendorCard"
-import { useNavigate, useParams } from "react-router-dom"
-
-const vendorData = [
-  {
-    id: "11",
-    name: "Shivam Caterers",
-    type: "food",
-    status: "hired",
-    events: ["100", "200", "300", "400"],
-  },
-  {
-    id: "21",
-    name: "Vanish Caterings",
-    type: "food",
-    status: "hired",
-    events: ["100", "200", "300", "400"],
-  },
-  {
-    id: "31",
-    name: "Event Managers Inc.",
-    type: "event management",
-    status: "invited",
-    events: ["100", "200", "300", "400"],
-  },
-  {
-    id: "41",
-    name: "Dhillon Managers Inc.",
-    type: "event management",
-    status: "invited",
-    events: ["100", "200", "300", "400"],
-  },
-]
+import { useEventContext } from "@/context/EventContext"
+import Loader from "@/components/Loader"
+import { useNavigate } from "react-router-dom"
 
 const ManageVendors = () => {
-  const hiredVendors = vendorData.filter((vendor) => vendor.status === "hired")
-  const invitedVendors = vendorData.filter(
-    (vendor) => vendor.status === "invited",
-  )
-  console.log(hiredVendors)
+  const { event, loadingEvent } = useEventContext()
   const navigate = useNavigate()
+
+  if (loadingEvent) return <Loader />
+  if (!event) return <div>No Event Found</div>
+
+  const vendorList = event.vendorList
+    .map((vendor) => {
+      const subEvents = vendor.subEvents.map((subEvent) => {
+        return {
+          subEvent: subEvent.subEvent,
+          vendor: vendor.vendor.user,
+          status: subEvent.status,
+          servicesOffering: subEvent.servicesOffering,
+        }
+      })
+      return subEvents
+    })
+    .flat()
+
+  console.log(vendorList)
+
   return (
     <div className="px-4 divide-y space-y-2">
       <Button
@@ -53,22 +40,29 @@ const ManageVendors = () => {
           Hired Vendors
         </div>
         <div className="flex flex-col gap-2 py-2">
-          {hiredVendors.map((vendor) => (
-            <VendorCard key={vendor.id} vendor={vendor} />
-          ))}
+          {vendorList.map((vendor) => {
+            if (vendor.status !== "hired") return null
+            return <VendorCard key={vendor.subEvent._id} vendor={vendor} />
+          })}
         </div>
 
         <div className="font-medium text-gray-800 px-2 text-xl mt-4">
           Invited Vendors
         </div>
         <div className="flex flex-col gap-2 py-2">
-          {invitedVendors.map((vendor) => (
-            <VendorCard
-              key={vendor.id}
-              vendor={vendor}
-              onClick={() => navigate(`${vendor.id}/chat`)}
-            />
-          ))}
+          {vendorList.map((vendor) => {
+            if (vendor.status !== "invited") return null
+            return <VendorCard key={vendor.subEvent._id} vendor={vendor} />
+          })}
+        </div>
+        <div className="font-medium text-gray-800 px-2 text-xl mt-4">
+          Rejected Vendors
+        </div>
+        <div className="flex flex-col gap-2 py-2">
+          {vendorList.map((vendor) => {
+            if (vendor.status !== "rejected") return null
+            return <VendorCard key={vendor.subEvent._id} vendor={vendor} />
+          })}
         </div>
       </div>
     </div>

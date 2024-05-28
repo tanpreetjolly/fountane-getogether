@@ -157,3 +157,18 @@ export const createSubEventChannel = (
   subEventId: string,
   channelData: { name: string; allowedUsers: string[] },
 ) => API.post(`/event/${eventId}/subEvent/${subEventId}/channel`, channelData)
+
+export const inviteGuest = (
+  eventId: string,
+  guestData: { guestId: string; subEventsIds: string[] },
+) => API.post(`/event/${eventId}/guest/invite`, guestData)
+
+export const inviteNewGuest = (
+  eventId: string,
+  guestData: {
+    name: string
+    phoneNo: string
+    email: string
+    subEventsIds: string[]
+  },
+) => API.post(`/event/${eventId}/guest/invite/new`, guestData)

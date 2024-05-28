@@ -3,7 +3,7 @@ import { IVendorProfile } from "../types/models"
 
 const VendorProfileSchema = new Schema<IVendorProfile>(
     {
-        userId: {
+        user: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: [true, "User is required."],

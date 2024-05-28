@@ -7,30 +7,32 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
+import { OtherUserType, SubEventType } from "@/definitions"
+import { useNavigate } from "react-router-dom"
 
 type Props = {
   vendor: {
-    id: string
-    name: string
-    type: string
+    subEvent: Omit<SubEventType, "channels">
+    vendor: OtherUserType
     status: string
-    events: string[]
+    servicesOffering: [string]
   }
-  onClick?: () => void
 }
 
-const VendorCard = (props: Props) => {
+const VendorCard = ({ vendor }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [festivities, setFestivities] = useState<string[]>([])
 
+  const navigate = useNavigate()
+
   const getStatusColor = () => {
-    switch (props.vendor.status) {
+    switch (vendor.status) {
       case "hired":
         return "bg-green-400 text-white "
       case "invited":
         return "bg-blue-400 text-white "
-      case "invite":
-        return "bg-yellow-300 text-gray-800"
+      case "rejected":
+        return "bg-red-600 text-gray-300"
       default:
         return ""
     }
@@ -57,33 +59,37 @@ const VendorCard = (props: Props) => {
 
   return (
     <>
-      <button onClick={props.onClick} className="border p-5 rounded-lg w-full">
+      <button
+        onClick={() => {
+          navigate(`${vendor.vendor._id}/chat`)
+        }}
+        className="border p-5 rounded-lg w-full"
+      >
         {/* vendor status - hired, invited, invite */}
         <div className="flex justify-between items-center">
           <div className="text-left">
             <div className="text-lg mb-1 font-medium text-gray-700">
-              {props.vendor.name}
+              {vendor.vendor.name}
             </div>
             <div className="text-sm text-gray-500 capitalize">
-              Type : {props.vendor.type}
+              Type :{" "}
+              {vendor.servicesOffering.map((service) => (
+                <span key={service}>{service}, </span>
+              ))}
             </div>
             {/* Vendor Events .map */}
             <div className="text-sm text-gray-500">
-              Events :{" "}
-              {props.vendor.events.map((event) => (
-                <span key={event} className="capitalize">
-                  {event},{" "}
-                </span>
-              ))}
+              Sub-Events :{" "}
+              <span className="capitalize">{vendor.subEvent.name}</span>
             </div>
           </div>
           <div
             className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor()}`}
             onClick={() => {
-              if (props.vendor.status === "invite") inviteVendor()
+              if (vendor.status === "invite") inviteVendor()
             }}
           >
-            {props.vendor.status}
+            {vendor.status}
           </div>
         </div>
       </button>

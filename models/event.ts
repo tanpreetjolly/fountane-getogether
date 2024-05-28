@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose"
-import { IEvent, IUserList } from "../types/models"
+import { IEvent, IUserList, IVendorList, IPayment } from "../types/models"
 import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
 import jwt from "jsonwebtoken"
 import { NotFoundError } from "../errors"
@@ -12,20 +12,85 @@ const UserList = new Schema<IUserList>(
             ref: "User",
             required: [true, "Please Provide User."],
         },
-        role: {
-            type: String,
-            enum: Array.from(Object.values(ROLES)),
-            required: [true, "Please Provide Role."],
-        },
-        permission: [
+        // role: {
+        //     type: String,
+        //     // enum: Array.from(Object.values(ROLES)),
+        //     // required: [true, "Please Provide Role."],
+        //     default: ROLES.GUEST,
+        // },
+        // permission: [
+        //     {
+        //         type: String,
+        //         enum: Array.from(Object.values(PERMISSIONS)),
+        //     },
+        // ],
+        subEvents: [
             {
-                type: String,
-                enum: Array.from(Object.values(PERMISSIONS)),
+                type: Schema.Types.ObjectId,
+                ref: "SubEvent",
+            },
+        ],
+        status: {
+            type: String,
+            enum: ["accepted", "rejected", "pending"],
+            default: "pending",
+        },
+    },
+    { timestamps: true },
+)
+
+UserList.index({ user: 1 })
+
+const PaymentSchema = new Schema<IPayment>(
+    {
+        amount: {
+            type: Number,
+            required: [true, "Please Provide Amount."],
+        },
+        status: {
+            type: String,
+            required: [true, "Please Provide Status."],
+            enum: ["pending", "paid", "failed"],
+            default: "pending",
+        },
+    },
+    { timestamps: true },
+)
+
+const VendorList = new Schema<IVendorList>(
+    {
+        vendor: {
+            type: Schema.Types.ObjectId,
+            ref: "VendorProfile",
+            required: true,
+        },
+        // permission: [
+        //     {
+        //         type: String,
+        //         enum: Array.from(Object.values(PERMISSIONS)),
+        //     },
+        // ],
+        subEvents: [
+            {
+                subEvent: {
+                    type: Schema.Types.ObjectId,
+                    ref: "SubEvent",
+                    required: true,
+                },
+                status: {
+                    type: String,
+                    enum: ["hired", "rejected", "invited"],
+                    default: "pending",
+                },
+                servicesOffering: [{ type: String, required: true }],
+                paymentStatus: { type: PaymentSchema },
             },
         ],
     },
     { timestamps: true },
 )
+
+VendorList.index({ vendorId: 1 })
 
 const EventSchema = new Schema<IEvent>(
     {
@@ -50,44 +115,24 @@ const EventSchema = new Schema<IEvent>(
             type: Number,
             required: [true, "Please Provide Budget."],
         },
-        //this is embedded document
-        userList: [UserList],
-        //this is ref document
-        subEvents: {
-            type: [Schema.Types.ObjectId],
-            ref: "SubEvent",
-        },
         eventType: {
             type: String,
             required: [true, "Please Provide Event Type."],
             lowercase: true,
         },
+        //this is embedded document
+        userList: [UserList],
+        vendorList: [VendorList],
+        //this is ref document
+        subEvents: {
+            type: [Schema.Types.ObjectId],
+            ref: "SubEvent",
+        },
     },
     { timestamps: true },
 )
 
-EventSchema.index({ "userList.user": 1 })
-
-EventSchema.pre("save", function (next) {
-    if (this.isNew === true) {
-        //assign host to user list with all permissions
-        console.log(this.host)
-
-        this.userList.push({
-            user: this.host,
-            role: ROLES.HOST,
-            permission: Array.from(Object.values(PERMISSIONS)),
-        })
-    }
-    // if (this.isModified("userList")) {
-    //     this.userList.forEach((user) => {
-    //         if (user.permission.length === 0) {
-    //             user.permission = Array.from(Object.values(PERMISSIONS))
-    //         }
-    //     })
-    // }
-    next()
-})
+// EventSchema.index({ "userList.user": 1 })
 
 EventSchema.methods.generateToken = function (userId: Types.ObjectId) {
     const isHost = this.host.toString() === userId.toString()

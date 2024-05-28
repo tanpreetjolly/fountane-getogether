@@ -25,14 +25,8 @@ export interface ServiceType {
 }
 
 export interface VendorProfileType {
-  userId: string
+  user: OtherUserType
   services: ServiceType[]
-}
-
-export interface HostType {
-  _id: string
-  name: string
-  profileImage: string
 }
 
 export interface EventShortType {
@@ -40,7 +34,7 @@ export interface EventShortType {
   name: string
   startDate: string
   endDate: string
-  host: HostType
+  host: OtherUserType
   eventType: string
   budget: number
   createdAt: string
@@ -72,11 +66,37 @@ export interface SubEventType {
   createdAt: string
 }
 
+export interface PaymentStatusType {
+  _id: string
+  amount: number
+  status: string
+  createdAt: string
+}
+
+export interface SubEventsVendorType {
+  _id: string
+  subEvent: Omit<SubEventType, "channels">
+  status: string
+  servicesOffering: [string]
+  paymentStatus: PaymentStatusType
+}
+
 export interface UserListType {
   _id: string
   user: OtherUserType
-  role: string
-  permission: [string]
+  // role: string
+  // permission: [string]
+  subEvents: [string]
+  createdAt: string
+  status: string
+}
+
+export interface VendorListType {
+  _id: string
+  vendor: VendorProfileType
+  // permission: [string]
+  subEvents: SubEventsVendorType[]
+  createdAt: string
 }
 
 export interface EventFull extends EventShortType {
@@ -84,6 +104,7 @@ export interface EventFull extends EventShortType {
   venue: string
   subEvents: SubEventType[]
   userList: UserListType[]
+  vendorList: VendorListType[]
 }
 
 export interface UserType {
