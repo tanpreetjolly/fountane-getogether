@@ -79,8 +79,8 @@ export const userSlice = createSlice({
     },
     UPDATE_EVENT: (state, action) => {
       if (state.user) {
-        console.log(action.payload);
-        
+        console.log(action.payload)
+
         state.user.events = state.user.events.map((event) =>
           event._id === action.payload._id ? action.payload : event,
         )

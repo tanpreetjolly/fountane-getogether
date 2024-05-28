@@ -1,6 +1,5 @@
 import { Schema, Types, Model } from "mongoose"
 
-
 export interface OTP {
     value: string
     expires: Date

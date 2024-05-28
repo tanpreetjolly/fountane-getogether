@@ -40,7 +40,7 @@ const allowedOrigins = [
         ? (process.env.RENDER_EXTERNAL_URL as string)
         : "http://localhost:5173",
 ]
-if (process.env.NODE_ENV === "development"){
+if (process.env.NODE_ENV === "development") {
     allowedOrigins.push("https://admin.socket.io" as string)
     allowedOrigins.push("http://192.168.1.4:5173" as string)
 }

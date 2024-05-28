@@ -42,7 +42,7 @@ const calculateAvailableBudget = (
 interface Props {}
 
 const BudgetsAndPayment: React.FC<Props> = () => {
-  const { event , loadingEvent} = useEventContext()
+  const { event, loadingEvent } = useEventContext()
   const [totalBudget, setTotalBudget] = useState<number>(initialBudget)
   const [availableBudget, setAvailableBudget] = useState<number>(
     calculateAvailableBudget(initialBudget, initialFestivities),
@@ -65,8 +65,13 @@ const BudgetsAndPayment: React.FC<Props> = () => {
     setAvailableBudget(calculateAvailableBudget(newTotalBudget, festivities))
     handleCloseModal()
   }
-  if(loadingEvent) return <div><Loader/></div>
-  if(event == null) return null
+  if (loadingEvent)
+    return (
+      <div>
+        <Loader />
+      </div>
+    )
+  if (event == null) return null
   return (
     <div className="px-4">
       <Box>
@@ -76,7 +81,9 @@ const BudgetsAndPayment: React.FC<Props> = () => {
         <div className="flex gap-2 mt-2 mb-6 items-center justify-end font-roboto">
           <div className="  w-1/2 relative  p-4 rounded-lg  bg-slate-800 text-white">
             <div className="text-sm text-gray-200 pl-0.5">Total Budget</div>
-            <div className="text-2xl font-semibold mt-0.5 ">${event.budget}</div>
+            <div className="text-2xl font-semibold mt-0.5 ">
+              ${event.budget}
+            </div>
             <button
               className="absolute top-3 right-3"
               onClick={handleOpenModal}
@@ -112,9 +119,9 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                   className={`p-1 px-3 rounded-full text-white font-medium flex items-center text-sm font-inter ${festivity.status.toLowerCase() == "paid" ? "bg-green-500" : "bg-amber-500"}`}
                 >
                   {festivity.status == "Pending" ? (
-                    <CircleDot className="inline mr-1" size={16}/>
+                    <CircleDot className="inline mr-1" size={16} />
                   ) : (
-                    <CheckCheck className="inline mr-1" size={16}/>
+                    <CheckCheck className="inline mr-1" size={16} />
                   )}
                   {festivity.status}
                 </div>
