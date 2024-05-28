@@ -2,20 +2,33 @@ import "react-date-range/dist/styles.css" // main style file
 import "react-date-range/dist/theme/default.css" // theme css file
 import { useState } from "react"
 import { FaRegCalendarPlus } from "react-icons/fa"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange"
 import Button from "../components/Button"
+import { createSubEvent } from "@/api"
+
 
 const CreateFestivity = () => {
   const navigate = useNavigate()
+  const { eventId } = useParams()
+  console.log(eventId)
   const [festivityName, setFestivityName] = useState("")
   const [venue, setVenue] = useState("")
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
-  console.log(startDate, endDate)
+  const [startDate, setStartDate] = useState<string | any>("")
+  const [endDate, setEndDate] = useState<string | any>("")
+  // console.log(startDate, endDate)
+
   const handleCreateEvent = () => {
-    // Handle form submission or navigate to another page
-    navigate("/events/1/festivities/100")
+    try {
+      createSubEvent(eventId as string, {
+        name: festivityName,
+        venue,
+        startDate,
+        endDate,
+      })
+    } catch (error) {
+      console.log(error)
+    } 
   }
 
   return (
