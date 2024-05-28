@@ -51,11 +51,17 @@ const EventSchema = new Schema<IEvent>(
             type: Number,
             required: [true, "Please Provide Budget."],
         },
-        //these are embedded documents
+        //this is embedded document
         userList: [UserList],
+        //this is ref document
         subEvents: {
             type: [Schema.Types.ObjectId],
             ref: "SubEvent",
+        },
+        eventType: {
+            type: String,
+            required: [true, "Please Provide Event Type."],
+            lowercase: true,
         },
     },
     { timestamps: true },

@@ -9,8 +9,8 @@ import { Calendar } from "@/components/ui/calendar"
 type DatePickerWithRangeProps = {
   startDate: Date | null
   endDate: Date | null
-  setStartDate: (date: Date | null) => void
-  setEndDate: (date: Date | null) => void
+  setStartDate: (date: Date) => void
+  setEndDate: (date: Date) => void
 }
 
 export function DatePickerWithRange({
@@ -42,7 +42,7 @@ export function DatePickerWithRange({
           variant={"outline"}
           className={cn(
             " justify-start text-left font-normal h-12 w-full",
-            !date && "text-muted-foreground "
+            !date && "text-muted-foreground ",
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />

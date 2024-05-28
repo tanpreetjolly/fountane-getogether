@@ -100,6 +100,7 @@ export interface IEvent extends Document {
     checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
+    eventType: string
     generateToken: (userId: Types.ObjectId) => string
 }
 

@@ -21,8 +21,11 @@ const CreateEvent = () => {
   const [eventType, setEventType] = React.useState("")
   const [loading, setLoading] = React.useState(false)
   const navigate = useNavigate()
-  const [startDate, setStartDate] = React.useState<Date | string>("")
-  const [endDate, setEndDate] = React.useState<Date | string>("")
+  const [startDate, setStartDate] = React.useState<Date>(new Date())
+  //2 days from now
+  const [endDate, setEndDate] = React.useState<Date>(
+    new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
+  )
   const [eventName, setEventName] = useState("")
   const [budget, setBudget] = useState("")
 
@@ -92,10 +95,10 @@ const CreateEvent = () => {
       </Select>
 
       <DatePickerWithRange
-        startDate={startDate as any}
-        endDate={endDate as any}
-        setStartDate={setStartDate as any}
-        setEndDate={setEndDate as any}
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
       />
 
       <div className="mt-auto mb-4">

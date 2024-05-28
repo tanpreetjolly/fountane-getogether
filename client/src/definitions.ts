@@ -41,9 +41,10 @@ export interface EventShort {
   startDate: string
   endDate: string
   host: Host
+  eventType: string
+  budget: number
   createdAt: string
   updatedAt: string
-  eventType?: string
 }
 
 export interface OtherUser {

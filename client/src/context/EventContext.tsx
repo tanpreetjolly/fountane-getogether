@@ -16,7 +16,7 @@ const EventContextProvider = ({ children }: { children: ReactNode }) => {
   //useParam
   const { eventId } = useParams()
 
-  console.log(eventId)
+  // console.log(eventId)
 
   useEffect(() => {
     if (loading || !isAuthenticated || !eventId)

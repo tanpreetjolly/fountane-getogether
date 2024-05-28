@@ -62,6 +62,7 @@ async function main() {
             startDate: new Date("2023-01-01T09:00:00Z"),
             endDate: new Date("2023-01-01T13:00:00Z"),
             budget: 1000,
+            eventType: "wedding",
         })
 
         // Create a channel for the event

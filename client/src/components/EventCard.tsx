@@ -11,6 +11,11 @@ import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import IconButton from "@mui/material/IconButton"
 import Button from "./Button"
+import { deleteEvent, updateEvent } from "../api"
+import { useAppDispatch } from "@/hooks"
+import confirm from "./ConfirmationComponent"
+import { deleteEventSlice, updateEventSlice } from "@/features/userSlice"
+import { DatePickerWithRange } from "./ui/DatePickerWithRange"
 
 interface EventCardProps {
   event: EventShort
@@ -20,6 +25,10 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [editedEvent, setEditedEvent] = useState<EventShort>(event)
+
+  const [updatingEvent, setUpdatingEvent] = useState(false)
+
+  const dispatch = useAppDispatch()
 
   const formatDate = (date: string) => {
     return format(new Date(date), "dd MMMM yyyy")
@@ -34,9 +43,39 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
   }
 
   const handleSaveEvent = () => {
-    // Implement your logic to save the edited event
-    console.log("Edited Event:", editedEvent)
-    closeDrawer()
+    if (updatingEvent) return
+
+    setUpdatingEvent(true)
+    updateEvent(editedEvent)
+      .then((res: { data: EventShort }) => {
+        dispatch(updateEventSlice(res.data))
+      })
+      .catch(() => console.log("Error deleting event"))
+      .finally(() => {
+        setUpdatingEvent(false)
+        closeDrawer()
+      })
+  }
+
+  const handleDeleteEvent = async () => {
+    if (updatingEvent) return
+    const confirmDelete = await confirm(
+      "Are you sure you want to delete this event?",
+      {
+        title: "Delete Event",
+        deleteButton: "Delete",
+        cancelButton: "Cancel",
+      },
+    )
+    if (confirmDelete === false) return
+
+    setUpdatingEvent(true)
+    deleteEvent(event._id)
+      .then(() => {
+        dispatch(deleteEventSlice(event._id))
+      })
+      .catch(() => console.log("Error deleting event"))
+      .finally(() => setUpdatingEvent(false))
   }
 
   return (
@@ -60,7 +99,11 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
               size={18}
               className="text-gray-700"
             />
-            <Trash onClick={() => {}} size={18} className="text-red-500" />
+            <Trash
+              onClick={handleDeleteEvent}
+              size={18}
+              className="text-red-500"
+            />
           </div>
         </div>
         <div className="text-base text-gray-700 mb-2 pl-2 mt-1">
@@ -99,41 +142,6 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             }
             placeholder="Event Name"
           />
-          <label htmlFor="hostName">Host Name</label>
-          <Input
-            id="hostName"
-            className="mb-3 ml-1"
-            value={editedEvent.host.name}
-            onChange={(e) =>
-              setEditedEvent({
-                ...editedEvent,
-                host: { ...editedEvent.host, name: e.target.value },
-              })
-            }
-            placeholder="Host Name"
-          />
-          <label htmlFor="startDate">Start Date</label>
-          <Input
-            id="startDate"
-            className="mb-3 ml-1"
-            value={editedEvent.startDate}
-            onChange={(e) =>
-              setEditedEvent({ ...editedEvent, startDate: e.target.value })
-            }
-            type="date"
-            placeholder="Start Date"
-          />
-          <label htmlFor="endDate">End Date</label>
-          <Input
-            id="endDate"
-            className="mb-3 ml-1"
-            value={editedEvent.endDate}
-            onChange={(e) =>
-              setEditedEvent({ ...editedEvent, endDate: e.target.value })
-            }
-            type="date"
-            placeholder="End Date"
-          />
           <label htmlFor="eventType">Event Type</label>
           <Select
             id="eventType"
@@ -150,6 +158,17 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             <MenuItem value="party">Party</MenuItem>
             <MenuItem value="concert">Concert</MenuItem>
           </Select>
+          <DatePickerWithRange
+            startDate={new Date(editedEvent.startDate)}
+            endDate={new Date(editedEvent.endDate)}
+            setStartDate={(date: Date) =>
+              setEditedEvent({ ...editedEvent, startDate: date.toString() })
+            }
+            setEndDate={(date: Date) =>
+              setEditedEvent({ ...editedEvent, endDate: date.toString() })
+            }
+          />
+
           <Button onClick={handleSaveEvent} text="Update Event" />
         </Box>
       </SwipeableDrawer>

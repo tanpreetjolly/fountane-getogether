@@ -3,7 +3,7 @@ import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Event, SubEvent } from "../models"
 import { StatusCodes } from "http-status-codes"
 
-const getEvent = async (req: Request, res: Response) => {
+export const getEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
 
     const event = await Event.findById(eventId).populate([
@@ -38,8 +38,8 @@ const getEvent = async (req: Request, res: Response) => {
     })
 }
 
-const createEvent = async (req: Request, res: Response) => {
-    const { name, startDate, endDate, budget } = req.body
+export const createEvent = async (req: Request, res: Response) => {
+    const { name, startDate, endDate, budget, eventType } = req.body
     const host = req.user
 
     console.log(host)
@@ -50,10 +50,11 @@ const createEvent = async (req: Request, res: Response) => {
         endDate,
         budget,
         host: host.userId,
+        eventType,
     })
 
     const event = await Event.findById(createEvent._id)
-        .select("name startDate endDate host")
+        .select("name startDate endDate host eventType budget")
         .populate({
             path: "host",
             select: "name profileImage",
@@ -65,7 +66,7 @@ const createEvent = async (req: Request, res: Response) => {
         msg: `Event ${name} Created`,
     })
 }
-const createSubEvent = async (req: Request, res: Response) => {
+export const createSubEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, venue } = req.body
 
@@ -90,4 +91,45 @@ const createSubEvent = async (req: Request, res: Response) => {
     })
 }
 
-export { getEvent, createEvent, createSubEvent }
+export const updateEvent = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { name, startDate, endDate, budget, eventType } = req.body
+
+    const event = await Event.findByIdAndUpdate(
+        eventId,
+        {
+            name,
+            startDate,
+            endDate,
+            budget,
+            eventType,
+        },
+        { new: true },
+    )
+        .select("name startDate endDate host eventType budget")
+        .populate({
+            path: "host",
+            select: "name profileImage",
+        })
+
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    res.status(200).json({
+        data: event,
+        success: true,
+        msg: "Event Updated Successfully",
+    })
+}
+
+export const deleteEvent = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+
+    const event = await Event.findByIdAndDelete(eventId)
+
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    res.status(200).json({
+        success: true,
+        msg: "Event Deleted Successfully",
+    })
+}

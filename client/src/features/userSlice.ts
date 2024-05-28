@@ -70,6 +70,22 @@ export const userSlice = createSlice({
     CREATE_EVENT: (state, action) => {
       state.user?.events.push(action.payload)
     },
+    DELETE_EVENT: (state, action) => {
+      if (state.user) {
+        state.user.events = state.user.events.filter(
+          (event) => event._id !== action.payload,
+        )
+      }
+    },
+    UPDATE_EVENT: (state, action) => {
+      if (state.user) {
+        console.log(action.payload);
+        
+        state.user.events = state.user.events.map((event) =>
+          event._id === action.payload._id ? action.payload : event,
+        )
+      }
+    },
   },
 })
 
@@ -231,6 +247,16 @@ export const updateUser = (user: UserType) => async (dispatch: Dispatch) => {
 export const createEventSlice =
   (event: EventShort) => async (dispatch: Dispatch) => {
     dispatch(userSlice.actions.CREATE_EVENT(event))
+  }
+
+export const deleteEventSlice =
+  (eventId: string) => async (dispatch: Dispatch) => {
+    dispatch(userSlice.actions.DELETE_EVENT(eventId))
+  }
+
+export const updateEventSlice =
+  (event: EventShort) => async (dispatch: Dispatch) => {
+    dispatch(userSlice.actions.UPDATE_EVENT(event))
   }
 export const selectUserState = (state: RootState) => state.user
 

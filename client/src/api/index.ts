@@ -5,6 +5,7 @@ import {
   SignUpType,
   UserType,
   ForgotPasswordType,
+  EventShort,
 } from "../definitions"
 
 /*
@@ -136,6 +137,10 @@ export const createEvent = (eventData: {
   budget: string
   eventType: string
 }) => API.post("/event", eventData)
+export const updateEvent = (eventData: EventShort) =>
+  API.patch(`/event/${eventData._id}`, eventData)
+
+export const deleteEvent = (eventId: string) => API.delete(`/event/${eventId}`)
 
 export const createSubEvent = (
   eventId: string,

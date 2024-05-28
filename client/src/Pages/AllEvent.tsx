@@ -10,7 +10,7 @@ const AllEvent = () => {
   const { user, isAuthenticated, loading } = useAppSelector(
     (state) => state.user,
   )
-  console.log(user)
+  // console.log(user)
   if (loading) return <Loader />
   if (!isAuthenticated || !user)
     return <div>Please Login to view this page</div>
