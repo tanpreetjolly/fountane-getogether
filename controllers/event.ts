@@ -42,10 +42,9 @@ const createEvent = async (req: Request, res: Response) => {
     const { name, startDate, endDate, budget } = req.body
     const host = req.user
 
-    console.log(host);
-    
+    console.log(host)
 
-    const event = await Event.create({
+    const createEvent = await Event.create({
         name,
         startDate,
         endDate,
@@ -53,8 +52,15 @@ const createEvent = async (req: Request, res: Response) => {
         host: host.userId,
     })
 
+    const event = await Event.findById(createEvent._id)
+        .select("name startDate endDate host")
+        .populate({
+            path: "host",
+            select: "name profileImage",
+        })
+
     res.status(StatusCodes.CREATED).json({
-        data: { _id: event._id },
+        data: event,
         success: true,
         msg: `Event ${name} Created`,
     })

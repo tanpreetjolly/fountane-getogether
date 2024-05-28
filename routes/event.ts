@@ -12,9 +12,9 @@ router.use("/task", TaskRouter)
 router.route("/").post(createEvent)
 
 router.route("/:eventId").get(getEvent)
-
-router.use(Protect(Permissions.HOST))
-
 router.route("/:eventId/subEvent").post(createSubEvent)
+
+// router.use(Protect(Permissions.HOST))
+
 
 export default router

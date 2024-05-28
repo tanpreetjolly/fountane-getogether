@@ -8,6 +8,9 @@ import { Select, SelectTrigger, SelectContent, SelectItem } from "./ui/select"
 import { Input } from "./ui/input"
 import Button from "./Button"
 import toast from "react-hot-toast"
+import { createEventSlice } from "../features/userSlice"
+import { EventShort } from "@/definitions"
+import { useAppDispatch } from "@/hooks"
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -23,6 +26,8 @@ const CreateEvent = () => {
   const [eventName, setEventName] = useState("")
   const [budget, setBudget] = useState("")
 
+  const dispatch = useAppDispatch()
+
   const handleEventTypeChange = (value: string) => {
     setEventType(value)
   }
@@ -37,10 +42,11 @@ const CreateEvent = () => {
       budget: budget,
       eventType: eventType,
     })
-      .then((res) => {
+      .then((res: { data: EventShort }) => {
         console.log(res.data)
         navigate(`/events/${res.data._id}`)
         toast.success("Event Created", { id: "loading" })
+        dispatch(createEventSlice(res.data))
       })
       .catch((err) => {
         console.log(err)

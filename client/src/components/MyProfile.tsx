@@ -5,9 +5,11 @@ import { updateProfile, updateImage, deleteProfileImage } from "../api"
 import toast from "react-hot-toast"
 import { CiEdit } from "react-icons/ci"
 import { useAppDispatch, useAppSelector } from "../hooks"
-import { updateUser } from "../features/userSlice"
+import { logout, updateUser } from "../features/userSlice"
 import { TbPhotoPlus } from "react-icons/tb"
 import { MdDeleteOutline } from "react-icons/md"
+import confirm from "./ConfirmationComponent"
+
 const defUser: UserType = {
   userId: "",
   name: "",
@@ -15,6 +17,8 @@ const defUser: UserType = {
   profileImage: "",
   socketToken: "",
   phoneNo: "",
+  isVendor: false,
+  events: [],
   createdAt: "",
   updatedAt: "",
 }
@@ -110,6 +114,18 @@ const MyProfile = () => {
       })
       .catch((error) => console.log(error))
       .finally(() => setLoadingProfileImage(false))
+  }
+  const handleLogout = async () => {
+    const confirmLogout = await confirm(
+      "Are you sure you want to logout? This will clear all saved blog data.",
+      {
+        title: "Logout",
+        deleteButton: "Logout",
+        cancelButton: "Cancel",
+      },
+    )
+    if (confirmLogout === false) return
+    dispatch(logout())
   }
 
   const user = edit ? editedUser : originalUser
@@ -234,6 +250,12 @@ const MyProfile = () => {
               className="rounded-lg p-2 border"
             />
           </form>
+          <button
+            onClick={handleLogout}
+            className={`cursor-pointer text-left hover:bg-highlight hover:text-white flex items-center gap-1 px-4 py-3 md:px-6 md:py-4 duration-150`}
+          >
+            Log Out{" "}
+          </button>
         </section>
       </main>
     </div>
