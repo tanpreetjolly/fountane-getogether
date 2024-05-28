@@ -29,6 +29,7 @@ const CreateEvent = () => {
 
   const handleCreateEvent = () => {
     setLoading(true)
+    toast.loading("Creating Event", { id: "loading" })
     createEvent({
       name: eventName,
       startDate: startDate.toString() as string,
@@ -39,11 +40,17 @@ const CreateEvent = () => {
       .then((res) => {
         console.log(res.data)
         navigate(`/events/${res.data._id}`)
+        toast.success("Event Created", { id: "loading" })
       })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false))
+      .catch((err) => {
+        console.log(err)
+        toast.dismiss("loading")
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
-  if(loading) return toast.loading("Creating Event")
+  // if(loading) return toast.loading("Creating Event")
   return (
     <div className="px-4 mx-auto flex flex-col h-[85vh] mt-2 gap-4">
       <Input
@@ -90,6 +97,7 @@ const CreateEvent = () => {
           onClick={handleCreateEvent}
           icon={<FaRegCalendarPlus />}
           text="Create Event"
+          disabled={loading}
         />
       </div>
 

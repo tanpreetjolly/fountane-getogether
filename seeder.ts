@@ -14,7 +14,13 @@ dotenv.config()
 async function main() {
     try {
         await connectDB(process.env.MONGO_URL as string)
-        await mongoose.connection.db.dropDatabase()
+
+        await User.deleteMany({})
+        await VendorProfile.deleteMany({})
+        await Event.deleteMany({})
+        await SubEvent.deleteMany({})
+        await ChatMessage.deleteMany({})
+        await Channel.deleteMany({})
 
         // Create a new user
         const user = await User.create({
