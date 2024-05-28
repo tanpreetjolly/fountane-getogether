@@ -19,8 +19,6 @@ import {
 import { ChannelType } from "../definitions"
 import { format } from "date-fns"
 
-const lightShades = ["bg-zinc-700", "bg-slate-700", "bg-dark", "bg-fuchsia-700"]
-
 const getChannelIcon = (channelName: string) => {
   switch (channelName) {
     case "Announcement":
@@ -40,7 +38,7 @@ const Channel = ({ channel }: { channel: ChannelType }) => {
   return (
     <button
       onClick={() => {
-        navigate(`channels/${channel._id}`)
+        navigate(`channel/${channel._id}`)
       }}
       className={`text-slate-900  w-full text-left px-5 mb-2 py-3 border border-slate-300 shadow-sm rounded-xl flex items-center gap-2`}
     >

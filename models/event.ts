@@ -79,6 +79,13 @@ EventSchema.pre("save", function (next) {
             permission: Array.from(Object.values(PERMISSIONS)),
         })
     }
+    // if (this.isModified("userList")) {
+    //     this.userList.forEach((user) => {
+    //         if (user.permission.length === 0) {
+    //             user.permission = Array.from(Object.values(PERMISSIONS))
+    //         }
+    //     })
+    // }
     next()
 })
 

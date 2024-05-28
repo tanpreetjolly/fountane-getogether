@@ -68,19 +68,45 @@ export const createEvent = async (req: Request, res: Response) => {
         msg: `Event ${name} Created`,
     })
 }
+
 export const createSubEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, venue } = req.body
 
-    const event = await Event.findById(eventId)
-
+    const event = await Event.findById(eventId).select("userList subEvents")
     if (!event) throw new NotFoundError("Event Not Found")
+
+    const newSubEventChannels = [
+        {
+            name: "Announcement",
+            allowedUsers: event.userList.map((user) => user.user),
+            type: CHANNEL_TYPES.MAIN,
+        },
+        {
+            name: "Vendors Only",
+            allowedUsers: event.userList
+                .filter((user) => user.role === ROLES.VENDOR)
+                .map((user) => user.user),
+            type: CHANNEL_TYPES.MAIN,
+        },
+        {
+            name: "Guests Only",
+            allowedUsers: event.userList
+                .filter((user) => user.role === ROLES.GUEST)
+                .map((user) => user.user),
+            type: CHANNEL_TYPES.MAIN,
+        },
+    ].map(async (channelData) => {
+        const newChannel = await Channel.create(channelData)
+        return newChannel
+    })
 
     const subEvent = await SubEvent.create({
         name,
         startDate,
         endDate,
         venue,
+        channels: await Promise.all(newSubEventChannels),
     })
 
     event.subEvents.push(subEvent._id)

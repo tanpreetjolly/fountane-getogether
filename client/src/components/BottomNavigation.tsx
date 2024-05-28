@@ -67,7 +67,7 @@ const BottomNav = () => {
           icon={<Search size={24} />}
           disableRipple
           onClick={() => {
-            // Handle search navigation
+            navigate("/search?type=user&query=hello")
           }}
         />
 

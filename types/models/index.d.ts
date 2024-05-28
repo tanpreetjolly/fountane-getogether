@@ -117,7 +117,7 @@ export interface IChannel extends Document {
     _id: Schema.Types.ObjectId
     name: string
     allowedUsers: Types.Array<Schema.Types.ObjectId>
-    allowedRoles: Types.Array<ROLES>
+    // allowedRoles: Types.Array<ROLES>
     type: CHANNEL_TYPES
     createdAt: Date
     updatedAt: Date

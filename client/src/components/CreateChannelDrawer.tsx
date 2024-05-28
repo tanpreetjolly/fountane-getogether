@@ -75,9 +75,9 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
       }),
       {
         loading: "Creating Festivity",
-        success: (data: { data: { subEventId: string } }) => {
+        success: (data: { data: { channelId: string } }) => {
           updateEvent()
-          navigate(`channel/${data.data.subEventId}`)
+          navigate(`channel/${data.data.channelId}`)
           return "Channel Created"
         },
         error: (err) => {

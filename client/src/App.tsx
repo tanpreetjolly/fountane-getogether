@@ -98,7 +98,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: <ErrorPage />,
+    // errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       { path: "features", element: <FeaturesPage /> },
@@ -141,7 +141,7 @@ const router = createBrowserRouter([
                   { index: true, element: <SubEventChannels /> },
                   { path: "vendors", element: <AssignVendors /> },
                   { path: "guests", element: <InviteGuests /> },
-                  { path: "channels/:channelId", element: <ChannelChat /> },
+                  { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },
             ],
@@ -160,7 +160,7 @@ const router = createBrowserRouter([
             element: <VendorChannels />,
           },
           {
-            path: "events/:id/festivity/:subEventId/channels/:channelId",
+            path: "events/:id/festivity/:subEventId/channel/:channelId",
             element: <VendorChat />,
           },
         ],

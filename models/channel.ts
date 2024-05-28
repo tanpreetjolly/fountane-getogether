@@ -14,11 +14,11 @@ const ChannelSchema = new Schema<IChannel>(
                 ref: "User",
             },
         ],
-        allowedRoles: {
-            type: [String],
-            enum: Array.from(Object.values(ROLES)),
-            default: [ROLES.HOST],
-        },
+        // allowedRoles: {
+        //     type: [String],
+        //     enum: Array.from(Object.values(ROLES)),
+        //     default: [ROLES.HOST],
+        // },
         type: {
             type: String,
             enum: Array.from(Object.values(CHANNEL_TYPES)),

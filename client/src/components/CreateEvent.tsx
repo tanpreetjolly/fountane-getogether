@@ -22,7 +22,6 @@ const CreateEvent = () => {
   const [loading, setLoading] = React.useState(false)
   const navigate = useNavigate()
   const [startDate, setStartDate] = React.useState<Date>(new Date())
-  //2 days from now
   const [endDate, setEndDate] = React.useState<Date>(
     new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
   )

@@ -32,7 +32,7 @@ const Channel = ({ name, colorIndex, id }: any) => {
   return (
     <button
       onClick={() => {
-        navigate(`channels/${id}`)
+        navigate(`channel/${id}`)
       }}
       className={`text-gray-100 w-full text-left px-3 mb-3 py-2.5 text-lg font-medium ${lightShades[colorIndex]} rounded-lg`}
     >
