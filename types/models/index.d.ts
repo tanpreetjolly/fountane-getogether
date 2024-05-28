@@ -100,6 +100,7 @@ export interface IEvent extends Document {
     checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
+    eventType: string
     generateToken: (userId: Types.ObjectId) => string
 }
 
@@ -116,8 +117,8 @@ export interface IChannel extends Document {
     _id: Schema.Types.ObjectId
     name: string
     allowedUsers: Types.Array<Schema.Types.ObjectId>
-    allowedRoles: [string]
-    type: string
+    // allowedRoles: Types.Array<ROLES>
+    type: CHANNEL_TYPES
     createdAt: Date
     updatedAt: Date
 }

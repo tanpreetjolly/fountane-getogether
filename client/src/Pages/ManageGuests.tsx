@@ -154,7 +154,7 @@ const ManageGuests = () => {
                 <ButtonSecondary
                   text="Invite"
                   onClick={() => handleGuestClick(guest)}
-                  icon = {<RsvpOutlined/>}
+                  icon={<RsvpOutlined />}
                 />
               </div>
             </CardContent>

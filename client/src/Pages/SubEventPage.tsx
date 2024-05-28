@@ -16,65 +16,51 @@ import {
   Users,
   Volume2,
 } from "lucide-react"
-import { SubEvent } from "../definitions"
+import { ChannelType } from "../definitions"
 import { format } from "date-fns"
-
-const channelData = [
-  {
-    id: "1",
-    name: "Announcements",
-  },
-  {
-    id: "2",
-    name: "Vendors Only",
-  },
-  {
-    id: "3",
-    name: "Guest Only",
-  },
-  {
-    id: "4",
-    name: "Photo Sharing",
-  },
-]
-
-const lightShades = ["bg-zinc-700", "bg-slate-700", "bg-dark", "bg-fuchsia-700"]
 
 const getChannelIcon = (channelName: string) => {
   switch (channelName) {
-    case "Announcements":
+    case "Announcement":
       return <Volume2 size={18} />
     case "Vendors Only":
       return <HandPlatter size={18} />
-    case "Guest Only":
+    case "Guests Only":
       return <Users size={18} />
     default:
       return <Group size={18} />
   }
 }
 
-const Channel = ({ name,id }: any) => {
+const Channel = ({ channel }: { channel: ChannelType }) => {
   const navigate = useNavigate()
 
   return (
     <button
       onClick={() => {
-        navigate(`channels/${id}`)
+        navigate(`channel/${channel._id}`)
       }}
       className={`text-slate-900  w-full text-left px-5 mb-2 py-3 border border-slate-300 shadow-sm rounded-xl flex items-center gap-2`}
     >
-      # {name}
-      {getChannelIcon(name)}
+      # {channel.name}
+      {getChannelIcon(channel.name)}
     </button>
   )
 }
+const formatDate = (date: string) => {
+  return format(new Date(date), "dd MMMM yyyy")
+}
 const SubEventChannels = () => {
-  const navigate = useNavigate()
-  const formatDate = (date: string) => {
-    return format(new Date(date), "dd MMMM yyyy")
-  }
-  const { event, loadingEvent } = useEventContext()
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false) // New state variable to track drawer type
+  const { event, loadingEvent } = useEventContext()
+
+  const navigate = useNavigate()
+  const { subEventId } = useParams()
+
+  const subEvent = event?.subEvents.find(
+    (subEvent) => subEvent._id === subEventId,
+  )
+
   const toggleDrawer = (open: boolean) => (event: any) => {
     if (
       event &&
@@ -86,39 +72,33 @@ const SubEventChannels = () => {
 
     setDrawerOpen(open)
   }
-  const { subEventId } = useParams()
-
-  const subEvent = event?.subEvents?.find(
-    (subEvent: SubEvent) => subEvent._id === subEventId,
-  )
 
   if (loadingEvent) return <Loader />
+  if (!event) return <div>Event Not Found</div>
+  if (!subEvent) return <div>Sub Event Not Found</div>
 
   return (
     <div className="px-4 flex flex-col justify-between  h-[85vh] ">
-      <div className="">
-        {subEvent && (
-          <div className="flex flex-col items-start justify-between ">
-            <div className="px-1">
-              <div className="mb-1  text-2xl font-bold text-gray-800">
-                {subEvent.name}
-              </div>
-              <div className="text-sm text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
-                <CalendarDays className="inline mb-0.5" size={18} />
-                {formatDate(subEvent.startDate)} -{" "}
-                {formatDate(subEvent.endDate)}
-              </div>
+      <div>
+        <div className="flex flex-col items-start justify-between ">
+          <div className="px-1">
+            <div className="mb-1  text-2xl font-bold text-gray-800">
+              {subEvent.name}
             </div>
-
-            <div className="text-base text-slate-800  rounded-full  flex items-center gap-1 pl-1">
-            <MapPin className="inline gap-1" size={16} />
-              {subEvent.venue}
+            <div className="text-sm text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
+              <CalendarDays className="inline mb-0.5" size={18} />
+              {formatDate(subEvent.startDate)} - {formatDate(subEvent.endDate)}
             </div>
           </div>
-        )}
+
+          <div className="text-base text-slate-800  rounded-full  flex items-center gap-1 pl-1">
+            <MapPin className="inline gap-1" size={16} />
+            {subEvent.venue}
+          </div>
+        </div>
         <div className="flex justify-around gap-3 mb-1 mt-2 font-inter">
           <button
-            onClick={() => navigate(`invite-guests`)}
+            onClick={() => navigate(`guests`)}
             className="flex items-center justify-around  bg-indigo-500 text-white rounded-lg w-1/2 px-4 py-3 gap-2"
           >
             <div>
@@ -128,7 +108,7 @@ const SubEventChannels = () => {
             <BookUser size={30} />
           </button>
           <button
-            onClick={() => navigate(`assign-vendors`)}
+            onClick={() => navigate(`vendors`)}
             className="flex items-center justify-around  bg-zinc-800 text-white  rounded-lg w-1/2 px-4 py-3 gap-4"
           >
             <div>
@@ -142,22 +122,18 @@ const SubEventChannels = () => {
           Text Channels
         </div>
         <div className="flex flex-col ">
-          {channelData?.map((channel, index) => (
-            <Channel
-              key={channel.id}
-              name={channel.name}
-              id={channel.id}
-              colorIndex={index % lightShades.length}
-            />
+          {subEvent.channels.map((channel) => (
+            <Channel key={channel._id} channel={channel} />
           ))}
         </div>
       </div>
-
-      <Button
-        text="Create Channel"
-        onClick={() => setDrawerOpen(true)}
-        icon={<AddCircleOutline />}
-      />
+      <div className="mb-10">
+        <Button
+          text="Create Channel"
+          onClick={() => setDrawerOpen(true)}
+          icon={<AddCircleOutline />}
+        />
+      </div>
 
       <SwipeableDrawer
         anchor="bottom"

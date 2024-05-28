@@ -2,6 +2,7 @@ import { createSlice, Dispatch } from "@reduxjs/toolkit"
 import { RootState } from "../store"
 import toast from "react-hot-toast"
 import {
+  EventShortType,
   ForgotPasswordType,
   LoginType,
   SignUpType,
@@ -65,6 +66,25 @@ export const userSlice = createSlice({
     SET_VERIFICATION_REQUIRED: (state, action) => {
       state.verificationUserID = action.payload
       state.verificationRequired = true
+    },
+    CREATE_EVENT: (state, action) => {
+      state.user?.events.push(action.payload)
+    },
+    DELETE_EVENT: (state, action) => {
+      if (state.user) {
+        state.user.events = state.user.events.filter(
+          (event) => event._id !== action.payload,
+        )
+      }
+    },
+    UPDATE_EVENT: (state, action) => {
+      if (state.user) {
+        console.log(action.payload)
+
+        state.user.events = state.user.events.map((event) =>
+          event._id === action.payload._id ? action.payload : event,
+        )
+      }
     },
   },
 })
@@ -224,6 +244,20 @@ export const loadUser = () => async (dispatch: Dispatch) => {
 export const updateUser = (user: UserType) => async (dispatch: Dispatch) => {
   dispatch(userSlice.actions.SET_USER(user))
 }
+export const createEventSlice =
+  (event: EventShortType) => async (dispatch: Dispatch) => {
+    dispatch(userSlice.actions.CREATE_EVENT(event))
+  }
+
+export const deleteEventSlice =
+  (eventId: string) => async (dispatch: Dispatch) => {
+    dispatch(userSlice.actions.DELETE_EVENT(eventId))
+  }
+
+export const updateEventSlice =
+  (event: EventShortType) => async (dispatch: Dispatch) => {
+    dispatch(userSlice.actions.UPDATE_EVENT(event))
+  }
 export const selectUserState = (state: RootState) => state.user
 
 export default userSlice.reducer

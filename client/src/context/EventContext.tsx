@@ -6,7 +6,15 @@ import { EventFull } from "../definitions"
 import { useParams } from "react-router-dom"
 import { getEvent } from "../api"
 
-const EventContext = createContext<any>(null)
+const EventContext = createContext<{
+  event: EventFull | null
+  loadingEvent: boolean
+  updateEvent: () => void
+}>({
+  event: null,
+  loadingEvent: false,
+  updateEvent: () => {},
+})
 
 const EventContextProvider = ({ children }: { children: ReactNode }) => {
   const [event, setEvent] = useState<EventFull | null>(null)
@@ -16,7 +24,21 @@ const EventContextProvider = ({ children }: { children: ReactNode }) => {
   //useParam
   const { eventId } = useParams()
 
-  console.log(eventId)
+  // console.log(eventId)
+
+  const updateEvent = () => {
+    if (!eventId) return
+    setLoadingEvent(true)
+    getEvent(eventId)
+      .then((data: { data: EventFull }) => {
+        console.log(data.data)
+        setEvent(data.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+      .finally(() => setLoadingEvent(false))
+  }
 
   useEffect(() => {
     if (loading || !isAuthenticated || !eventId)
@@ -24,15 +46,18 @@ const EventContextProvider = ({ children }: { children: ReactNode }) => {
         setEvent(null)
       }
 
-    setLoadingEvent(true)
-    getEvent(eventId)
-      .then((data) => {
-        setEvent(data?.data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-      .finally(() => setLoadingEvent(false))
+    updateEvent()
+
+    // setLoadingEvent(true)
+    // getEvent(eventId)
+    //   .then((data: { data: EventFull }) => {
+    //     console.log(data.data)
+    //     setEvent(data.data)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+    //   .finally(() => setLoadingEvent(false))
 
     return () => {
       setEvent(null)
@@ -40,7 +65,7 @@ const EventContextProvider = ({ children }: { children: ReactNode }) => {
   }, [loading, isAuthenticated, eventId])
 
   return (
-    <EventContext.Provider value={{ event, loadingEvent }}>
+    <EventContext.Provider value={{ event, loadingEvent, updateEvent }}>
       {children}
     </EventContext.Provider>
   )

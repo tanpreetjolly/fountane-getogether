@@ -40,13 +40,12 @@ const ManageVendors = () => {
     (vendor) => vendor.status === "invited",
   )
   console.log(hiredVendors)
-  const { id } = useParams()
   const navigate = useNavigate()
   return (
     <div className="px-4 divide-y space-y-2">
       <Button
         text="Book a Vendor"
-        onClick={() => navigate(`/search-vendors/${id}`)}
+        onClick={() => navigate("search")}
         icon={<IoPeopleSharp />}
       />
       <div className="pt-2">
@@ -67,7 +66,7 @@ const ManageVendors = () => {
             <VendorCard
               key={vendor.id}
               vendor={vendor}
-              onClick={() => navigate(`/vendor-chat/${vendor.id}`)}
+              onClick={() => navigate(`${vendor.id}/chat`)}
             />
           ))}
         </div>

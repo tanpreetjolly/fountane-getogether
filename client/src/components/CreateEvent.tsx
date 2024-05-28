@@ -8,6 +8,9 @@ import { Select, SelectTrigger, SelectContent, SelectItem } from "./ui/select"
 import { Input } from "./ui/input"
 import Button from "./Button"
 import toast from "react-hot-toast"
+import { createEventSlice } from "../features/userSlice"
+import { EventShortType } from "@/definitions"
+import { useAppDispatch } from "@/hooks"
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -18,10 +21,14 @@ const CreateEvent = () => {
   const [eventType, setEventType] = React.useState("")
   const [loading, setLoading] = React.useState(false)
   const navigate = useNavigate()
-  const [startDate, setStartDate] = React.useState<Date | string>("")
-  const [endDate, setEndDate] = React.useState<Date | string>("")
+  const [startDate, setStartDate] = React.useState<Date>(new Date())
+  const [endDate, setEndDate] = React.useState<Date>(
+    new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
+  )
   const [eventName, setEventName] = useState("")
   const [budget, setBudget] = useState("")
+
+  const dispatch = useAppDispatch()
 
   const handleEventTypeChange = (value: string) => {
     setEventType(value)
@@ -29,6 +36,7 @@ const CreateEvent = () => {
 
   const handleCreateEvent = () => {
     setLoading(true)
+    toast.loading("Creating Event", { id: "loading" })
     createEvent({
       name: eventName,
       startDate: startDate.toString() as string,
@@ -36,14 +44,21 @@ const CreateEvent = () => {
       budget: budget,
       eventType: eventType,
     })
-      .then((res) => {
+      .then((res: { data: EventShortType }) => {
         console.log(res.data)
         navigate(`/events/${res.data._id}`)
+        toast.success("Event Created", { id: "loading" })
+        dispatch(createEventSlice(res.data))
       })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false))
+      .catch((err) => {
+        console.log(err)
+        toast.dismiss("loading")
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
-  if(loading) return toast.loading("Creating Event")
+  // if(loading) return toast.loading("Creating Event")
   return (
     <div className="px-4 mx-auto flex flex-col h-[85vh] mt-2 gap-4">
       <Input
@@ -79,10 +94,10 @@ const CreateEvent = () => {
       </Select>
 
       <DatePickerWithRange
-        startDate={startDate as any}
-        endDate={endDate as any}
-        setStartDate={setStartDate as any}
-        setEndDate={setEndDate as any}
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
       />
 
       <div className="mt-auto mb-4">
@@ -90,6 +105,7 @@ const CreateEvent = () => {
           onClick={handleCreateEvent}
           icon={<FaRegCalendarPlus />}
           text="Create Event"
+          disabled={loading}
         />
       </div>
 

@@ -41,7 +41,7 @@ const VendorSubEvents = (_props: Props) => {
           <button
             key={event.id}
             onClick={() => {
-              navigate(`festivities/${event.id}`)
+              navigate(`festivity/${event.id}`)
             }}
             className="focus:outline-none"
           >

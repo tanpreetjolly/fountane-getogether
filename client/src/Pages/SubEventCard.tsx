@@ -1,11 +1,11 @@
 import { To, useNavigate } from "react-router-dom"
-import { SubEvent } from "../definitions"
+import { SubEventType } from "../definitions"
 import { format } from "date-fns"
 import { CalendarDays, MapPin, MoveRight } from "lucide-react"
 import ButtonSecondary from "../components/ButtonSecondary"
 type Props = {
-  subEvent: SubEvent
-  url? : To
+  subEvent: SubEventType
+  url?: To
 }
 
 const SubEventCard = (props: Props) => {
@@ -21,10 +21,11 @@ const SubEventCard = (props: Props) => {
       <div className="flex justify-between text-left items-start">
         <div className="space-y-4">
           <div className="pl-1 ">
-          <div className="text-xs text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
-          <CalendarDays className="inline mb-0.5" size={16} />
-          {formatDate(props.subEvent.startDate)} - {formatDate(props.subEvent.endDate)}
-          </div>
+            <div className="text-xs text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
+              <CalendarDays className="inline mb-0.5" size={16} />
+              {formatDate(props.subEvent.startDate)} -{" "}
+              {formatDate(props.subEvent.endDate)}
+            </div>
             <div className="text-xl    font-semibold text-slate-800 ">
               {props.subEvent.name}
             </div>
@@ -39,7 +40,7 @@ const SubEventCard = (props: Props) => {
           />
         </div>
         <div className="text-sm text-slate-800  rounded-full  flex items-center gap-1">
-          <MapPin className="inline gap-1 mb-0.5" size={14}/>
+          <MapPin className="inline gap-1 mb-0.5" size={14} />
           {props.subEvent.venue}
         </div>
       </div>

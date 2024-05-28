@@ -98,7 +98,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: <ErrorPage />,
+    // errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       { path: "features", element: <FeaturesPage /> },
@@ -118,23 +118,34 @@ const router = createBrowserRouter([
             path: "events/:eventId",
             children: [
               { index: true, element: <EventPage /> },
-              { path: "manage-vendors", element: <ManageVendors /> },
-              { path: "manage-guests", element: <ManageGuests /> },
-              { path: "payments-budget", element: <BudgetsAndPayment /> },
-              { path: "create-festivity", element: <CreateFestivityPage /> },
               {
-                path: "festivities/:subEventId",
+                path: "vendors",
+                children: [
+                  { index: true, element: <ManageVendors /> },
+                  { path: "search", element: <SearchVendors /> },
+                  {
+                    path: ":vendorId",
+                    children: [
+                      // {index:true,element:<VendorProfile />},
+                      { path: "chat", element: <VendorChat /> },
+                    ],
+                  },
+                ],
+              },
+              { path: "guests", element: <ManageGuests /> },
+              { path: "payments", element: <BudgetsAndPayment /> },
+              { path: "festivity", element: <CreateFestivityPage /> },
+              {
+                path: "festivity/:subEventId",
                 children: [
                   { index: true, element: <SubEventChannels /> },
-                  { path: "assign-vendors", element: <AssignVendors /> },
-                  { path: "invite-guests", element: <InviteGuests /> },
-                  { path: "channels/:channelId", element: <ChannelChat /> },
+                  { path: "vendors", element: <AssignVendors /> },
+                  { path: "guests", element: <InviteGuests /> },
+                  { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },
             ],
           },
-          { path: "search-vendors/:id", element: <SearchVendors /> },
-          { path: "vendor-chat/:id", element: <VendorChat /> },
         ],
       },
       {
@@ -145,11 +156,11 @@ const router = createBrowserRouter([
           { path: "edit-services", element: <EditVendorServices /> },
           { path: "events/:id", element: <VendorSubEvents /> },
           {
-            path: "events/:id/festivities/:subEventId",
+            path: "events/:id/festivity/:subEventId",
             element: <VendorChannels />,
           },
           {
-            path: "events/:id/festivities/:subEventId/channels/:channelId",
+            path: "events/:id/festivity/:subEventId/channel/:channelId",
             element: <VendorChat />,
           },
         ],

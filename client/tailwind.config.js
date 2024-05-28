@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -20,12 +20,11 @@ module.exports = {
       fontFamily: {
         playfair: ["Playfair Display", "serif"],
         inter: ["Inter", "sans-serif"],
-        railway : ["Railway", "sans-serif"],
-        lemon : ["Lemon", "sans-serif"],
-        roboto : ["Roboto", "sans-serif"],
+        railway: ["Railway", "sans-serif"],
+        lemon: ["Lemon", "sans-serif"],
+        roboto: ["Roboto", "sans-serif"],
       },
       colors: {
-
         dark: "#101356",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

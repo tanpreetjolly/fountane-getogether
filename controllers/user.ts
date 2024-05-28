@@ -24,7 +24,7 @@ const getMe = async (req: Request, res: Response) => {
     const socketToken = user.generateSocketToken()
 
     const events = await Event.find({ "userList.user": user._id })
-        .select("name startDate endDate host")
+        .select("name startDate endDate host eventType budget")
         .populate({
             path: "host",
             select: "name profileImage",

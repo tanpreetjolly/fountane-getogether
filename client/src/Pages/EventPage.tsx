@@ -5,7 +5,7 @@ import { FaCreditCard, FaPeopleCarry } from "react-icons/fa"
 import SubEventCard from "./SubEventCard"
 import Loader from "../components/Loader"
 import { useEventContext } from "../context/EventContext"
-import { SubEvent } from "../definitions"
+import { SubEventType } from "../definitions"
 
 const EventPage = () => {
   const navigate = useNavigate()
@@ -27,7 +27,7 @@ const EventPage = () => {
       <div className="flex justify-around gap-2">
         <button
           onClick={() => {
-            navigate("manage-guests")
+            navigate("guests")
           }}
           className="flex font-inter items-center  justify-around bg-indigo-500  text-white  rounded-lg w-1/2 px-4 py-6 gap-4"
         >
@@ -39,7 +39,7 @@ const EventPage = () => {
         </button>
         <button
           onClick={() => {
-            navigate("manage-vendors")
+            navigate("vendors")
           }}
           className="flex font-inter items-center  justify-around bg-slate-800  text-white  rounded-lg w-1/2 px-4 py-6 gap-4"
         >
@@ -52,27 +52,27 @@ const EventPage = () => {
       </div>
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[52.5dvh] overflow-y-auto">
-          {event.subEvents.map((subEvent: SubEvent) => (
+          {event.subEvents.map((subEvent: SubEventType) => (
             <SubEventCard
               key={subEvent._id}
               subEvent={subEvent}
-              url={`festivities/${subEvent._id}`}
+              url={`festivity/${subEvent._id}`}
             />
           ))}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 items-center">
-      <Button
-        text="Add Festivity"
-        icon={<BsFillCalendarEventFill />}
-        onClick={() => navigate("create-festivity")}
-      />
-      <Button
-        text="Payments"
-        icon={<FaCreditCard />}
-        onClick={() => navigate("payments-budget")}
-      />
+        <Button
+          text="Add Festivity"
+          icon={<BsFillCalendarEventFill />}
+          onClick={() => navigate("festivity")}
+        />
+        <Button
+          text="Payments"
+          icon={<FaCreditCard />}
+          onClick={() => navigate("payments")}
+        />
       </div>
     </div>
   )
