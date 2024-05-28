@@ -1,5 +1,6 @@
 import { Schema, Types, Model } from "mongoose"
 
+
 export interface OTP {
     value: string
     expires: Date
@@ -117,8 +118,8 @@ export interface IChannel extends Document {
     _id: Schema.Types.ObjectId
     name: string
     allowedUsers: Types.Array<Schema.Types.ObjectId>
-    allowedRoles: [string]
-    type: string
+    allowedRoles: Types.Array<ROLES>
+    type: CHANNEL_TYPES
     createdAt: Date
     updatedAt: Date
 }

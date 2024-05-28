@@ -6,10 +6,11 @@ import {
     getEvent,
     updateEvent,
     deleteEvent,
+    createSubEventChannel,
 } from "../controllers/event"
 
 import Protect from "../middleware/permissionRequired"
-import Permissions from "../permissions"
+// import { Permissions } from "../values"
 
 const router = Router()
 
@@ -19,6 +20,9 @@ router.route("/").post(createEvent)
 
 router.route("/:eventId").get(getEvent).delete(deleteEvent).patch(updateEvent)
 router.route("/:eventId/subEvent").post(createSubEvent)
+router
+    .route("/:eventId/subEvent/:subEventId/channel")
+    .post(createSubEventChannel)
 
 // router.use(Protect(Permissions.HOST))
 

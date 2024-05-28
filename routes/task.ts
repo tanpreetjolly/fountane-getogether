@@ -7,19 +7,19 @@ import {
     deleteTasks,
 } from "../controllers/task"
 import Protect from "../middleware/permissionRequired"
-import Permissions from "../permissions"
+import { PERMISSIONS } from "../values"
 
 const router = Router()
 
-router.use(Protect(Permissions.VIEW_TASK))
+router.use(Protect(PERMISSIONS.VIEW_TASK))
 
 router
     .route("/")
     .get(getTasks)
-    .post(Protect(Permissions.EDIT_TASK), createTasks)
+    .post(Protect(PERMISSIONS.EDIT_TASK), createTasks)
 router.route("/:taskId").get(getTask)
 
-router.use(Protect(Permissions.EDIT_TASK))
+router.use(Protect(PERMISSIONS.EDIT_TASK))
 router.route("/:taskId").put(updateTasks).delete(deleteTasks)
 
 export default router

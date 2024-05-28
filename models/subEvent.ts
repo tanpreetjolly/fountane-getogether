@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose"
 import { ISubEvent } from "../types/models"
-import Roles from "../roles"
 import Channel from "./channel"
+import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
 
 const SubEventSchema = new Schema<ISubEvent>(
     {
@@ -34,20 +34,20 @@ SubEventSchema.pre("save", function (next) {
         {
             name: "Announcement",
             allowedUsers: [],
-            allowedRoles: Array.from(Object.values(Roles)),
-            type: "main",
+            allowedRoles: [ROLES.HOST, ROLES.VENDOR, ROLES.GUEST],
+            type: CHANNEL_TYPES.MAIN,
         },
         {
             name: "Vendors Only",
             allowedUsers: [],
-            allowedRoles: [Roles.VENDOR, Roles.HOST],
-            type: "main",
+            allowedRoles: [ROLES.VENDOR, ROLES.HOST],
+            type: CHANNEL_TYPES.MAIN,
         },
         {
             name: "Guests Only",
             allowedUsers: [],
-            allowedRoles: [Roles.GUEST, Roles.HOST],
-            type: "main",
+            allowedRoles: [ROLES.GUEST, ROLES.HOST],
+            type: CHANNEL_TYPES.MAIN,
         },
     ]
     if (this.isNew) {

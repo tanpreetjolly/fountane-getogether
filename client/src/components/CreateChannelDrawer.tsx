@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import TextField from "@mui/material/TextField"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -10,71 +10,127 @@ import Button from "../components/Button"
 import { FaPlus } from "react-icons/fa"
 import { IoIosCloseCircle } from "react-icons/io"
 import { indigo } from "@mui/material/colors" // Import the indigo color
-
-// Sample user data
-const users = [
-  {
-    name: "John Doe",
-    email: "john@example.com",
-    role: "vendor",
-    vendorType: "Food",
-  },
-  { name: "Jane Smith", email: "jane@example.com", role: "guest" },
-  {
-    name: "Bob Johnson",
-    email: "bob@example.com",
-    role: "vendor",
-    vendorType: "Entertainment",
-  },
-  { name: "Alice Williams", email: "alice@example.com", role: "guest" },
-  {
-    name: "Tom Davis",
-    email: "tom@example.com",
-    role: "vendor",
-    vendorType: "Decor",
-  },
-]
+import { useEventContext } from "@/context/EventContext"
+import { Loader } from "lucide-react"
+import { createSubEventChannel } from "@/api"
+import toast from "react-hot-toast"
+import { Navigate, useNavigate, useParams } from "react-router-dom"
 
 type Props = {
   toggleDrawer: (arg: boolean) => (arg2: any) => void
 }
 
-const CreateChannelDrawer = (props: Props) => {
+const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
+  const [channelName, setChannelName] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [filterRole, setFilterRole] = useState<"all" | "vendor" | "guest">(
     "all",
   )
 
+  const navigate = useNavigate()
+  const { eventId, subEventId } = useParams()
+
+  const { event, loadingEvent, updateEvent } = useEventContext()
+
+  useEffect(() => {
+    const host = event?.userList.find((user) => user.role === "host")
+    if (host) {
+      setSelectedUsers([host._id])
+    }
+  }, [event])
+
+  if (!eventId) return <Navigate to="/events" />
+  if (!subEventId) return <Navigate to={`/events/${eventId}`} />
+  if (loadingEvent) return <Loader />
+  if (!event) return <div>Event Not Found</div>
+
+  const { userList } = event
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value)
   }
 
-  const handleUserSelect = (email: string) => {
-    if (selectedUsers.includes(email)) {
-      setSelectedUsers(selectedUsers.filter((user) => user !== email))
+  const handleUserSelect = (userId: string) => {
+    //if user is host then return
+    if (userList.find((user) => user.user._id === userId)?.role === "host") {
+      return
+    }
+    if (selectedUsers.includes(userId)) {
+      setSelectedUsers(selectedUsers.filter((user) => user !== userId))
     } else {
-      setSelectedUsers([...selectedUsers, email])
+      setSelectedUsers([...selectedUsers, userId])
     }
   }
 
-  const filteredUsers = users.filter(
+  const handleCreateChannel = () => {
+    console.log("Create Channel")
+    if (channelName === "") {
+      return toast.error("Channel Name is required", { id: "channelName" })
+    }
+    toast.promise(
+      createSubEventChannel(eventId, subEventId, {
+        name: channelName,
+        allowedUsers: selectedUsers,
+      }),
+      {
+        loading: "Creating Festivity",
+        success: (data: { data: { subEventId: string } }) => {
+          updateEvent()
+          navigate(`channel/${data.data.subEventId}`)
+          return "Channel Created"
+        },
+        error: (err) => {
+          console.log(err)
+          return "Failed to create Channel"
+        },
+      },
+    )
+  }
+
+  let filteredUsers = userList.filter(
     (user) =>
-      (filterRole === "all" ||
-        (filterRole === "vendor" && user.role === "vendor") ||
-        (filterRole === "guest" && user.role === "guest")) &&
-      (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())),
+      user.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   )
+  switch (filterRole) {
+    case "vendor":
+      filteredUsers = userList.filter((user) => user.role === "vendor")
+      break
+    case "guest":
+      filteredUsers = userList.filter((user) => user.role === "guest")
+      break
+  }
 
   return (
     <div className="h-[90vh] px-3 py-2 pb-8">
       <button
-        onClick={props.toggleDrawer(false)}
+        onClick={toggleDrawer(false)}
         className="flex w-full justify-end "
       >
         <IoIosCloseCircle className="text-3xl text-red-500" />
       </button>
+      <TextField
+        label="Channel Name"
+        variant="outlined"
+        value={channelName}
+        onChange={(e) => setChannelName(e.target.value)}
+        fullWidth
+        className="!mb-3 !mt-2"
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: indigo[600],
+            },
+            "&:hover fieldset": {
+              borderColor: indigo[800],
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: indigo[900],
+            },
+          },
+        }}
+      />
       <TextField
         label="Search Vendors, Guests"
         variant="outlined"
@@ -131,12 +187,13 @@ const CreateChannelDrawer = (props: Props) => {
       <List className="h-[60vh] overflow-y-auto">
         {filteredUsers.map((user) => (
           <ListItem
-            key={user.email}
+            key={user._id}
             secondaryAction={
               <Checkbox
                 edge="end"
-                checked={selectedUsers.includes(user.email)}
-                onChange={() => handleUserSelect(user.email)}
+                disabled={user.role === "host"}
+                checked={selectedUsers.includes(user._id)}
+                onChange={() => handleUserSelect(user._id)}
                 sx={{
                   color: indigo[600],
                   "&.Mui-checked": {
@@ -147,22 +204,14 @@ const CreateChannelDrawer = (props: Props) => {
             }
           >
             <ListItemAvatar>
-              <Avatar>{user.name.charAt(0)}</Avatar>
+              <Avatar src={user.user.profileImage}>{user.user.name[0]} </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={user.name}
+              primary={user.user.name}
               secondary={
                 <div>
-                  <span>{user.email}</span>
-                  {user.role === "vendor" && (
-                    <span className="capitalize">
-                      {" "}
-                      - {user.role} ({user.vendorType})
-                    </span>
-                  )}
-                  {user.role === "guest" && (
-                    <span className="capitalize"> - {user.role}</span>
-                  )}
+                  <span>{user.user.email}</span>
+                  <span className="capitalize"> - {user.role}</span>
                 </div>
               }
             />
@@ -170,7 +219,11 @@ const CreateChannelDrawer = (props: Props) => {
         ))}
       </List>
 
-      <Button text="Create Channel" onClick={() => {}} icon={<FaPlus />} />
+      <Button
+        text="Create Channel"
+        onClick={handleCreateChannel}
+        icon={<FaPlus />}
+      />
     </div>
   )
 }

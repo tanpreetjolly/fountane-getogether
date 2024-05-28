@@ -1,7 +1,9 @@
 import { Request, Response } from "express"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
-import { Event, SubEvent } from "../models"
+import { Channel, Event, SubEvent } from "../models"
 import { StatusCodes } from "http-status-codes"
+import { Types } from "mongoose"
+import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
 
 export const getEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
@@ -131,5 +133,39 @@ export const deleteEvent = async (req: Request, res: Response) => {
     res.status(200).json({
         success: true,
         msg: "Event Deleted Successfully",
+    })
+}
+
+export const createSubEventChannel = async (req: Request, res: Response) => {
+    const { eventId, subEventId } = req.params
+    const { name, allowedUsers } = req.body
+    if (name === "") throw new BadRequestError("Channel Name is required")
+
+    // make a set of allowedUsers
+    const allowedUsersSet = Array.from(new Set(allowedUsers))
+    //check all allowed users are mongoose object id
+    const isValid = allowedUsersSet.every((id) =>
+        Types.ObjectId.isValid(id as string),
+    )
+    if (!isValid) throw new BadRequestError("Invalid User Ids")
+    const channel = await Channel.create({
+        name,
+        allowedUsers: allowedUsersSet,
+        type: CHANNEL_TYPES.OTHER,
+    })
+
+    const subEvent = await SubEvent.findByIdAndUpdate(subEventId, {
+        $push: { channels: channel._id },
+    })
+
+    if (!subEvent) {
+        // delete channel
+        await Channel.findByIdAndDelete(channel._id)
+        throw new NotFoundError("Sub Event Not Found")
+    }
+    res.status(StatusCodes.CREATED).json({
+        data: { channelId: channel._id },
+        success: true,
+        msg: `Channel ${name} Created`,
     })
 }

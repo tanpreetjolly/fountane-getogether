@@ -18,36 +18,36 @@ export interface ForgotPasswordType {
   password: string
 }
 
-export interface Service {
+export interface ServiceType {
   serviceName: string
   serviceDescription: string
   price: number
 }
 
-export interface VendorProfile {
+export interface VendorProfileType {
   userId: string
-  services: Service[]
+  services: ServiceType[]
 }
 
-export interface Host {
+export interface HostType {
   _id: string
   name: string
   profileImage: string
 }
 
-export interface EventShort {
+export interface EventShortType {
   _id: string
   name: string
   startDate: string
   endDate: string
-  host: Host
+  host: HostType
   eventType: string
   budget: number
   createdAt: string
   updatedAt: string
 }
 
-export interface OtherUser {
+export interface OtherUserType {
   _id: string
   name: string
   email: string
@@ -55,35 +55,35 @@ export interface OtherUser {
   phoneNo: string
 }
 
-export interface Channel {
+export interface ChannelType {
   _id: string
   name: string
-  allowedUsers: OtherUser[]
+  allowedUsers: OtherUserType[]
 }
 
-export interface SubEvent {
+export interface SubEventType {
   _id: string
   name: string
   startDate: string
   endDate: string
   venue: string
-  channels: Channel[]
+  channels: ChannelType[]
   updatedAt: string
   createdAt: string
 }
 
-export interface UserList {
+export interface UserListType {
   _id: string
-  user: OtherUser[]
+  user: OtherUserType
   role: string
   permission: [string]
 }
 
-export interface EventFull extends EventShort {
+export interface EventFull extends EventShortType {
   budget: number
   venue: string
-  subEvents: SubEvent[]
-  userList: UserList[]
+  subEvents: SubEventType[]
+  userList: UserListType[]
 }
 
 export interface UserType {
@@ -92,10 +92,10 @@ export interface UserType {
   email: string
   profileImage?: string
   isVendor: boolean
-  vendorProfile?: VendorProfile
+  vendorProfile?: VendorProfileType
   phoneNo: string | undefined
   socketToken: string
-  events: EventShort[]
+  events: EventShortType[]
   createdAt: string
   updatedAt: string
 }

@@ -5,7 +5,7 @@ import { FaCreditCard, FaPeopleCarry } from "react-icons/fa"
 import SubEventCard from "./SubEventCard"
 import Loader from "../components/Loader"
 import { useEventContext } from "../context/EventContext"
-import { SubEvent } from "../definitions"
+import { SubEventType } from "../definitions"
 
 const EventPage = () => {
   const navigate = useNavigate()
@@ -52,7 +52,7 @@ const EventPage = () => {
       </div>
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[52.5dvh] overflow-y-auto">
-          {event.subEvents.map((subEvent: SubEvent) => (
+          {event.subEvents.map((subEvent: SubEventType) => (
             <SubEventCard
               key={subEvent._id}
               subEvent={subEvent}

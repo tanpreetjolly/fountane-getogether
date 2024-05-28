@@ -5,7 +5,7 @@ import {
   SignUpType,
   UserType,
   ForgotPasswordType,
-  EventShort,
+  EventShortType,
 } from "../definitions"
 
 /*
@@ -137,7 +137,7 @@ export const createEvent = (eventData: {
   budget: string
   eventType: string
 }) => API.post("/event", eventData)
-export const updateEvent = (eventData: EventShort) =>
+export const updateEvent = (eventData: EventShortType) =>
   API.patch(`/event/${eventData._id}`, eventData)
 
 export const deleteEvent = (eventId: string) => API.delete(`/event/${eventId}`)
@@ -151,3 +151,9 @@ export const createSubEvent = (
     venue: string
   },
 ) => API.post(`/event/${eventId}/subEvent`, subEventData)
+
+export const createSubEventChannel = (
+  eventId: string,
+  subEventId: string,
+  channelData: { name: string; allowedUsers: string[] },
+) => API.post(`/event/${eventId}/subEvent/${subEventId}/channel`, channelData)

@@ -1,10 +1,9 @@
 import { Schema, model, Types } from "mongoose"
 import { IEvent, IUserList } from "../types/models"
+import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
 import jwt from "jsonwebtoken"
 import { NotFoundError } from "../errors"
 import { EventPayload } from "../types/express"
-import Permissions from "../permissions"
-import Roles from "../roles"
 
 const UserList = new Schema<IUserList>(
     {
@@ -15,13 +14,13 @@ const UserList = new Schema<IUserList>(
         },
         role: {
             type: String,
-            enum: Array.from(Object.values(Roles)),
+            enum: Array.from(Object.values(ROLES)),
             required: [true, "Please Provide Role."],
         },
         permission: [
             {
                 type: String,
-                enum: Array.from(Object.values(Permissions)),
+                enum: Array.from(Object.values(PERMISSIONS)),
             },
         ],
     },
@@ -76,8 +75,8 @@ EventSchema.pre("save", function (next) {
 
         this.userList.push({
             user: this.host,
-            role: Roles.HOST,
-            permission: Array.from(Object.values(Permissions)),
+            role: ROLES.HOST,
+            permission: Array.from(Object.values(PERMISSIONS)),
         })
     }
     next()

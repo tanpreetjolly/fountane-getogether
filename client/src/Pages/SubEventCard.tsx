@@ -1,10 +1,10 @@
 import { To, useNavigate } from "react-router-dom"
-import { SubEvent } from "../definitions"
+import { SubEventType } from "../definitions"
 import { format } from "date-fns"
 import { CalendarDays, MapPin, MoveRight } from "lucide-react"
 import ButtonSecondary from "../components/ButtonSecondary"
 type Props = {
-  subEvent: SubEvent
+  subEvent: SubEventType
   url? : To
 }
 

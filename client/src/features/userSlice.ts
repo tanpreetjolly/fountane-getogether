@@ -2,7 +2,7 @@ import { createSlice, Dispatch } from "@reduxjs/toolkit"
 import { RootState } from "../store"
 import toast from "react-hot-toast"
 import {
-  EventShort,
+  EventShortType,
   ForgotPasswordType,
   LoginType,
   SignUpType,
@@ -245,7 +245,7 @@ export const updateUser = (user: UserType) => async (dispatch: Dispatch) => {
   dispatch(userSlice.actions.SET_USER(user))
 }
 export const createEventSlice =
-  (event: EventShort) => async (dispatch: Dispatch) => {
+  (event: EventShortType) => async (dispatch: Dispatch) => {
     dispatch(userSlice.actions.CREATE_EVENT(event))
   }
 
@@ -255,7 +255,7 @@ export const deleteEventSlice =
   }
 
 export const updateEventSlice =
-  (event: EventShort) => async (dispatch: Dispatch) => {
+  (event: EventShortType) => async (dispatch: Dispatch) => {
     dispatch(userSlice.actions.UPDATE_EVENT(event))
   }
 export const selectUserState = (state: RootState) => state.user

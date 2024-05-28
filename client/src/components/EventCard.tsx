@@ -1,7 +1,7 @@
 import { format } from "date-fns"
 import { useNavigate } from "react-router-dom"
 import { FC, useState } from "react"
-import { EventShort } from "../definitions"
+import { EventShortType } from "../definitions"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Box from "@mui/material/Box"
 import { ArrowRightToLine, SquarePen, Trash, X } from "lucide-react"
@@ -18,13 +18,13 @@ import { deleteEventSlice, updateEventSlice } from "@/features/userSlice"
 import { DatePickerWithRange } from "./ui/DatePickerWithRange"
 
 interface EventCardProps {
-  event: EventShort
+  event: EventShortType
 }
 
 const EventCard: FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [editedEvent, setEditedEvent] = useState<EventShort>(event)
+  const [editedEvent, setEditedEvent] = useState<EventShortType>(event)
 
   const [updatingEvent, setUpdatingEvent] = useState(false)
 
@@ -47,7 +47,7 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
 
     setUpdatingEvent(true)
     updateEvent(editedEvent)
-      .then((res: { data: EventShort }) => {
+      .then((res: { data: EventShortType }) => {
         dispatch(updateEventSlice(res.data))
       })
       .catch(() => console.log("Error deleting event"))

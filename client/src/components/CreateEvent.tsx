@@ -9,7 +9,7 @@ import { Input } from "./ui/input"
 import Button from "./Button"
 import toast from "react-hot-toast"
 import { createEventSlice } from "../features/userSlice"
-import { EventShort } from "@/definitions"
+import { EventShortType } from "@/definitions"
 import { useAppDispatch } from "@/hooks"
 
 export interface InputProps
@@ -45,7 +45,7 @@ const CreateEvent = () => {
       budget: budget,
       eventType: eventType,
     })
-      .then((res: { data: EventShort }) => {
+      .then((res: { data: EventShortType }) => {
         console.log(res.data)
         navigate(`/events/${res.data._id}`)
         toast.success("Event Created", { id: "loading" })
