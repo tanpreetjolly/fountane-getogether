@@ -48,6 +48,7 @@ import EditVendorServices from "./Pages/EditVendorServices"
 import BottomNav from "./components/BottomNavigation"
 import Invites from "./Pages/Invites"
 import TodoList from "./Pages/TodoList"
+import MyChats from "./components/MyChats"
 
 const Layout = () => {
   const location = useLocation()
@@ -56,16 +57,17 @@ const Layout = () => {
     "/sign-up",
     "/verify",
     "/forgot-password",
+    "/"
   ]
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname)
   return (
     <div>
       {!shouldHideNavbar && <Navbar />}
       <ScrollRestoration />
-      <div className={`min-h-screen ${!shouldHideNavbar && "pt-14 pb-20"}`}>
+      <div className={`min-h-screen ${!shouldHideNavbar && "pt-16 pb-20"}`}>
         <Outlet />
       </div>
-      <BottomNav />
+      {!shouldHideNavbar && <BottomNav />}
     </div>
   )
 }
@@ -118,6 +120,14 @@ const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
           { path: "profile", element: <ProfilePage /> },
+          {
+            path: "my-chats",
+            element: <MyChats />,
+          },
+          {
+            path: "my-chats/:id",
+            element: <ChannelChat />,
+          },
           { path: "events", element: <AllEvent /> },
           { path: "events/create", element: <CreateEvent /> },
           {
