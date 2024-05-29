@@ -346,3 +346,58 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
         msg: "Guest Invited Successfully",
     })
 }
+
+export const acceptRejectInvite = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { status, userListId, vendorListSubEventId } = req.body
+
+    console.log(eventId, status, userListId, vendorListSubEventId)
+
+    if (!userListId && !vendorListSubEventId)
+        throw new BadRequestError(
+            "At least one of userListId or vendorListSubEventId is required",
+        )
+
+    if (!status) throw new BadRequestError("Status is required")
+
+    const event = await Event.findById(eventId)
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    if (userListId) {
+        const userIndex = event.userList.findIndex(
+            (user) => user._id.toString() === userListId,
+        )
+        if (userIndex === -1)
+            throw new NotFoundError("User Is Not Part Of This Event")
+        event.userList[userIndex].status = status
+        await event.save()
+    } else if (vendorListSubEventId) {
+        const subEventId = event.vendorList
+            .map((vendor) => {
+                return vendor.subEvents.map((subEvent) => subEvent._id)
+            })
+            .flat()
+            .find((subEventId) => {
+                return subEventId.toString() === vendorListSubEventId
+            })
+        if (subEventId === undefined)
+            throw new NotFoundError("Vendor Is Not Part Of This Event")
+        const vendorIndex = event.vendorList.findIndex((vendor) =>
+            vendor.subEvents.some((subEvent) => {
+                if (subEvent._id.toString() === vendorListSubEventId) {
+                    subEvent.status = status
+                    return true
+                }
+                return false
+            }),
+        )
+        if (vendorIndex === -1)
+            throw new NotFoundError("Vendor Is Not Part Of This Event")
+        await event.save()
+    }
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Status Updated Successfully",
+    })
+}

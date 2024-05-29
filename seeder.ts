@@ -214,7 +214,7 @@ async function main() {
                     subEvents: assignRandomSubEvents(subEventToCreate).map(
                         (sId) => ({
                             subEvent: sId,
-                            status: ["hired", "invited", "rejected"][
+                            status: ["accepted", "rejected", "pending"][
                                 Math.floor(Math.random() * 3)
                             ],
                             servicesOffering: sampleService.slice(
@@ -225,11 +225,10 @@ async function main() {
                                     Math.random() * sampleService.length,
                                 ),
                             ),
-                            paymentStatus: {
-                                amount: Math.floor(Math.random() * 1000),
-                                status:
-                                    Math.random() > 0.5 ? "paid" : "pending",
-                            },
+                            amount: Math.floor(Math.random() * 1000),
+                            paymentStatus: ["pending", "paid", "failed"][
+                                Math.floor(Math.random() * 3)
+                            ],
                         }),
                     ),
                 })),

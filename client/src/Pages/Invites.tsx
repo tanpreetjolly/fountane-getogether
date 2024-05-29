@@ -15,53 +15,79 @@ import {
   MapPinIcon,
   UserIcon,
 } from "lucide-react"
+import { InvitesType, NotificationsType } from "@/definitions"
+import { useAppDispatch, useAppSelector } from "@/hooks"
+import { format } from "date-fns"
+import { acceptRejectNotification } from "@/features/userSlice"
 
-const initialInvites = [
-  {
-    id: "1",
-    festivityName: "Diwali Celebration",
-    eventName: "Diwali Party",
-    timeSpan: "October 24, 2023 - October 25, 2023",
-    venue: "Grand Ballroom, Hotel Marriott",
-    host: "John Doe",
-    status: "pending",
-  },
-  {
-    id: "2",
-    festivityName: "Christmas Eve",
-    eventName: "Christmas Party",
-    timeSpan: "December 24, 2023",
-    venue: "Community Center",
-    host: "Jane Smith",
-    status: "pending",
-  },
-  {
-    id: "3",
-    festivityName: "New Year's Eve",
-    eventName: "Countdown Party",
-    timeSpan: "December 31, 2023 - January 1, 2024",
-    venue: "City Park",
-    host: "Bob Johnson",
-    status: "pending",
-  },
-]
+const formatDate = (date: string) => {
+  return format(new Date(date), "dd MMMM yyyy")
+}
+
+function convertNotificationsToInvites(
+  notifications: NotificationsType[],
+): InvitesType[] {
+  const invites: InvitesType[] = []
+
+  notifications.forEach((notification) => {
+    notification.userList.forEach((userItem) => {
+      userItem.subEvents.forEach((subEvent) => {
+        const invite: InvitesType = {
+          id: userItem._id,
+          eventId: notification._id,
+          subEventName: subEvent.name,
+          eventName: notification.name,
+          startDate: notification.startDate,
+          endDate: notification.endDate,
+          venue: subEvent.venue,
+          host: notification.host.name,
+          status: userItem.status,
+          userListId: userItem._id,
+        }
+        invites.push(invite)
+      })
+    })
+
+    notification.vendorList.forEach((vendorItem) => {
+      vendorItem.subEvents.forEach((subEvent) => {
+        const invite: InvitesType = {
+          id: vendorItem._id,
+          eventId: notification._id,
+          subEventName: subEvent.subEvent.name,
+          eventName: notification.name,
+          startDate: notification.startDate,
+          endDate: notification.endDate,
+          venue: subEvent.subEvent.venue,
+          host: notification.host.name,
+          status: subEvent.status,
+          vendorListSubEventId: subEvent._id,
+        }
+        invites.push(invite)
+      })
+    })
+  })
+
+  return invites
+}
 
 const Invites = () => {
-  const [invites, setInvites] = useState(initialInvites)
+  // const [invites, setInvites] = useState(initialInvites)
 
-  const handleAccept = (id: string) => {
-    setInvites((prevInvites) =>
-      prevInvites.map((invite) =>
-        invite.id === id ? { ...invite, status: "accepted" } : invite,
-      ),
-    )
-  }
+  const dispatch = useAppDispatch()
 
-  const handleReject = (id: string) => {
-    setInvites((prevInvites) =>
-      prevInvites.map((invite) =>
-        invite.id === id ? { ...invite, status: "rejected" } : invite,
-      ),
+  const { user } = useAppSelector((state) => state.user)
+  const notifications = user?.notifications || []
+
+  const invites = convertNotificationsToInvites(notifications)
+  console.log(invites)
+
+  const handleAccept = (invite: InvitesType, status: string) => {
+    dispatch(
+      acceptRejectNotification(invite.eventId, {
+        status: status,
+        userListId: invite.userListId,
+        vendorListSubEventId: invite.vendorListSubEventId,
+      }),
     )
   }
 
@@ -70,19 +96,22 @@ const Invites = () => {
       <div className="text-2xl px-5 my-2 font-semibold text-zinc-800">
         Your Invites
       </div>
-      <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+      <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {invites.length === 0 && <span>You don't have any invites yet</span>}
         {invites.map((invite) => (
           <Card key={invite.id} className="rounded-lg">
-            <CardHeader className="p-4">
-              <CardTitle>{invite.festivityName}</CardTitle>
+            <CardHeader className="p-4 relative">
+              <CardTitle>{invite.subEventName}</CardTitle>
               <CardDescription>{invite.eventName}</CardDescription>
+              <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
+                {invite.status}
+              </div>
             </CardHeader>
             <CardContent className=" p-4 pt-0">
               <div className="space-y-1 text-sm text-zinc-700">
                 <div className="flex items-center">
                   <CalendarIcon className="mr-2" size={16} />
-                  <span>{invite.timeSpan}</span>
+                  {formatDate(invite.startDate)} - {formatDate(invite.endDate)}
                 </div>
                 <div className="flex items-center">
                   <MapPinIcon className="mr-2" size={16} />
@@ -95,25 +124,21 @@ const Invites = () => {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end p-4 pt-0">
-              {invite.status === "pending" && (
-                <>
-                  <Button
-                    variant="outline"
-                    className="mr-2"
-                    onClick={() => handleAccept(invite.id)}
-                  >
-                    <CircleCheck className="inline mr-1" size={16} />
-                    Accept
-                  </Button>
-                  <Button
-                    className="bg-indigo-500"
-                    onClick={() => handleReject(invite.id)}
-                  >
-                    <CircleX className="inline mr-1" size={16} />
-                    Reject
-                  </Button>
-                </>
-              )}
+              <Button
+                variant="outline"
+                className="mr-2"
+                onClick={() => handleAccept(invite, "accepted")}
+              >
+                <CircleCheck className="inline mr-1" size={16} />
+                Accept
+              </Button>
+              <Button
+                className="bg-indigo-500"
+                onClick={() => handleAccept(invite, "rejected")}
+              >
+                <CircleX className="inline mr-1" size={16} />
+                Reject
+              </Button>
               {invite.status === "accepted" && (
                 <div className="text-green-500 font-semibold">Accepted</div>
               )}

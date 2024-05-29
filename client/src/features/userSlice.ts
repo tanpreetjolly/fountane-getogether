@@ -17,6 +17,7 @@ import {
   verifyOtp,
   forgotPasswordSendOtpApi,
   forgotPasswordVerifyOtpApi,
+  acceptRejectInvite,
 } from "../api/index.ts"
 
 interface CounterState {
@@ -221,25 +222,27 @@ export const verification =
       })
   }
 
-export const loadUser = () => async (dispatch: Dispatch) => {
-  const isLoggedIn = document.cookie.split(";").some((cookie) => {
-    const [key, _value] = cookie.split("=")
-    if (key.trim() === "userId") return true
-    return false
-  })
-  if (!isLoggedIn) return dispatch(userSlice.actions.SET_LOADING_FALSE())
-
-  dispatch(userSlice.actions.SET_LOADING())
-  signInToken()
-    .then((res: any) => {
-      const user = res.data
-
-      toast.success("Logged in", { id: "loadUser" })
-      dispatch(userSlice.actions.SET_USER(user))
+export const loadUser =
+  (showToast: boolean = true) =>
+  async (dispatch: Dispatch) => {
+    const isLoggedIn = document.cookie.split(";").some((cookie) => {
+      const [key, _value] = cookie.split("=")
+      if (key.trim() === "userId") return true
+      return false
     })
-    .catch((error) => console.log(error))
-    .finally(() => dispatch(userSlice.actions.SET_LOADING_FALSE()))
-}
+    if (!isLoggedIn) return dispatch(userSlice.actions.SET_LOADING_FALSE())
+
+    dispatch(userSlice.actions.SET_LOADING())
+    signInToken()
+      .then((res: any) => {
+        const user = res.data
+
+        if (showToast) toast.success("Logged in", { id: "loadUser" })
+        dispatch(userSlice.actions.SET_USER(user))
+      })
+      .catch((error) => console.log(error))
+      .finally(() => dispatch(userSlice.actions.SET_LOADING_FALSE()))
+  }
 
 export const updateUser = (user: UserType) => async (dispatch: Dispatch) => {
   dispatch(userSlice.actions.SET_USER(user))
@@ -257,6 +260,36 @@ export const deleteEventSlice =
 export const updateEventSlice =
   (event: EventShortType) => async (dispatch: Dispatch) => {
     dispatch(userSlice.actions.UPDATE_EVENT(event))
+  }
+
+export const acceptRejectNotification =
+  (
+    eventId: string,
+    eventUpdate: {
+      status: string
+      userListId?: string
+      vendorListSubEventId?: string
+    },
+  ) =>
+  async (dispatch: any) => {
+    toast.promise(
+      acceptRejectInvite(eventId, eventUpdate),
+      {
+        loading: "Processing",
+        success: () => {
+          dispatch(loadUser(false))
+          return "Success"
+        },
+        error: (err) => {
+          console.log(err)
+          toast.dismiss(err.response.data.msg)
+          return err.response.data.msg
+        },
+      },
+      {
+        id: "acceptRejectNotification",
+      },
+    )
   }
 export const selectUserState = (state: RootState) => state.user
 

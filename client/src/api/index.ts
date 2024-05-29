@@ -172,3 +172,12 @@ export const inviteNewGuest = (
     subEventsIds: string[]
   },
 ) => API.post(`/event/${eventId}/guest/invite/new`, guestData)
+
+export const acceptRejectInvite = (
+  eventId: string,
+  eventUpdate: {
+    status: string
+    userListId?: string
+    vendorListSubEventId?: string
+  },
+) => API.post(`/event/${eventId}/guest/invite/accept-reject`, eventUpdate)

@@ -111,7 +111,7 @@ const router = createBrowserRouter([
       { path: "verify", element: <VerifyOTP /> },
       { path: "about", element: <About /> },
       {
-        path: "invite/:inviteId",
+        path: "invites",
         element: <Invites />,
       },
       {
@@ -151,7 +151,6 @@ const router = createBrowserRouter([
                   { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },
-              
             ],
           },
         ],
