@@ -6,6 +6,7 @@ import SubEventCard from "./SubEventCard"
 import Loader from "../components/Loader"
 import { useEventContext } from "../context/EventContext"
 import { SubEventType } from "../definitions"
+import { ListTodo } from "lucide-react"
 
 const EventPage = () => {
   const navigate = useNavigate()
@@ -16,13 +17,19 @@ const EventPage = () => {
   if (!event) return <div>Event not found</div>
 
   return (
-    <div className="px-4 flex flex-col gap-2 h-[87.5vh] overflow-hidden">
-      <div className="pl-1">
-        <div className="text-2xl font-bold text-dark">{event.name}</div>
-        <div className="text-lg text-gray-700 mb-1">
-          Hosted by{" "}
-          <span className="font-semibold text-dark">{event.host.name}</span>
+    <div className="px-4 flex flex-col gap-2 h-[85.5dvh] overflow-hidden">
+      <div className="pl-1 flex justify-between">
+        <div>
+          <div className="text-2xl font-bold text-dark">{event.name}</div>
+          <div className="text-lg text-gray-700 mb-1">
+            Hosted by{" "}
+            <span className="font-semibold text-dark">{event.host.name}</span>
+          </div>
         </div>
+        <button onClick={()=>navigate("todo")} className="flex items-center border border-zinc-800 h-fit my-auto px-3 py-1 rounded-lg">
+        <ListTodo className="mr-1" size={20}/>
+          Todo
+        </button>
       </div>
       <div className="flex justify-around gap-2">
         <button
@@ -51,7 +58,7 @@ const EventPage = () => {
         </button>
       </div>
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[52.5dvh] overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[45.5dvh] overflow-y-auto">
           {event.subEvents.map((subEvent: SubEventType) => (
             <SubEventCard
               key={subEvent._id}
