@@ -4,7 +4,6 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
-import Typography from "@mui/material/Typography"
 import Button from "@/components/Button"
 import { FaPlusCircle } from "react-icons/fa"
 
