@@ -4,18 +4,11 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
-import { ListItemText } from "@mui/material"
+import { ListItemText, TextField } from "@mui/material"
 import Checkbox from "@mui/material/Checkbox"
-import TextField from "@mui/material/TextField"
 import CardContent from "@mui/material/CardContent"
 import Button from "../components/Button"
 import { FaPlusCircle } from "react-icons/fa"
-import Dialog from "@mui/material/Dialog"
-import DialogActions from "@mui/material/DialogActions"
-import DialogContent from "@mui/material/DialogContent"
-import DialogTitle from "@mui/material/DialogTitle"
-import IconButton from "@mui/material/IconButton"
-import CloseIcon from "@mui/icons-material/Close"
 import ButtonSecondary from "@/components/ButtonSecondary"
 import { RsvpOutlined } from "@mui/icons-material"
 import { useEventContext } from "@/context/EventContext"
@@ -23,28 +16,26 @@ import Loader from "@/components/Loader"
 import { inviteGuest, inviteNewGuest, search } from "@/api"
 import { OtherUserType, SubEventType } from "@/definitions"
 import toast from "react-hot-toast"
+import { Input } from "@/components/ui/input"
 
 const ManageGuests = () => {
   const [selectedGuest, setSelectedGuest] = useState<OtherUserType | null>(null)
-  // const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-  // const [searchQuery, setSearchQuery] = useState<string>("")
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false)
+  const [isInviteDrawerOpen, setIsInviteDrawerOpen] = useState<boolean>(false)
   const [searchResult, setSearchResult] = useState<OtherUserType[] | null>(null)
   const [newGuest, setNewGuest] = useState<Partial<OtherUserType>>({
     name: "",
     email: "",
     phoneNo: "",
   })
+  const [selectedSubEvents, setSelectedSubEvents] = useState<string[]>([])
 
   const { event, loadingEvent, updateEvent } = useEventContext()
 
   const closeDrawer = () => {
     setSelectedGuest(null)
-  }
-
-  const handleCloseInviteModal = () => {
-    setIsInviteModalOpen(false)
+    setIsInviteDrawerOpen(false)
     setNewGuest({ name: "", email: "", phoneNo: "" })
+    setSelectedSubEvents([])
   }
 
   const handleNewGuestChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,24 +43,26 @@ const ManageGuests = () => {
     setNewGuest((prevGuest) => ({ ...prevGuest, [name]: value }))
   }
 
-  const handleInviteNewGuest = () => {
-    // Here you would normally handle the submission logic, such as updating the guest list and sending the invite
-    console.log("Inviting new guest:", newGuest)
+  const handleSubEventChange = (subEventId: string) => {
+    setSelectedSubEvents((prevSelectedSubEvents) =>
+      prevSelectedSubEvents.includes(subEventId)
+        ? prevSelectedSubEvents.filter((id) => id !== subEventId)
+        : [...prevSelectedSubEvents, subEventId]
+    )
+  }
 
+  const handleInviteNewGuest = () => {
     if (!newGuest.name || !newGuest.email || !newGuest.phoneNo) {
       return toast.error("Please fill in all the fields.")
     }
     if (event === null) return
-
-    toast.error("SubEventsIds is yet to be added")
 
     toast.promise(
       inviteNewGuest(event._id, {
         name: newGuest.name,
         email: newGuest.email,
         phoneNo: newGuest.phoneNo,
-        //please add this
-        subEventsIds: [],
+        subEventsIds: selectedSubEvents,
       }),
       {
         loading: "Sending Invite...",
@@ -84,7 +77,7 @@ const ManageGuests = () => {
       },
     )
 
-    handleCloseInviteModal()
+    closeDrawer()
   }
 
   const guestList = event?.userList || []
@@ -139,7 +132,7 @@ const ManageGuests = () => {
         </span>
         <Button
           text="Invite a Guest"
-          onClick={() => setIsInviteModalOpen(true)}
+          onClick={() => setIsInviteDrawerOpen(true)}
           icon={<FaPlusCircle />}
         />
       </div>
@@ -158,63 +151,66 @@ const ManageGuests = () => {
           />
         </SwipeableDrawer>
       )}
-      <Dialog open={isInviteModalOpen} onClose={handleCloseInviteModal}>
-        <DialogTitle>
-          Invite a New Guest
-          <IconButton
-            aria-label="close"
-            onClick={handleCloseInviteModal}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          <TextField
-            margin="dense"
-            label="Name"
+
+      <SwipeableDrawer
+        anchor="bottom"
+        open={isInviteDrawerOpen}
+        onClose={closeDrawer}
+        onOpen={() => setIsInviteDrawerOpen(true)}
+      >
+        <Box sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Invite a New Guest
+          </Typography>
+          <Input
+            type="text"
+            placeholder="Name"
             name="name"
-            fullWidth
-            variant="outlined"
             value={newGuest.name}
             onChange={handleNewGuestChange}
+            className="mb-2"
           />
-          <TextField
-            margin="dense"
-            label="Email"
+          <Input
+            type="email"
+            placeholder="Email"
             name="email"
-            fullWidth
-            variant="outlined"
             value={newGuest.email}
             onChange={handleNewGuestChange}
+            className="mb-2"
           />
-          <TextField
-            margin="dense"
-            label="Phone"
-            name="phone"
-            fullWidth
-            variant="outlined"
+          <Input
+            type="tel"
+            placeholder="Phone"
+            name="phoneNo"
             value={newGuest.phoneNo}
             onChange={handleNewGuestChange}
+            className="mb-2"
           />
-        </DialogContent>
-        <DialogActions>
-          <Button text="Cancel" onClick={handleCloseInviteModal} />
+          <Typography variant="h6" gutterBottom>
+            Select Festivities
+          </Typography>
+          <List>
+            {subEvents.map((festivity: SubEventType) => (
+              <ListItem key={festivity._id}>
+                <ListItemText primary={festivity.name} />
+                <Checkbox
+                  checked={selectedSubEvents.includes(festivity._id)}
+                  onChange={() => handleSubEventChange(festivity._id)}
+                />
+              </ListItem>
+            ))}
+          </List>
           <Button
             text="Send Invite"
             onClick={handleInviteNewGuest}
             icon={<FaPlusCircle />}
           />
-        </DialogActions>
-      </Dialog>
+        </Box>
+      </SwipeableDrawer>
     </div>
   )
 }
+
 
 const SearchField = ({
   setSearchResult,
