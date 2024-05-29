@@ -61,6 +61,14 @@ const CreateEvent = () => {
   // if(loading) return toast.loading("Creating Event")
   return (
     <div className="px-4 mx-auto flex flex-col h-[85vh] mt-2 gap-4">
+      <div className="">
+        <Button
+          onClick={handleCreateEvent}
+          icon={<FaRegCalendarPlus />}
+          text="Create Event"
+          disabled={loading}
+        />
+      </div>
       <Input
         id="eventName"
         name="eventName"
@@ -99,15 +107,6 @@ const CreateEvent = () => {
         setStartDate={setStartDate}
         setEndDate={setEndDate}
       />
-
-      <div className="mt-auto mb-4">
-        <Button
-          onClick={handleCreateEvent}
-          icon={<FaRegCalendarPlus />}
-          text="Create Event"
-          disabled={loading}
-        />
-      </div>
 
       <style>
         {`

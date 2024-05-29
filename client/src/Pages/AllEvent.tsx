@@ -16,7 +16,7 @@ const AllEvent = () => {
     return <div>Please Login to view this page</div>
 
   return (
-    <div className="px-4 mx-auto flex flex-col justify-between h-[85vh]">
+    <div className="px-4 mx-auto flex flex-col justify-between h-[82.5dvh] ">
       <div className="mt-2">
         <div className="text-2xl pl-1 font-bold text-dark">Upcoming Events</div>
         {user.events.length === 0 ? (
