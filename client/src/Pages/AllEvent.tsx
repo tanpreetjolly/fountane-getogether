@@ -18,7 +18,9 @@ const AllEvent = () => {
   return (
     <div className="px-4 mx-auto flex flex-col justify-between h-[82.5dvh] ">
       <div className="mt-2">
-        <div className="text-2xl pl-1 font-bold text-dark">Upcoming Events</div>
+        <div className="text-2xl pl-1 font-bold text-slate-700">Hello,{" "}{user.name} 👋</div>
+        <div className="text-slate-600 pl-1 pb-1">Here are your upcoming Events</div>
+        
         {user.events.length === 0 ? (
           <div className="text-center italic text-xl px-4  text-gray-500 h-[40vh] flex items-center justify-center">
             No events to show, Create your first event

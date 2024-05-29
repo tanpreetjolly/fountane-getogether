@@ -93,7 +93,7 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             </span>
             <div className="pt-2 text-gray-700 pl-2 mt-2">
               <div className="text-sm">Event Name</div>
-              <div className="text-2xl font-semibold text-gray-700">
+              <div className="text-xl font-semibold text-slate-700">
                 {event.name}
               </div>
             </div>
@@ -111,12 +111,14 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             />
           </div>
         </div>
-        <div className="text-base text-gray-700 mb-2 pl-2 mt-1">
+        <div
+          className={`text-sm mb-2 px-2 ml-2 rounded-full mt-1 w-fit text-white ${user.userId === event.host._id ? "bg-orange-400 " : "bg-blue-400"}`}
+        >
           {user.userId === event.host._id
             ? "Hosted"
             : `Invited by ${event.host.name}`}
         </div>
-        <div className="pl-1.5 mt-2">
+        <div className="pl-1.5 mt-2 ml-auto mr-3">
           <ButtonSecondary
             text="View Event"
             onClick={() => navigate(`/events/${event._id}`)}
