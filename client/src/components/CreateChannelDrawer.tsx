@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useMemo, useState } from "react"
 import TextField from "@mui/material/TextField"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -15,6 +15,7 @@ import { Loader } from "lucide-react"
 import { createSubEventChannel } from "@/api"
 import toast from "react-hot-toast"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
+import { OtherUserType } from "@/definitions"
 
 type Props = {
   toggleDrawer: (arg: boolean) => (arg2: any) => void
@@ -33,19 +34,12 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
 
   const { event, loadingEvent, updateEvent } = useEventContext()
 
-  useEffect(() => {
-    const host = event?.userList.find((user) => user.role === "host")
-    if (host) {
-      setSelectedUsers([host._id])
-    }
-  }, [event])
-
   if (!eventId) return <Navigate to="/events" />
   if (!subEventId) return <Navigate to={`/events/${eventId}`} />
   if (loadingEvent) return <Loader />
   if (!event) return <div>Event Not Found</div>
 
-  const { userList } = event
+  const { userList, vendorList, host } = event
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value)
@@ -53,7 +47,7 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
 
   const handleUserSelect = (userId: string) => {
     //if user is host then return
-    if (userList.find((user) => user.user._id === userId)?.role === "host") {
+    if (host._id === userId) {
       return
     }
     if (selectedUsers.includes(userId)) {
@@ -88,18 +82,51 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
     )
   }
 
-  let filteredUsers = userList.filter(
-    (user) =>
-      user.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.user.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const [vendorUser, guestUsers, combineList] = useMemo(() => {
+    const vendorUser = vendorList
+      .filter((vendor) =>
+        vendor.subEvents.some((subEvent) => subEvent.subEventId === subEventId),
+      )
+      .map((vendor) => vendor.vendor.user)
+
+    const users = userList
+      .filter((user) => user.subEvents.includes(subEventId))
+      .map((user) => user.user)
+
+    const combineSet = new Map<string, OtherUserType>()
+    vendorUser.forEach((user) => combineSet.set(user._id, user))
+    users.forEach((user) => combineSet.set(user._id, user))
+    return [vendorUser, users, Array.from(combineSet.values())]
+  }, [userList, vendorList, subEventId])
+
+  let filteredUsers: OtherUserType[] = []
   switch (filterRole) {
     case "vendor":
-      filteredUsers = userList.filter((user) => user.role === "vendor")
+      filteredUsers = vendorUser
       break
     case "guest":
-      filteredUsers = userList.filter((user) => user.role === "guest")
+      filteredUsers = guestUsers
       break
+    case "all":
+      filteredUsers = combineList
+      break
+  }
+  // const users = userList
+  filteredUsers = filteredUsers.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.phoneNo.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
+
+  const getUserRole = (user: OtherUserType) => {
+    if (vendorUser.includes(user)) {
+      return "vendor"
+    }
+    if (guestUsers.includes(user)) {
+      return "guest"
+    }
+    return "guest"
   }
 
   return (
@@ -191,7 +218,6 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
             secondaryAction={
               <Checkbox
                 edge="end"
-                disabled={user.role === "host"}
                 checked={selectedUsers.includes(user._id)}
                 onChange={() => handleUserSelect(user._id)}
                 sx={{
@@ -204,14 +230,14 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
             }
           >
             <ListItemAvatar>
-              <Avatar src={user.user.profileImage}>{user.user.name[0]} </Avatar>
+              <Avatar src={user.profileImage}>{user.name[0]} </Avatar>
             </ListItemAvatar>
             <ListItemText
-              primary={user.user.name}
+              primary={user.name}
               secondary={
                 <div>
-                  <span>{user.user.email}</span>
-                  <span className="capitalize"> - {user.role}</span>
+                  <span>{user.email}</span>
+                  <span className="capitalize"> - {getUserRole(user)}</span>
                 </div>
               }
             />

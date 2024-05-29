@@ -26,6 +26,8 @@ const EventContextProvider = ({ children }: { children: ReactNode }) => {
 
   // console.log(eventId)
 
+  // console.log(event)
+
   const updateEvent = () => {
     if (!eventId) return
     setLoadingEvent(true)
@@ -47,17 +49,6 @@ const EventContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
     updateEvent()
-
-    // setLoadingEvent(true)
-    // getEvent(eventId)
-    //   .then((data: { data: EventFull }) => {
-    //     console.log(data.data)
-    //     setEvent(data.data)
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //   })
-    //   .finally(() => setLoadingEvent(false))
 
     return () => {
       setEvent(null)

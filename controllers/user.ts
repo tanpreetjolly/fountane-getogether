@@ -23,7 +23,9 @@ const getMe = async (req: Request, res: Response) => {
 
     const socketToken = user.generateSocketToken()
 
-    const events = await Event.find({ "userList.user": user._id })
+    const events = await Event.find({
+        $or: [{ "userList.user": user._id }, { host: user._id }],
+    })
         .select("name startDate endDate host eventType budget")
         .populate({
             path: "host",

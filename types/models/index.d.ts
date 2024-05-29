@@ -25,7 +25,7 @@ export interface IUser extends Document {
 }
 
 export interface IVendorProfile extends Document {
-    userId: Schema.Types.ObjectId
+    user: Schema.Types.ObjectId
     services: [
         {
             serviceName: string
@@ -37,27 +37,18 @@ export interface IVendorProfile extends Document {
     updatedAt: Date
 }
 
-export interface IGuest extends Document {
-    guestId: Schema.Types.ObjectId
-    subEvent: Schema.Types.ObjectId
-    status: string
-    createdAt: Date
-    updatedAt: Date
-}
-
-export interface IPayment {
-    amount: number
-    status: string
-    createdAt: Date
-    updatedAt: Date
-}
-
-export interface IVendor extends Document {
-    vendorId: Schema.Types.ObjectId
-    subEvents: Schema.Types.ObjectId
-    status: string
-    serviceOffering: string
-    paymentStatus: IPayment
+export interface IVendorList extends Document {
+    vendor: Schema.Types.ObjectId
+    // permission: [string]
+    subEvents: [
+        {
+            subEvent: Schema.Types.ObjectId
+            status: string
+            servicesOffering: [string]
+            paymentStatus: string
+            amount: number
+        },
+    ]
     createdAt: Date
     updatedAt: Date
 }
@@ -83,8 +74,10 @@ export interface ITask extends Document {
 
 export interface IUserList {
     user: Schema.Types.ObjectId
-    role: string
+    // role: string
     permission: [string]
+    subEvents: [Schema.Types.ObjectId]
+    status: string
     createdAt: Date
     updatedAt: Date
 }
@@ -96,6 +89,7 @@ export interface IEvent extends Document {
     endDate: Date
     budget: number
     userList: Types.Array<IUserList>
+    vendorList: Types.Array<IVendorList>
     subEvents: Types.Array<Schema.Types.ObjectId>
     checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date

@@ -19,7 +19,6 @@ const CreateFestivity = () => {
   const { eventId } = useParams()
 
   const { updateEvent } = useEventContext()
-  console.log(eventId)
 
   const handleCreateEvent = () => {
     toast.promise(

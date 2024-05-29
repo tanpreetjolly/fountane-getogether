@@ -25,7 +25,7 @@ const AllEvent = () => {
           </div>
         ) : (
           user.events.map((event) => (
-            <div className="mt-2 flex flex-col gap-2">
+            <div className="mt-2 flex flex-col gap-2" key={event._id}>
               <EventCard event={event} />
             </div>
           ))

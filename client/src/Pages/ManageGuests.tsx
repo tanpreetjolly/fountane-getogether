@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
@@ -18,95 +18,33 @@ import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
 import ButtonSecondary from "@/components/ButtonSecondary"
 import { RsvpOutlined } from "@mui/icons-material"
-
-interface Guest {
-  id: string
-  name: string
-  email: string
-  phone: string
-  status: "invite" | "invited"
-}
-
-const guestData: Guest[] = [
-  {
-    id: "11",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "1234567890",
-    status: "invite",
-  },
-  {
-    id: "21",
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    phone: "9876543210",
-    status: "invite",
-  },
-  {
-    id: "31",
-    name: "Michael Johnson",
-    email: "michael.johnson@example.com",
-    phone: "5555555555",
-    status: "invited",
-  },
-  {
-    id: "41",
-    name: "Emily Davis",
-    email: "emily.davis@example.com",
-    phone: "1111111111",
-    status: "invited",
-  },
-]
-
-const festivities = ["Wedding", "Birthday", "Anniversary", "Corporate Event"]
+import { useEventContext } from "@/context/EventContext"
+import Loader from "@/components/Loader"
+import { inviteGuest, inviteNewGuest, search } from "@/api"
+import { OtherUserType, SubEventType } from "@/definitions"
+import toast from "react-hot-toast"
 
 const ManageGuests = () => {
-  const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null)
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-  const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
-  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [selectedGuest, setSelectedGuest] = useState<OtherUserType | null>(null)
+  // const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+  // const [searchQuery, setSearchQuery] = useState<string>("")
   const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false)
-  const [newGuest, setNewGuest] = useState<Partial<Guest>>({
+  const [searchResult, setSearchResult] = useState<OtherUserType[] | null>(null)
+  const [newGuest, setNewGuest] = useState<Partial<OtherUserType>>({
     name: "",
     email: "",
-    phone: "",
+    phoneNo: "",
   })
 
-  const handleGuestClick = (guest: Guest) => {
-    setSelectedGuest(guest)
-    setIsDrawerOpen(true)
-  }
+  const { event, loadingEvent, updateEvent } = useEventContext()
 
   const closeDrawer = () => {
-    setIsDrawerOpen(false)
-  }
-
-  const handleFestivityChange = (festivity: string) => {
-    setSelectedFestivities((prevSelectedFestivities) =>
-      prevSelectedFestivities.includes(festivity)
-        ? prevSelectedFestivities.filter((item) => item !== festivity)
-        : [...prevSelectedFestivities, festivity],
-    )
-  }
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value)
-  }
-
-  const filteredGuests = guestData.filter(
-    (guest) =>
-      guest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guest.phone.includes(searchQuery),
-  )
-
-  const handleInviteButtonClick = () => {
-    setIsInviteModalOpen(true)
+    setSelectedGuest(null)
   }
 
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false)
-    setNewGuest({ name: "", email: "", phone: "" })
+    setNewGuest({ name: "", email: "", phoneNo: "" })
   }
 
   const handleNewGuestChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,106 +55,109 @@ const ManageGuests = () => {
   const handleInviteNewGuest = () => {
     // Here you would normally handle the submission logic, such as updating the guest list and sending the invite
     console.log("Inviting new guest:", newGuest)
+
+    if (!newGuest.name || !newGuest.email || !newGuest.phoneNo) {
+      return toast.error("Please fill in all the fields.")
+    }
+    if (event === null) return
+
+    toast.error("SubEventsIds is yet to be added")
+
+    toast.promise(
+      inviteNewGuest(event._id, {
+        name: newGuest.name,
+        email: newGuest.email,
+        phoneNo: newGuest.phoneNo,
+        //please add this
+        subEventsIds: [],
+      }),
+      {
+        loading: "Sending Invite...",
+        success: () => {
+          updateEvent()
+          return "Invite sent successfully"
+        },
+        error: (error) => {
+          console.log(error)
+          return "Failed to send invite. Please try again later."
+        },
+      },
+    )
+
     handleCloseInviteModal()
   }
+
+  const guestList = event?.userList || []
+
+  if (loadingEvent) return <Loader />
+  if (!event) return <div>No event found</div>
+
+  const subEvents = event.subEvents
+
+  const isInvited = (guestId: string) => {
+    return guestList.some((guest) => guest.user._id === guestId)
+  }
+
+  const filteredGuests =
+    searchResult !== null ? searchResult : guestList.map((user) => user.user)
 
   return (
     <div className="px-4 flex flex-col mt-1 gap-2">
       <div className="text-2xl font-semibold text-gray-700">Manage Guests</div>
-      <TextField
-        fullWidth
-        label="Search names"
-        variant="outlined"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        className="!mb-2"
-      />
-      {filteredGuests.length > 0 ? (
-        filteredGuests.map((guest) => (
-          <div
-            key={guest.id}
-            style={{ cursor: "pointer", marginBottom: "8px" }}
-            className="border rounded-xl"
-          >
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Typography variant="h6" component="div">
-                    {guest.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {guest.email}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {guest.phone}
-                  </Typography>
-                </div>
-                <ButtonSecondary
-                  text="Invite"
-                  onClick={() => handleGuestClick(guest)}
-                  icon={<RsvpOutlined />}
-                />
+      <SearchField setSearchResult={setSearchResult} />
+      {filteredGuests.map((guest) => (
+        <div
+          key={guest._id}
+          style={{ cursor: "pointer", marginBottom: "8px" }}
+          className="border rounded-xl"
+        >
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <Typography variant="h6" component="div">
+                  {guest.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {guest.email}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {guest.phoneNo}
+                </Typography>
               </div>
-            </CardContent>
-          </div>
-        ))
-      ) : (
-        <div className="border p-2 py-4 rounded-lg text-gray-700 flex flex-col gap-3">
-          <span className="px-3">
-            Couldn't find your match, Click here to invite a new guest to app
-          </span>
-          <Button
-            text="Invite a Guest"
-            onClick={handleInviteButtonClick}
-            icon={<FaPlusCircle />}
-          />
+              <ButtonSecondary
+                text={isInvited(guest._id) ? "Invited" : "Invite"}
+                onClick={() => setSelectedGuest(guest)}
+                icon={<RsvpOutlined />}
+              />
+            </div>
+          </CardContent>
         </div>
+      ))}
+      <div className="border p-2 py-4 rounded-lg text-gray-700 flex flex-col gap-3">
+        <span className="px-3">
+          Match not found. Click here to invite a new guest.
+        </span>
+        <Button
+          text="Invite a Guest"
+          onClick={() => setIsInviteModalOpen(true)}
+          icon={<FaPlusCircle />}
+        />
+      </div>
+
+      {selectedGuest && (
+        <SwipeableDrawer
+          anchor="bottom"
+          open={!!selectedGuest}
+          onClose={closeDrawer}
+          onOpen={() => setSelectedGuest(null)}
+        >
+          <ShowSelectedGuest
+            selectedGuest={selectedGuest}
+            subEvents={subEvents}
+            closeDrawer={closeDrawer}
+          />
+        </SwipeableDrawer>
       )}
-      <SwipeableDrawer
-        anchor="bottom"
-        open={isDrawerOpen}
-        onClose={closeDrawer}
-        onOpen={() => setIsDrawerOpen(true)}
-      >
-        <Box sx={{ p: 2 }}>
-          {selectedGuest && (
-            <>
-              <Typography variant="h6" gutterBottom>
-                {selectedGuest.name}
-              </Typography>
-              <List>
-                <ListItem>
-                  <ListItemText
-                    primary="Email"
-                    secondary={selectedGuest.email}
-                  />
-                </ListItem>
-                <ListItem>
-                  <ListItemText
-                    primary="Phone"
-                    secondary={selectedGuest.phone}
-                  />
-                </ListItem>
-              </List>
-              <Typography variant="h6" gutterBottom>
-                Invite to Festivities
-              </Typography>
-              <List>
-                {festivities.map((festivity) => (
-                  <ListItem key={festivity}>
-                    <ListItemText primary={festivity} />
-                    <Checkbox
-                      checked={selectedFestivities.includes(festivity)}
-                      onChange={() => handleFestivityChange(festivity)}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
-          <Button text="Invite" onClick={closeDrawer} icon={<FaPlusCircle />} />
-        </Box>
-      </SwipeableDrawer>
       <Dialog open={isInviteModalOpen} onClose={handleCloseInviteModal}>
         <DialogTitle>
           Invite a New Guest
@@ -258,7 +199,7 @@ const ManageGuests = () => {
             name="phone"
             fullWidth
             variant="outlined"
-            value={newGuest.phone}
+            value={newGuest.phoneNo}
             onChange={handleNewGuestChange}
           />
         </DialogContent>
@@ -275,4 +216,144 @@ const ManageGuests = () => {
   )
 }
 
+const SearchField = ({
+  setSearchResult,
+}: {
+  setSearchResult: React.Dispatch<React.SetStateAction<OtherUserType[] | null>>
+}) => {
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [timeoutId, setTimeoutId] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      search(searchQuery, "user", 1, 10)
+        .then((response: { data: { users: [] } }) => {
+          // console.log(response.data.users)
+          setSearchResult(response.data.users)
+        })
+        .catch((error) => console.error(error.response))
+    }
+
+    if (searchQuery.length >= 3) {
+      if (timeoutId) clearTimeout(timeoutId)
+      const id = setTimeout(fetchData, 500)
+      setTimeoutId(id)
+    } else {
+      setSearchResult(null)
+    }
+  }, [searchQuery])
+
+  return (
+    <TextField
+      fullWidth
+      label="Name / Email / Phone Number"
+      variant="outlined"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      className="!mb-2"
+    />
+  )
+}
+
+const ShowSelectedGuest = ({
+  selectedGuest,
+  subEvents,
+  closeDrawer,
+}: {
+  selectedGuest: OtherUserType
+  subEvents: SubEventType[]
+  closeDrawer: () => void
+}) => {
+  const [selectedSubEvents, setSelectedSubEvents] = useState<string[]>([])
+
+  // console.log(selectedSubEvents)
+
+  const handleSelectedSubEventChange = (festivity: SubEventType) => {
+    setSelectedSubEvents((prevSelectedFestivities) =>
+      prevSelectedFestivities.includes(festivity._id)
+        ? prevSelectedFestivities.filter((id) => id !== festivity._id)
+        : [...prevSelectedFestivities, festivity._id],
+    )
+  }
+
+  const { updateEvent, event } = useEventContext()
+
+  useEffect(() => {
+    if (event === null) return
+
+    const userId = selectedGuest._id
+    const userSubEvents = event.userList.find(
+      (user) => user.user._id === userId,
+    )?.subEvents
+    console.log(userSubEvents)
+
+    setSelectedSubEvents(userSubEvents || [])
+  }, [event, event?.userList, selectedGuest._id])
+
+  if (!event) return null
+
+  const handleInviteGuest = () => {
+    // Here you would normally handle the submission logic, such as updating the guest list and sending the invite
+    console.log("Inviting guest:", selectedGuest)
+    toast.promise(
+      inviteGuest(event._id, {
+        guestId: selectedGuest._id,
+        subEventsIds: selectedSubEvents,
+      }),
+      {
+        loading: "Sending Invite...",
+        success: () => {
+          updateEvent()
+          return "Invite sent successfully"
+        },
+        error: (error) => {
+          console.log(error)
+          return "Failed to send invite. Please try again later."
+        },
+      },
+    )
+    closeDrawer()
+  }
+
+  const isInvited = (guestId: string) => {
+    return event.userList.some((guest) => guest.user._id === guestId)
+  }
+
+  return (
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        {selectedGuest.name}
+      </Typography>
+      <List>
+        <ListItem>
+          <ListItemText primary="Email" secondary={selectedGuest.email} />
+        </ListItem>
+        <ListItem>
+          <ListItemText primary="Phone" secondary={selectedGuest.phoneNo} />
+        </ListItem>
+      </List>
+      <Typography variant="h6" gutterBottom>
+        Invite to Festivities
+      </Typography>
+      <List>
+        {subEvents.map((festivity) => (
+          <ListItem key={festivity._id}>
+            <ListItemText primary={festivity.name} />
+            <Checkbox
+              checked={selectedSubEvents.includes(festivity._id)}
+              onChange={() => handleSelectedSubEventChange(festivity)}
+            />
+          </ListItem>
+        ))}
+      </List>
+      <Button
+        text={isInvited(selectedGuest._id) ? "Update" : "Invite"}
+        onClick={handleInviteGuest}
+        icon={<FaPlusCircle />}
+      />
+    </Box>
+  )
+}
 export default ManageGuests
