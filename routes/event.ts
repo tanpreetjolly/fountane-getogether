@@ -9,6 +9,7 @@ import {
     createSubEventChannel,
     inviteGuest,
     inviteNewGuest,
+    acceptRejectInvite,
 } from "../controllers/event"
 
 // import Protect from "../middleware/permissionRequired"
@@ -20,7 +21,8 @@ router.route("/").post(createEvent)
 
 router.route("/:eventId").get(getEvent).delete(deleteEvent).patch(updateEvent)
 
-router.use("/:eventId/guest/invite", inviteGuest)
+router.route("/:eventId/guest/invite").post(inviteGuest)
+router.route("/:eventId/guest/invite/accept-reject").post(acceptRejectInvite)
 router.use("/:eventId/guest/invite/new", inviteNewGuest)
 router.use("/:eventId/task", TaskRouter)
 

@@ -38,10 +38,12 @@ export interface IVendorProfile extends Document {
 }
 
 export interface IVendorList extends Document {
+    _id: string
     vendor: Schema.Types.ObjectId
     // permission: [string]
     subEvents: [
         {
+            _id: string
             subEvent: Schema.Types.ObjectId
             status: string
             servicesOffering: [string]
@@ -73,6 +75,7 @@ export interface ITask extends Document {
 }
 
 export interface IUserList {
+    _id: Schema.Types.ObjectId
     user: Schema.Types.ObjectId
     // role: string
     permission: [string]

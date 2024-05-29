@@ -46,7 +46,7 @@ const VendorList = new Schema<IVendorList>(
         vendor: {
             type: Schema.Types.ObjectId,
             ref: "VendorProfile",
-            required: true,
+            required: [true, "Please Provide Vendor."],
         },
         // permission: [
         //     {
@@ -63,7 +63,7 @@ const VendorList = new Schema<IVendorList>(
                 },
                 status: {
                     type: String,
-                    enum: ["hired", "rejected", "invited"],
+                    enum: ["accepted", "rejected", "pending"],
                     default: "pending",
                 },
                 servicesOffering: [{ type: String, required: true }],

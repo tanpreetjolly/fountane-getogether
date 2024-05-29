@@ -1,4 +1,4 @@
-import { User, Event } from "../models"
+import { User, Event, SubEvent } from "../models"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
@@ -29,8 +29,60 @@ const getMe = async (req: Request, res: Response) => {
         .select("name startDate endDate host eventType budget")
         .populate({
             path: "host",
-            select: "name profileImage",
+            select: "name email phoneNo profileImage",
         })
+
+    const eventsNotifications = await Event.find({
+        $or: [
+            {
+                userList: {
+                    $elemMatch: {
+                        user: user._id,
+                        status: "pending",
+                    },
+                },
+            },
+            {
+                vendorList: {
+                    $elemMatch: {
+                        vendor: user.vendorProfile,
+                        subEvents: {
+                            $elemMatch: {
+                                status: "invited",
+                            },
+                        },
+                    },
+                },
+            },
+        ],
+    })
+        .select("name host startDate endDate userList vendorList")
+        .populate({
+            path: "host",
+            select: "name profileImage email phoneNo",
+        })
+        .populate({
+            path: "userList.subEvents",
+            select: "name startDate endDate venue",
+        })
+        .populate({
+            path: "vendorList.subEvents.subEvent",
+            select: "name startDate endDate venue",
+        })
+
+    const notifications = eventsNotifications.map((event) => {
+        return {
+            ...event.toJSON(),
+            userList: event.userList.filter(
+                (user) => user.user.toString() === req.user.userId.toString(),
+            ),
+            vendorList: event.vendorList.filter(
+                (vendor) =>
+                    vendor.vendor.toString() ===
+                        user?.vendorProfile?.toString() || null,
+            ),
+        }
+    })
 
     const sendUser = {
         userId: user._id,
@@ -41,6 +93,7 @@ const getMe = async (req: Request, res: Response) => {
         isVendor: user.vendorProfile ? true : false,
         vendorProfile: user.vendorProfile,
         events: events,
+        notifications,
         socketToken,
     }
 

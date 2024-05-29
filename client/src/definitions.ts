@@ -118,6 +118,59 @@ export interface UserType {
   phoneNo: string | undefined
   socketToken: string
   events: EventShortType[]
+  notifications: NotificationsType[]
   createdAt: string
   updatedAt: string
+}
+
+export interface SubEventShort {
+  _id: string
+  name: string
+  startDate: string
+  endDate: string
+  venue: string
+}
+
+export interface NotificationsType {
+  _id: string
+  name: string
+  host: OtherUserType
+  startDate: string
+  endDate: string
+  userList: {
+    _id: string
+    user: string
+    subEvents: SubEventShort[]
+    status: string
+    createdAt: string
+    updatedAt: string
+  }[]
+  vendorList: {
+    _id: string
+    vendor: string
+    subEvents: {
+      _id: string
+      subEvent: SubEventShort
+      status: string
+      servicesOffering: string[]
+      amount: number
+      paymentStatus: string
+    }[]
+    createdAt: string
+    updatedAt: string
+  }[]
+}
+
+export interface InvitesType {
+  id: string
+  eventId: string
+  subEventName: string
+  eventName: string
+  startDate: string
+  endDate: string
+  venue: string
+  host: string
+  status: string
+  userListId?: string
+  vendorListSubEventId?: string
 }

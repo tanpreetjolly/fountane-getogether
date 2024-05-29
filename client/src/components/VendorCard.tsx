@@ -30,7 +30,9 @@ const VendorCard = ({ vendor }: Props) => {
 
   const navigate = useNavigate()
 
-  const { event, loadingEvent } = useEventContext()
+  console.log(vendor.services)
+
+  const { event, loadingEvent, updateEvent } = useEventContext()
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
@@ -133,40 +135,50 @@ const VendorCard = ({ vendor }: Props) => {
       >
         <Box sx={{ p: 2 }}>
           {/* List to select festivities to invite to vendor */}
+          {vendor.services && (
+            <>
+              <span className="pl-4 text-xl text-gray-800 font-medium">
+                Select the Services for RSVP
+              </span>
+              <List>
+                {vendor.services.map((service) => (
+                  <ListItem
+                    key={service._id}
+                    secondaryAction={
+                      <Checkbox
+                        edge="end"
+                        color="secondary"
+                        checked={selectedServices.includes(service._id)}
+                        onChange={() => {
+                          setSelectedServices((prevServices) =>
+                            prevServices.includes(service._id)
+                              ? prevServices.filter(
+                                  (item) => item !== service._id,
+                                )
+                              : [...prevServices, service._id],
+                          )
+                        }}
+                      />
+                    }
+                  >
+                    <ListItemText
+                      primary={service.serviceName}
+                      secondary={
+                        service.serviceDescription + " - $" + service.price
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </>
+          )}
           <span className="pl-4 text-xl text-gray-800 font-medium">
             Select the Festivities for RSVP
           </span>
-          {vendor.services && (
-            <List>
-              {vendor.services.map((service) => (
-                <ListItem
-                  key={service._id}
-                  secondaryAction={
-                    <Checkbox
-                      edge="end"
-                      color="secondary"
-                      checked={selectedServices.includes(service._id)}
-                      onChange={() => {
-                        setSelectedServices((prevServices) =>
-                          prevServices.includes(service._id)
-                            ? prevServices.filter(
-                                (item) => item !== service._id,
-                              )
-                            : [...prevServices, service._id],
-                        )
-                      }}
-                    />
-                  }
-                >
-                  <ListItemText
-                    primary={service.serviceName}
-                    secondary={
-                      service.serviceDescription + " - $" + service.price
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
+          {festivityList.length === 0 && (
+            <div className="text-center text-gray-500">
+              No Festivities Found, Create Festivities
+            </div>
           )}
           <List>
             {festivityList.map((festivity) => (

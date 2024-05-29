@@ -12,7 +12,7 @@ import MenuItem from "@mui/material/MenuItem"
 import IconButton from "@mui/material/IconButton"
 import Button from "./Button"
 import { deleteEvent, updateEvent } from "../api"
-import { useAppDispatch } from "@/hooks"
+import { useAppDispatch, useAppSelector } from "@/hooks"
 import confirm from "./ConfirmationComponent"
 import { deleteEventSlice, updateEventSlice } from "@/features/userSlice"
 import { DatePickerWithRange } from "./ui/DatePickerWithRange"
@@ -29,6 +29,8 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
   const [updatingEvent, setUpdatingEvent] = useState(false)
 
   const dispatch = useAppDispatch()
+
+  const { user } = useAppSelector((state) => state.user)
 
   const formatDate = (date: string) => {
     return format(new Date(date), "dd MMMM yyyy")
@@ -79,6 +81,7 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
       .catch(() => console.log("Error deleting event"))
       .finally(() => setUpdatingEvent(false))
   }
+  if (!user) return null
 
   return (
     <>
@@ -109,8 +112,9 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
           </div>
         </div>
         <div className="text-base text-gray-700 mb-2 pl-2 mt-1">
-          Event Host :{" "}
-          <span className="font-medium text-dark ">{event.host.name}</span>
+          {user.userId === event.host._id
+            ? "Hosted"
+            : `Invited by ${event.host.name}`}
         </div>
         <div className="pl-1.5 mt-2">
           <ButtonSecondary
