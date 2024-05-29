@@ -36,12 +36,6 @@ export interface IVendorProfile extends Document {
     createdAt: Date
     updatedAt: Date
 }
-export interface IPayment {
-    amount: number
-    status: string
-    createdAt: Date
-    updatedAt: Date
-}
 
 export interface IVendorList extends Document {
     vendor: Schema.Types.ObjectId
@@ -50,8 +44,9 @@ export interface IVendorList extends Document {
         {
             subEvent: Schema.Types.ObjectId
             status: string
-            serviceOffering: [string]
-            paymentStatus: IPayment
+            servicesOffering: [string]
+            paymentStatus: string
+            amount: number
         },
     ]
     createdAt: Date

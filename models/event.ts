@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose"
-import { IEvent, IUserList, IVendorList, IPayment } from "../types/models"
+import { IEvent, IUserList, IVendorList } from "../types/models"
 import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
 import jwt from "jsonwebtoken"
 import { NotFoundError } from "../errors"
@@ -41,22 +41,6 @@ const UserList = new Schema<IUserList>(
 
 UserList.index({ user: 1 })
 
-const PaymentSchema = new Schema<IPayment>(
-    {
-        amount: {
-            type: Number,
-            required: [true, "Please Provide Amount."],
-        },
-        status: {
-            type: String,
-            required: [true, "Please Provide Status."],
-            enum: ["pending", "paid", "failed"],
-            default: "pending",
-        },
-    },
-    { timestamps: true },
-)
-
 const VendorList = new Schema<IVendorList>(
     {
         vendor: {
@@ -83,7 +67,16 @@ const VendorList = new Schema<IVendorList>(
                     default: "pending",
                 },
                 servicesOffering: [{ type: String, required: true }],
-                paymentStatus: { type: PaymentSchema },
+                amount: {
+                    type: Number,
+                    required: [true, "Please Provide Amount."],
+                },
+                paymentStatus: {
+                    type: String,
+                    required: [true, "Please Provide Status."],
+                    enum: ["pending", "paid", "failed"],
+                    default: "pending",
+                },
             },
         ],
     },

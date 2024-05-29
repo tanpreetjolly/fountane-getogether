@@ -1,45 +1,33 @@
-import { useState } from "react"
-import VendorCard from "../components/VendorCard"
+import { useEffect, useState } from "react"
+import { search } from "@/api"
+import { VendorSearchType } from "@/definitions"
+import VendorCard from "@/components/VendorCard"
 
-type Props = {}
-
-const vendorData = [
-  {
-    id: "11",
-    name: "Shivam Caterers",
-    type: "food",
-    status: "invite",
-    events: ["100", "200", "300", "400"],
-  },
-  {
-    id: "21",
-    name: "Vanish Caterings",
-    type: "food",
-    status: "invite",
-    events: ["100", "200", "300", "400"],
-  },
-  {
-    id: "31",
-    name: "Event Managers Inc.",
-    type: "event management",
-    status: "invited",
-    events: ["100", "200", "300", "400"],
-  },
-  {
-    id: "41",
-    name: "Dhillon Managers Inc.",
-    type: "event management",
-    status: "invited",
-    events: ["100", "200", "300", "400"],
-  },
-]
-
-const SearchVendors = (_props: Props) => {
+const SearchVendors = () => {
   const [searchQuery, setSearchQuery] = useState("")
+  const [vendors, setVendors] = useState<VendorSearchType[]>([])
+  const [timeoutId, setTimeoutId] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null)
 
   const handleSearchChange = (event: any) => {
     setSearchQuery(event.target.value)
   }
+  useEffect(() => {
+    const fetchData = async () => {
+      search(searchQuery, "vendor", 1, 20)
+        .then((response: { data: { vendors: VendorSearchType[] } }) => {
+          console.log(response.data)
+
+          setVendors(response.data.vendors)
+        })
+        .catch((error) => console.error(error.response))
+    }
+
+    if (timeoutId) clearTimeout(timeoutId)
+    const id = setTimeout(fetchData, 500)
+    setTimeoutId(id)
+  }, [searchQuery])
 
   return (
     <div>
@@ -53,19 +41,20 @@ const SearchVendors = (_props: Props) => {
             <input
               type="text"
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Search vendors..."
+              placeholder="Search services..."
               value={searchQuery}
               onChange={handleSearchChange}
             />
-
-            {vendorData
-              .filter((vendor) =>
-                vendor.name.toLowerCase().includes(searchQuery.toLowerCase()),
-              )
-              .map((vendor) => (
-                <VendorCard key={vendor.id} vendor={vendor} />
-              ))}
           </div>
+          {vendors.map((vendor) => (
+            <VendorCard
+              key={vendor.user._id}
+              vendor={{
+                vendor: vendor.user,
+                services: vendor.services,
+              }}
+            />
+          ))}
         </div>
       </div>
     </div>

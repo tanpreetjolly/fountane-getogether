@@ -10,7 +10,7 @@ import { search } from "../api/index"
 
 import EventCard from "../components/EventCard"
 
-const categories: string[] = ["blog", "user"]
+const categories: string[] = ["user"]
 const SearchResults: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [data, setData] = useState<{}[]>([])

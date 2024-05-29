@@ -19,6 +19,7 @@ export interface ForgotPasswordType {
 }
 
 export interface ServiceType {
+  _id: string
   serviceName: string
   serviceDescription: string
   price: number
@@ -66,19 +67,13 @@ export interface SubEventType {
   createdAt: string
 }
 
-export interface PaymentStatusType {
-  _id: string
-  amount: number
-  status: string
-  createdAt: string
-}
-
 export interface SubEventsVendorType {
   _id: string
   subEvent: Omit<SubEventType, "channels">
   status: string
   servicesOffering: [string]
-  paymentStatus: PaymentStatusType
+  paymentStatus: string
+  amount: number
 }
 
 export interface UserListType {
@@ -105,6 +100,12 @@ export interface EventFull extends EventShortType {
   subEvents: SubEventType[]
   userList: UserListType[]
   vendorList: VendorListType[]
+}
+
+export interface VendorSearchType {
+  _id: string
+  user: OtherUserType
+  services: ServiceType[]
 }
 
 export interface UserType {

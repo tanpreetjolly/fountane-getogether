@@ -8,7 +8,7 @@ const search = async (req: Request, res: Response) => {
         type: string
         query: string
     }
-    if (!query) throw new BadRequestError("Query is required")
+    // if (!query) throw new BadRequestError("Query is required")
 
     switch (type) {
         case "user":
@@ -75,7 +75,7 @@ const search = async (req: Request, res: Response) => {
 
         default:
             throw new BadRequestError(
-                "Invalid type, accepted types are 'user' and 'blog'",
+                "Invalid type, accepted types are 'user' and 'vendor'",
             )
     }
 }
