@@ -4,13 +4,14 @@ type Props = {
   icon?: any
   prim?: boolean
   fontSize?: string
+  fullWidth?: boolean
 }
 
 const ButtonSecondary = (props: Props) => {
   return (
     <button
       onClick={props.onClick}
-      className={`w-fit  font-medium flex items-center text-base  px-3 rounded-lg gap-2 mb-4 border border-dark text-dark py-1.5 ${props.text === "Invited" ? "bg-green-500 text-black" : "bg-white text-gree"}`}
+      className={`${props.fullWidth ? "w-full justify-center" : "w-fit"}  font-medium flex items-center text-base  px-3 rounded-lg gap-2 mb-4 border border-dark text-dark py-1.5`}
     >
       <span className={`${props.fontSize ? props.fontSize : ""}`}>
         {props.text}
