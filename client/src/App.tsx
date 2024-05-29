@@ -46,6 +46,8 @@ import VendorSubEvents from "./Pages/VendorSubEvents"
 import VendorChannels from "./Pages/VendorChannels"
 import EditVendorServices from "./Pages/EditVendorServices"
 import BottomNav from "./components/BottomNavigation"
+import Invites from "./Pages/Invites"
+import TodoList from "./Pages/TodoList"
 
 const Layout = () => {
   const location = useLocation()
@@ -60,7 +62,7 @@ const Layout = () => {
     <div>
       {!shouldHideNavbar && <Navbar />}
       <ScrollRestoration />
-      <div className={`min-h-screen ${!shouldHideNavbar && "pt-14 "}`}>
+      <div className={`min-h-screen ${!shouldHideNavbar && "pt-14 pb-20"}`}>
         <Outlet />
       </div>
       <BottomNav />
@@ -109,6 +111,10 @@ const router = createBrowserRouter([
       { path: "verify", element: <VerifyOTP /> },
       { path: "about", element: <About /> },
       {
+        path: "invite/:inviteId",
+        element: <Invites />,
+      },
+      {
         element: <ProtectedRoute />,
         children: [
           { path: "profile", element: <ProfilePage /> },
@@ -118,6 +124,7 @@ const router = createBrowserRouter([
             path: "events/:eventId",
             children: [
               { index: true, element: <EventPage /> },
+              { path: "todo", element: <TodoList /> },
               {
                 path: "vendors",
                 children: [
@@ -144,6 +151,7 @@ const router = createBrowserRouter([
                   { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },
+              
             ],
           },
         ],
