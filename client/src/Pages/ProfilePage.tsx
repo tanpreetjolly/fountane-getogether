@@ -65,7 +65,7 @@ const ProfilePage = () => {
   return (
     <Box className="w-11/12 mx-auto">
       <Box sx={{ borderBottom: 1, borderColor: "divider" }} className="mx-16">
-        <Tabs
+        {/* <Tabs
           value={value}
           onChange={handleChange}
           textColor="secondary"
@@ -80,7 +80,7 @@ const ProfilePage = () => {
               key={index}
             />
           ))}
-        </Tabs>
+        </Tabs> */}
       </Box>
       {tabMap.map((tab, index) => (
         <CustomTabPanel value={value} index={index} key={index}>

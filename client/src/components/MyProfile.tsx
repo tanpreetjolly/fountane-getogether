@@ -9,6 +9,8 @@ import { logout, updateUser } from "../features/userSlice"
 import { TbPhotoPlus } from "react-icons/tb"
 import { MdDeleteOutline } from "react-icons/md"
 import confirm from "./ConfirmationComponent"
+import { LogOutIcon } from "lucide-react"
+import ButtonSecondary from "./ButtonSecondary"
 
 const defUser: UserType = {
   userId: "",
@@ -250,12 +252,14 @@ const MyProfile = () => {
               className="rounded-lg p-2 border"
             />
           </form>
-          <button
-            onClick={handleLogout}
-            className={`cursor-pointer text-left hover:bg-highlight hover:text-white flex items-center gap-1 px-4 py-3 md:px-6 md:py-4 duration-150`}
-          >
-            Log Out{" "}
-          </button>
+          <div className="mt-2 mx-auto">
+            <ButtonSecondary
+              onClick={handleLogout}
+              text="Logout"
+              fullWidth={true}
+              icon={<LogOutIcon size={16} />}
+            />
+          </div>
         </section>
       </main>
     </div>
