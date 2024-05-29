@@ -1,6 +1,7 @@
 import { Input } from "@mui/material"
 import { useState } from "react"
 import MessageComponent from "../components/MessageComponent"
+import { SendHorizontal } from "lucide-react"
 
 const randomChatData = [
   { id: 1, message: "Hey there!", name: "Alice", date: "10:30" },
@@ -33,8 +34,8 @@ const ChannelChat = () => {
   }
 
   return (
-    <div className="px-4 flex-col flex justify-between h-[90vh]">
-      <div className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3">
+    <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative">
+      <div className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-20 ">
         {messages.map((msg, index) => (
           <MessageComponent
             key={index}
@@ -45,7 +46,7 @@ const ChannelChat = () => {
           />
         ))}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 absolute bottom-4 w-11/12">
         <Input
           fullWidth
           placeholder="Type a message..."
@@ -55,9 +56,9 @@ const ChannelChat = () => {
         />
         <button
           onClick={handleSendMessage}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+          className="py-2.5 px-3 bg-zinc-600 text-white rounded-full"
         >
-          Send
+          <SendHorizontal size={18}/>
         </button>
       </div>
     </div>

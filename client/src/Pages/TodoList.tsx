@@ -27,18 +27,6 @@ const initialState = [
   { id: 14, text: "Hire a transportation", completed: false },
   { id: 15, text: "Hire a security", completed: false },
   { id: 16, text: "Hire a hotel", completed: false },
-  { id: 17, text: "Hire a tailor", completed: false },
-  { id: 18, text: "Hire a jeweler", completed: false },
-  { id: 19, text: "Hire a travel agent", completed: false },
-  { id: 20, text: "Hire a calligrapher", completed: false },
-  { id: 21, text: "Hire a stationer", completed: false },
-  { id: 22, text: "Hire a officiant", completed: false },
-  { id: 23, text: "Hire a party rental", completed: false },
-  { id: 24, text: "Hire a lighting designer", completed: false },
-  { id: 25, text: "Hire a sound engineer", completed: false },
-  { id: 26, text: "Hire a live band", completed: false },
-  { id: 27, text: "Hire a dance instructor", completed: false },
-  { id: 28, text: "Hire a choreographer", completed: false },
 ]
 
 const TodoList = () => {
