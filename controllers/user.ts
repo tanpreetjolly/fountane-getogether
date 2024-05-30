@@ -78,7 +78,7 @@ const getMe = async (req: Request, res: Response) => {
             ),
             vendorList: event.vendorList.filter(
                 (vendor) =>
-                    vendor.vendor.toString() ===
+                    vendor.vendorProfile.toString() ===
                         user?.vendorProfile?.toString() || null,
             ),
         }

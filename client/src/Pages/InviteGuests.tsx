@@ -10,11 +10,9 @@ import { OtherUserType } from "@/definitions"
 import Loader from "@/components/Loader"
 import { useEventContext } from "@/context/EventContext"
 import { useParams } from "react-router-dom"
-import { Avatar, ListItemAvatar, ListItemButton } from "@mui/material"
+import { Avatar, ListItemAvatar } from "@mui/material"
 
-type Props = {}
-
-const InviteGuests = (_props: Props) => {
+const InviteGuests = () => {
   const [selectedGuests, setSelectedGuests] = useState<OtherUserType[]>([])
 
   const { event, loadingEvent } = useEventContext()
@@ -32,8 +30,8 @@ const InviteGuests = (_props: Props) => {
 
   const handleGuestChange = (guest: OtherUserType) => {
     setSelectedGuests((prevSelectedGuests) =>
-      prevSelectedGuests.includes(guest)
-        ? prevSelectedGuests.filter((id) => id !== guest)
+      prevSelectedGuests.some((user) => user._id === guest._id)
+        ? prevSelectedGuests.filter((user) => user._id !== guest._id)
         : [...prevSelectedGuests, guest],
     )
   }
@@ -42,9 +40,7 @@ const InviteGuests = (_props: Props) => {
   if (!event) return <div>No Event Found</div>
   if (!subEventId) return <div>No SubEvent Found</div>
 
-  const userList = event.userList
-    .filter((user) => user.subEvents.includes(subEventId))
-    .map((guest) => guest.user)
+  const userList = event.userList.map((guest) => guest.user)
 
   return (
     <div className="px-2 my-2 mb-8 flex flex-col h-[85vh] justify-between">
