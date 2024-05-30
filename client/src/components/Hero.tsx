@@ -39,7 +39,7 @@ const Hero: React.FC<Props> = () => {
           Create, manage and share your events with friends and family with
           ease.
         </p>
-        <div className="flex items-center mb-6">
+        <div className="flex flex-col lg:flex-row items-center mb-6">
           <div className="flex -space-x-2">
             <div className="w-9 aspect-square rounded-full overflow-hidden">
               {" "}
