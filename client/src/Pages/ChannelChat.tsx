@@ -1,8 +1,7 @@
 import { Input } from "@mui/material"
 import { useState } from "react"
 import MessageComponent from "../components/MessageComponent"
-import { SendHorizontal } from "lucide-react"
-
+import { Link, SendHorizontal } from "lucide-react"
 const randomChatData = [
   { id: 1, message: "Hey there!", name: "Alice", date: "10:30" },
   { id: 2, message: "Hello!", name: "Bob", date: "10:32" },
@@ -47,6 +46,9 @@ const ChannelChat = () => {
         ))}
       </div>
       <div className="flex items-center gap-2 absolute bottom-4 w-11/12">
+        <button className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full">
+          <Link size={20} />
+        </button>
         <Input
           fullWidth
           placeholder="Type a message..."

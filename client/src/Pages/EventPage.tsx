@@ -18,7 +18,7 @@ const EventPage = () => {
   if (!event) return <div>Event not found</div>
 
   return (
-    <div className="px-4 flex flex-col gap-2 h-[85.5dvh] overflow-hidden">
+    <div className="px-4 flex flex-col gap-2 h-[85.5dvh] pt-2 overflow-hidden">
       <div className="pl-1 flex justify-between">
         <div>
           <div className="text-2xl font-bold text-dark">{event.name}</div>

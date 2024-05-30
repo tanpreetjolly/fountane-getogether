@@ -4,7 +4,7 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
-import { Avatar, ListItemText, TextField } from "@mui/material"
+import { Avatar, ListItemText } from "@mui/material"
 import Checkbox from "@mui/material/Checkbox"
 import CardContent from "@mui/material/CardContent"
 import Button from "../components/Button"
@@ -94,16 +94,18 @@ const ManageGuests = () => {
 
   const subEvents = event.subEvents
 
-  const isInvited = (guestId: string) => {
-    return guestList.some((guest) => guest.user._id === guestId)
-  }
+  // const isInvited = (guestId: string) => {
+  //   return guestList.some((guest) => guest.user._id === guestId)
+  // }
 
   const filteredGuests =
     searchResult !== null ? searchResult : guestList.map((user) => user.user)
 
   return (
-    <div className="px-4 flex flex-col mt-1 gap-2">
-      <div className="text-2xl font-semibold text-gray-700">Manage Guests</div>
+    <div className="px-4 flex flex-col mt-1 pt-2 gap-2">
+      <div className="text-xl mb-2 font-medium text-gray-700">
+        Manage Guests for <span className="text-indigo-600">{event.name}</span>
+      </div>
       <SearchField setSearchResult={setSearchResult} />
       {filteredGuests.map((guest) => (
         <div
@@ -111,7 +113,7 @@ const ManageGuests = () => {
           style={{ cursor: "pointer", marginBottom: "8px" }}
           className="border rounded-xl"
         >
-          <CardContent>
+          <CardContent className="!pb-1">
             <div className="flex items-center">
               <Avatar src={guest.profileImage} className="mr-3">
                 {guest.name[0]}
@@ -127,8 +129,9 @@ const ManageGuests = () => {
                   {guest.phoneNo}
                 </Typography>
               </div>
+            </div>
+            <div className="ml-auto w-fit">
               <ButtonSecondary
-                // text={isInvited(guest._id) ? "Invited" : "Invite"}
                 text={capitalizeFirstLetter(
                   guestList.find((user) => user.user._id === guest._id)
                     ?.status || "Invite",
@@ -256,14 +259,14 @@ const SearchField = ({
   }, [searchQuery])
 
   return (
-    <TextField
-      fullWidth
-      label="Name / Email / Phone Number"
-      variant="outlined"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      className="!mb-2"
-    />
+    <>
+      <Input
+        placeholder="Search for a guest"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="!mb-2"
+      />
+    </>
   )
 }
 
