@@ -114,12 +114,12 @@ const Invites = () => {
               <CardTitle className="text-lg">{invite.name}</CardTitle>
               <CardDescription className="flex flex-col ml-2">
                 <span className="flex items-center">
-                  <CalendarIcon className="text-blue-500 mr-2" size={14} />
+                  <CalendarIcon className="text-indigo-500 mr-2" size={14} />
                   {formatDate(invite.startDate)} - {formatDate(invite.endDate)}
                 </span>
 
                 <span className="flex items-center">
-                  <UserIcon className="text-blue-500 mr-2" size={16} />
+                  <UserIcon className="text-indigo-500 mr-2" size={16} />
                   <p>{invite.host.name}</p>
                 </span>
                 <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
@@ -133,15 +133,15 @@ const Invites = () => {
                   key={subEvent._id}
                   className="flex flex-col space-x-2 p-4 pb-3 border border-zinc-300 rounded-md"
                 >
-                  <span className="font-semibold text-base text-zinc-900 capitalize">
+                  <span className="font-semibold text-base text-zinc-900 capitalize flex justify-between">
                     {subEvent.name}
+                    <span className="flex items-center text-xs mb-1">
+                      <MapPinIcon className="mr-1" size={14} />
+                      {subEvent.venue}
+                    </span>
                   </span>
-                  <span className="flex items-center">
-                    <MapPinIcon className="mr-2" size={14} />
-                    {subEvent.venue}
-                  </span>
-                  <span className="flex items-center">
-                    <CalendarIcon className="mr-2" size={14} />
+                  <span className="flex items-center text-sm">
+                    <CalendarIcon className="mr-2" size={16} />
                     {formatDateShort(subEvent.startDate)} -{" "}
                     {formatDateShort(subEvent.endDate)}
                   </span>
