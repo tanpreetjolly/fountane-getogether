@@ -23,7 +23,7 @@ const Footer = () => {
               </g>
             </svg>
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white tracking-wide uppercase">
-              Creativerse
+              Getogether
             </span>
           </NavLink>
           <ul className="flex flex-wrap items-center mb-6 text-sm font-medium sm:mb-0 text-gray-400">
@@ -56,7 +56,7 @@ const Footer = () => {
             to="https://blogminds.onrender.com/"
             className="hover:underline"
           >
-            Creativerse™
+            Getogether™
           </NavLink>
           . All Rights Reserved.
         </span>

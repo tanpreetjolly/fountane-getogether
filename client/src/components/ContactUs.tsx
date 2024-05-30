@@ -62,7 +62,7 @@ const ContactUs = () => {
               type="email"
               id="email"
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-dark focus:border-dark block w-full p-2.5"
-              placeholder="name@creativerse.com"
+            placeholder="name@getogether.com"
               required
             />
           </div>
