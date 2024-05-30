@@ -49,18 +49,52 @@ const search = async (req: Request, res: Response) => {
             //     },
             // })
 
-            const vendors = await VendorProfile.find({
-                services: {
-                    $elemMatch: {
-                        serviceName: { $regex: query, $options: "i" },
+            const vendors = await VendorProfile.aggregate([
+                {
+                    $lookup: {
+                        from: "services",
+                        localField: "services",
+                        foreignField: "_id",
+                        as: "servicesData",
                     },
                 },
-            })
-                .select("user services")
-                .populate("user", "name email phoneNo profileImage")
-            // .skip(req.pagination.skip)
-            // .limit(req.pagination.limit)
-            // .sort({ createdAt: -1 })
+                {
+                    $match: {
+                        "servicesData.serviceName": {
+                            $regex: query,
+                            $options: "i",
+                        },
+                    },
+                },
+                {
+                    $project: {
+                        user: 1,
+                        services: 1,
+                        servicesData: 1,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "user",
+                        foreignField: "_id",
+                        as: "userData",
+                    },
+                },
+                {
+                    $unwind: "$userData",
+                },
+                {
+                    $project: {
+                        userId: "$userData._id",
+                        name: "$userData.name",
+                        email: "$userData.email",
+                        phoneNo: "$userData.phoneNo",
+                        profileImage: "$userData.profileImage",
+                        servicesData: 1,
+                    },
+                },
+            ])
 
             return res.status(StatusCodes.OK).json({
                 data: {

@@ -45,10 +45,10 @@ const getMe = async (req: Request, res: Response) => {
             {
                 vendorList: {
                     $elemMatch: {
-                        vendor: user.vendorProfile,
+                        vendorProfile: user.vendorProfile,
                         subEvents: {
                             $elemMatch: {
-                                status: "invited",
+                                status: "pending",
                             },
                         },
                     },
@@ -69,18 +69,30 @@ const getMe = async (req: Request, res: Response) => {
             path: "vendorList.subEvents.subEvent",
             select: "name startDate endDate venue",
         })
+        .populate("vendorList.subEvents.servicesOffering")
 
     const notifications = eventsNotifications.map((event) => {
         return {
             ...event.toJSON(),
-            userList: event.userList.filter(
-                (user) => user.user.toString() === req.user.userId.toString(),
+            userList: event.userList.find(
+                (user) =>
+                    user.user.toString() === req.user.userId.toString() &&
+                    user.status === "pending",
             ),
-            vendorList: event.vendorList.filter(
-                (vendor) =>
-                    vendor.vendorProfile.toString() ===
-                        user?.vendorProfile?.toString() || null,
-            ),
+            vendorList: event.vendorList.filter((vendor) => {
+                if (
+                    vendor.vendorProfile.toString() !==
+                        user?.vendorProfile?.toString() ||
+                    null
+                )
+                    return false
+                //@ts-ignore
+                vendor.subEvents = vendor.subEvents.filter(
+                    (subEvent) => subEvent.status === "pending",
+                )
+
+                return true
+            }),
         }
     })
 

@@ -7,6 +7,7 @@ import {
     SubEvent,
     VendorProfile,
     Task,
+    Services,
 } from "./models"
 import connectDB from "./db/connect"
 import dotenv from "dotenv"
@@ -50,6 +51,49 @@ const createChannelsForSubEvents = async (
     return newChannels.map((channel) => channel._id)
 }
 
+const createVendorServices = async () => {
+    const sampleService = [
+        {
+            serviceName: "Photographer",
+            serviceDescription:
+                "We provide the best photography services! for weddings, birthdays, and other events.",
+            price: faker.finance.amount(),
+        },
+        {
+            serviceName: "Caterer",
+            serviceDescription: "We provide the best catering services!",
+            price: faker.finance.amount(),
+        },
+        {
+            serviceName: "Decorator",
+            serviceDescription: "We provide the best decoration services!",
+            price: faker.finance.amount(),
+        },
+        {
+            serviceName: "Music",
+            serviceDescription: "We provide the best music services!",
+            price: faker.finance.amount(),
+        },
+        {
+            serviceName: "Transportation",
+            serviceDescription: "We provide the best transportation services!",
+            price: faker.finance.amount(),
+        },
+        {
+            serviceName: "Venue",
+            serviceDescription: "We provide the best venue services!",
+            price: faker.finance.amount(),
+        },
+        {
+            serviceName: "Entertainment",
+            serviceDescription: "We provide the best entertainment services!",
+            price: faker.finance.amount(),
+        },
+    ]
+    const newChannels = await Services.insertMany(sampleService)
+    return newChannels.map((channel) => channel._id)
+}
+
 // Connect to the database and drop the existing data
 async function main() {
     try {
@@ -62,6 +106,12 @@ async function main() {
         await ChatMessage.deleteMany({})
         await Channel.deleteMany({})
 
+        // Create a vendor profile for the user
+        const vendorProfile = await VendorProfile.create({
+            user: "60f1b9e3b3f1f3b3b3f1f3b3",
+            services: await createVendorServices(),
+        })
+
         // Create a new user
         const user = await User.create({
             _id: "60f1b9e3b3f1f3b3b3f1f3b3",
@@ -71,7 +121,7 @@ async function main() {
             phoneNo: faker.string.numeric(10),
             password: "hello@hello.com",
             status: "active",
-            vendorProfile: null,
+            vendorProfile: vendorProfile._id,
         })
 
         const hashedPassword = await bcrypt.hash("password", 10)
@@ -84,57 +134,27 @@ async function main() {
             phoneNo: faker.string.numeric(10),
             password: hashedPassword,
             status: "active",
+            vendorProfile: null as any,
         }))
 
-        await User.insertMany(manyUser)
-
-        const vendorUsers = manyUser.slice(0, 4)
+        manyUser.slice(0, 4).forEach((user) => {
+            user.vendorProfile = vendorProfile._id
+        })
         const guestUsers = manyUser.slice(4)
 
-        const sampleService = [
-            "Photography",
-            "Catering",
-            "Decoration",
-            "Music",
-            "Transportation",
-            "Venue",
-            "Entertainment",
-        ]
-
-        const vendorProfileToCreate = [
-            ...vendorUsers.map((user) => ({
-                _id: new mongoose.Types.ObjectId(),
-                user: user._id,
-                services: Array.from({ length: 2 }, () => ({
-                    //random service from sampleService
-                    serviceName:
-                        sampleService[
-                            Math.floor(Math.random() * sampleService.length)
-                        ],
-                    serviceDescription: faker.lorem.sentence(),
-                    price: faker.finance.amount(),
+        const vendorProfileToCreatePromise = [
+            ...manyUser
+                .filter((user) => user.vendorProfile)
+                .map(async (user) => ({
+                    _id: new mongoose.Types.ObjectId(),
+                    user: user._id,
+                    services: await createVendorServices(),
                 })),
-            })),
         ]
-
-        // Create a vendor profile for the user
-        const vendorProfile = await VendorProfile.create({
-            user: user._id,
-            services: [
-                {
-                    serviceName: "Photographer",
-                    serviceDescription:
-                        "We provide the best photography services! for weddings, birthdays, and other events.",
-                    price: faker.finance.amount(),
-                },
-                {
-                    serviceName: "Caterer",
-                    serviceDescription:
-                        "We provide the best catering services!",
-                    price: faker.finance.amount(),
-                },
-            ],
-        })
+        const vendorProfileToCreate = await Promise.all(
+            vendorProfileToCreatePromise,
+        )
+        await User.insertMany(manyUser)
 
         // Update the user with the vendor profile
         await User.findByIdAndUpdate(user._id, {
@@ -165,7 +185,34 @@ async function main() {
                 name: "Reception and Dinner",
                 startDate: new Date("2024-05-27T09:00:00Z"),
                 endDate: new Date("2024-05-27T13:00:00Z"),
-                venue: "Venue 3",
+                venue: "Leela Palace, Bangalore",
+                channels: [] as mongoose.Schema.Types.ObjectId[],
+            },
+        ]
+
+        let inviteSubEventToCreate = [
+            {
+                _id: new mongoose.Types.ObjectId(),
+                name: "Pre-Wedding",
+                startDate: new Date("2024-05-24T09:00:00Z"),
+                endDate: new Date("2024-05-24T13:00:00Z"),
+                venue: "Miami Cafe, Delhi",
+                channels: [] as mongoose.Schema.Types.ObjectId[],
+            },
+            {
+                _id: new mongoose.Types.ObjectId(),
+                name: "Wedding Day",
+                startDate: new Date("2024-05-25T09:00:00Z"),
+                endDate: new Date("2024-05-26T13:00:00Z"),
+                venue: "Taj Hotel, Mumbai",
+                channels: [] as mongoose.Schema.Types.ObjectId[],
+            },
+            {
+                _id: new mongoose.Types.ObjectId(),
+                name: "Reception and Dinner",
+                startDate: new Date("2024-05-27T09:00:00Z"),
+                endDate: new Date("2024-05-27T13:00:00Z"),
+                venue: "Leela Palace, Bangalore",
                 channels: [] as mongoose.Schema.Types.ObjectId[],
             },
         ]
@@ -199,27 +246,87 @@ async function main() {
                 })),
             ],
             vendorList: [
-                ...vendorUsers.map((user) => ({
-                    vendorProfile:
-                        vendorProfileToCreate[
-                            Math.floor(
-                                Math.random() * vendorProfileToCreate.length,
-                            )
-                        ]._id,
+                ...vendorProfileToCreate.map((vendorUser) => ({
+                    vendorProfile: vendorUser._id,
                     subEvents: assignRandomSubEvents(subEventToCreate).map(
                         (sId) => ({
                             subEvent: sId,
                             status: ["accepted", "rejected", "pending"][
                                 Math.floor(Math.random() * 3)
                             ],
-                            servicesOffering: sampleService.slice(
+                            servicesOffering:
+                                vendorUser.services[
+                                    Math.floor(
+                                        Math.random() *
+                                            vendorUser.services.length,
+                                    )
+                                ],
+                            amount: Math.floor(Math.random() * 1000),
+                            paymentStatus: ["pending", "paid", "failed"][
+                                Math.floor(Math.random() * 3)
+                            ],
+                        }),
+                    ),
+                })),
+            ],
+        })
+
+        const inviteEvent = await Event.create({
+            name: "Sam weds Riya",
+            host: guestUsers[0]._id,
+            startDate: new Date("2024-06-14T09:00:00Z"),
+            endDate: new Date("2024-06-17T13:00:00Z"),
+            budget: 900000,
+            eventType: "wedding",
+            userList: [
+                {
+                    user: user._id,
+                    subEvents: assignRandomSubEvents(inviteSubEventToCreate),
+                },
+                ...guestUsers.map((user) => ({
+                    user: user._id,
+                    subEvents: assignRandomSubEvents(inviteSubEventToCreate),
+                })),
+            ],
+            vendorList: [
+                {
+                    vendorProfile: user.vendorProfile,
+                    subEvents: assignRandomSubEvents(
+                        inviteSubEventToCreate,
+                    ).map((sId) => ({
+                        subEvent: sId,
+                        status: ["accepted", "rejected", "pending"][
+                            Math.floor(Math.random() * 3)
+                        ],
+                        //select any one service vendor is offering
+                        servicesOffering:
+                            vendorProfile.services[
                                 Math.floor(
-                                    Math.random() * sampleService.length,
-                                ),
-                                Math.floor(
-                                    Math.random() * sampleService.length,
-                                ),
-                            ),
+                                    Math.random() *
+                                        vendorProfile.services.length,
+                                )
+                            ],
+                        amount: Math.floor(Math.random() * 1000),
+                        paymentStatus: ["pending", "paid", "failed"][
+                            Math.floor(Math.random() * 3)
+                        ],
+                    })),
+                },
+                ...vendorProfileToCreate.map((vendorUser) => ({
+                    vendorProfile: vendorUser._id,
+                    subEvents: assignRandomSubEvents(subEventToCreate).map(
+                        (sId) => ({
+                            subEvent: sId,
+                            status: ["accepted", "rejected", "pending"][
+                                Math.floor(Math.random() * 3)
+                            ],
+                            servicesOffering:
+                                vendorUser.services[
+                                    Math.floor(
+                                        Math.random() *
+                                            vendorUser.services.length,
+                                    )
+                                ]._id,
                             amount: Math.floor(Math.random() * 1000),
                             paymentStatus: ["pending", "paid", "failed"][
                                 Math.floor(Math.random() * 3)
@@ -249,6 +356,25 @@ async function main() {
                     )
                 }),
             )
+            inviteSubEventToCreate[i].channels =
+                await createChannelsForSubEvents(
+                    event.userList.filter((user) => {
+                        const userSubEvents = user.subEvents.map((se) =>
+                            se.toString(),
+                        )
+                        return userSubEvents.includes(
+                            subEventToCreate[i]._id.toString(),
+                        )
+                    }),
+                    event.vendorList.filter((vendor) => {
+                        const vendorSubEvents = vendor.subEvents.map((se) =>
+                            se.toString(),
+                        )
+                        return vendorSubEvents.includes(
+                            subEventToCreate[i]._id.toString(),
+                        )
+                    }),
+                )
         }
 
         // Create a channel for the event
@@ -276,6 +402,24 @@ async function main() {
                 $push: {
                     subEvents: {
                         $each: subEvent.map((se) => se._id),
+                    },
+                },
+            },
+            {
+                runValidators: true,
+            },
+        )
+
+        // Create a sub-event for the event
+        const inviteSubEvent = await SubEvent.insertMany(inviteSubEventToCreate)
+
+        // Add the sub-event to the event
+        await Event.findByIdAndUpdate(
+            inviteEvent._id,
+            {
+                $push: {
+                    subEvents: {
+                        $each: inviteSubEvent.map((se) => se._id),
                     },
                 },
             },

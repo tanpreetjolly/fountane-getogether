@@ -65,6 +65,11 @@ const EventPage = () => {
       )}
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[50dvh] overflow-y-auto">
+          {event.subEvents.length == 0 && (
+            <div className="text-center text-lg text-gray-700">
+              No festivity added yet
+            </div>
+          )}
           {event.subEvents
             .sort(
               (a: SubEventType, b: SubEventType) =>
@@ -80,19 +85,20 @@ const EventPage = () => {
             ))}
         </div>
       </div>
-
-      <div className="grid grid-cols-2 gap-2 items-center">
-        <Button
-          text="Add Festivity"
-          icon={<BsFillCalendarEventFill />}
-          onClick={() => navigate("festivity")}
-        />
-        <Button
-          text="Payments"
-          icon={<FaCreditCard />}
-          onClick={() => navigate("payments")}
-        />
-      </div>
+      {event.host._id == user?.userId && (
+        <div className="grid grid-cols-2 gap-2 items-center">
+          <Button
+            text="Add Festivity"
+            icon={<BsFillCalendarEventFill />}
+            onClick={() => navigate("festivity")}
+          />
+          <Button
+            text="Payments"
+            icon={<FaCreditCard />}
+            onClick={() => navigate("payments")}
+          />
+        </div>
+      )}
     </div>
   )
 }

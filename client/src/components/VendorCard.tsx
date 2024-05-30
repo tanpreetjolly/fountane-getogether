@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Box from "@mui/material/Box"
 import Button from "./Button"
@@ -7,18 +7,17 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
-import { OtherUserType, ServiceType, SubEventType } from "@/definitions"
+import { OtherUserType, ServiceType, SubEventsVendorType } from "@/definitions"
 import { Link } from "react-router-dom"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 
 type Props = {
   vendor: {
-    subEvent?: Omit<SubEventType, "channels">
     vendor: OtherUserType
+    servicesOffering: ServiceType
     status?: string
-    servicesOffering?: [string]
-    services?: ServiceType[]
+    subEvent?: Omit<SubEventsVendorType, "channels">
   }
 }
 
@@ -26,11 +25,25 @@ const VendorCard = ({ vendor }: Props) => {
   const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
-  const [selectedServices, setSelectedServices] = useState<string[]>([])
-
-  console.log(vendor.services)
 
   const { event, loadingEvent } = useEventContext()
+
+  // useEffect(() => {
+  //   if (!event) return
+
+  //   // if current vendor is already invited, set the selected festivity
+  //   const selectedSubEvents = event.vendorList
+  //     .find((v) => v.vendorProfile.user._id === vendor.vendor._id)
+  //     ?.subEvents.filter(
+  //       (subEvent) =>
+  //         subEvent.servicesOffering._id === vendor.servicesOffering._id,
+  //     )
+  //     .map((subEvent) => subEvent.subEvent._id)
+
+  //   console.log(selectedSubEvents)
+
+  //   setSelectedFestivities(selectedSubEvents || [])
+  // }, [event, vendor])
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
@@ -86,39 +99,34 @@ const VendorCard = ({ vendor }: Props) => {
       (subEvent) => subEvent.subEvent._id === subEventID,
     )?.status
   }
+
   return (
     <>
       <button className="border p-5 rounded-lg w-full">
-        {/* vendor status - hired, invited, invite */}
         <Link
           to={`${vendor.vendor._id}/chat`}
           className="flex justify-between items-center"
         >
           <div className="text-left">
-            <div className="text-lg mb-1 font-medium text-gray-700">
+            <div className="text-lg mb-1 font-medium">
+              {vendor.servicesOffering.serviceName} - $
+              {vendor.subEvent?.amount || vendor.servicesOffering.price}
+            </div>
+            <div className="text-base  text-gray-700 capitalize italic">
               {vendor.vendor.name}
             </div>
-            {vendor.servicesOffering && (
+            {!vendor.status && (
               <div className="text-sm text-gray-500 capitalize">
-                Type :{" "}
-                {vendor.servicesOffering.map((service) => (
-                  <span key={service}>{service}, </span>
-                ))}
-              </div>
-            )}
-            {vendor.services && (
-              <div className="text-sm text-gray-500 capitalize">
-                Type :{" "}
-                {vendor.services.map((service) => (
-                  <span key={service._id}>{service.serviceName}, </span>
-                ))}
+                {vendor.servicesOffering.serviceDescription}
               </div>
             )}
 
             {vendor.subEvent && (
               <div className="text-sm text-gray-500">
                 Sub-Events :{" "}
-                <span className="capitalize">{vendor.subEvent.name}</span>
+                <span className="capitalize">
+                  {vendor.subEvent.subEvent.name}
+                </span>
               </div>
             )}
           </div>
@@ -138,46 +146,22 @@ const VendorCard = ({ vendor }: Props) => {
       >
         <Box sx={{ p: 2 }}>
           {/* List to select festivities to invite to vendor */}
-          {vendor.services && (
-            <>
-              <span className="pl-4 text-xl text-gray-800 font-medium">
-                Select the Services for RSVP
-              </span>
-              <List>
-                {vendor.services.map((service) => (
-                  <ListItem
-                    key={service._id}
-                    secondaryAction={
-                      <Checkbox
-                        edge="end"
-                        color="secondary"
-                        checked={selectedServices.includes(service._id)}
-                        onChange={() => {
-                          setSelectedServices((prevServices) =>
-                            prevServices.includes(service._id)
-                              ? prevServices.filter(
-                                  (item) => item !== service._id,
-                                )
-                              : [...prevServices, service._id],
-                          )
-                        }}
-                      />
-                    }
-                  >
-                    <ListItemText
-                      primary={service.serviceName}
-                      secondary={
-                        service.serviceDescription + " - $" + service.price
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
           <span className="pl-4 text-xl text-gray-800 font-medium">
             Select the Festivities for RSVP
           </span>
+          <span className="text-lg text-gray-800 font-medium">
+            {vendor.vendor.name}
+          </span>
+          <br />
+          <span className="ml-2 text-sm text-gray-500">
+            {vendor.servicesOffering.serviceName} - $
+            {vendor.servicesOffering.price}
+          </span>
+          <br />
+          <span className="text-sm text-gray-500">
+            {vendor.servicesOffering.serviceDescription}
+          </span>
+
           {festivityList.length === 0 && (
             <div className="text-center text-gray-500">
               No Festivities Found, Create Festivities

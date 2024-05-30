@@ -8,19 +8,10 @@ const VendorProfileSchema = new Schema<IVendorProfile>(
             ref: "User",
             required: [true, "User is required."],
         },
-        services: [
-            {
-                serviceName: {
-                    type: String,
-                    required: [true, "Service Name is required."],
-                },
-                serviceDescription: {
-                    type: String,
-                    required: [true, "Service Description is required."],
-                },
-                price: { type: Number, required: [true, "Price is required."] },
-            },
-        ],
+        services: {
+            type: [Schema.Types.ObjectId],
+            ref: "Services",
+        },
     },
     { timestamps: true },
 )

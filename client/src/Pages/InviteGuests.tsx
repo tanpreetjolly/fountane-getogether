@@ -46,9 +46,7 @@ const InviteGuests = () => {
       ) || []
 
   if (loadingEvent) return <Loader />
-
   if (!event) return <div>No Event Found</div>
-
   if (!subEventId) return <div>No SubEvent Found</div>
 
   return (

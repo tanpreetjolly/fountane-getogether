@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react"
 import { search } from "@/api"
-import { VendorSearchType } from "@/definitions"
+import { OtherUserType, ServiceType, VendorSearchType } from "@/definitions"
 import VendorCard from "@/components/VendorCard"
+import { useEventContext } from "@/context/EventContext"
 
 const SearchVendors = () => {
   const [searchQuery, setSearchQuery] = useState("")
-  const [vendors, setVendors] = useState<VendorSearchType[]>([])
+  const [vendors, setVendors] = useState<
+    { vendor: OtherUserType; servicesOffering: ServiceType }[]
+  >([])
   const [timeoutId, setTimeoutId] = useState<ReturnType<
     typeof setTimeout
   > | null>(null)
+
+  const { event, loadingEvent } = useEventContext()
 
   const handleSearchChange = (event: any) => {
     setSearchQuery(event.target.value)
@@ -17,17 +22,36 @@ const SearchVendors = () => {
     const fetchData = async () => {
       search(searchQuery, "vendor", 1, 20)
         .then((response: { data: { vendors: VendorSearchType[] } }) => {
-          console.log(response.data)
+          // console.log(response.data)
 
-          setVendors(response.data.vendors)
+          setVendors(() =>
+            response.data.vendors
+              .map((vendor) =>
+                vendor.servicesData.map((service) => ({
+                  vendor: vendor,
+                  servicesOffering: service,
+                })),
+              )
+              .flat()
+              .filter((vendor) => {
+                return vendor.servicesOffering.serviceName
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
+              }),
+          )
         })
         .catch((error) => console.error(error.response))
     }
 
     if (timeoutId) clearTimeout(timeoutId)
-    const id = setTimeout(fetchData, 500)
+    const id = setTimeout(fetchData, 1500)
     setTimeoutId(id)
   }, [searchQuery])
+
+  if (loadingEvent) return <div>Loading...</div>
+  if (!event) return <div>No Event Found</div>
+
+  const displayVendors = vendors
 
   return (
     <div>
@@ -46,15 +70,19 @@ const SearchVendors = () => {
               onChange={handleSearchChange}
             />
           </div>
-          {vendors.map((vendor) => (
-            <VendorCard
-              key={vendor.user._id}
-              vendor={{
-                vendor: vendor.user,
-                services: vendor.services,
-              }}
-            />
-          ))}
+          {displayVendors.length === 0 ? (
+            <div className="text-center text-gray-500">No Vendors Found</div>
+          ) : (
+            displayVendors.map((vendor) => (
+              <VendorCard
+                key={vendor.servicesOffering._id}
+                vendor={{
+                  vendor: vendor.vendor,
+                  servicesOffering: vendor.servicesOffering,
+                }}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>
