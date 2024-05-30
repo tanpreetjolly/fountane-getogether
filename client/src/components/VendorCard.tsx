@@ -8,7 +8,7 @@ import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
 import { OtherUserType, ServiceType, SubEventType } from "@/definitions"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 
@@ -28,11 +28,9 @@ const VendorCard = ({ vendor }: Props) => {
   const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
   const [selectedServices, setSelectedServices] = useState<string[]>([])
 
-  const navigate = useNavigate()
-
   console.log(vendor.services)
 
-  const { event, loadingEvent, updateEvent } = useEventContext()
+  const { event, loadingEvent } = useEventContext()
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
@@ -46,9 +44,9 @@ const VendorCard = ({ vendor }: Props) => {
 
   const getStatusColor = () => {
     switch (vendor.status) {
-      case "hired":
+      case "accepted":
         return "bg-green-400 text-white "
-      case "invited":
+      case "pending":
         return "bg-blue-400 text-white "
       case "rejected":
         return "bg-red-600 text-gray-300"
@@ -71,15 +69,30 @@ const VendorCard = ({ vendor }: Props) => {
     )
   }
 
+  const handleStatusButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setSelectedFestivities(
+      vendorSelected?.subEvents.map((subEvent) => subEvent.subEvent._id) || [],
+    )
+    setSelectedVendorId(vendor.vendor._id)
+    setIsDrawerOpen(true)
+  }
+
+  const getStatus = (subEventID: string) => {
+    return vendorSelected?.subEvents.find(
+      (subEvent) => subEvent.subEvent._id === subEventID,
+    )?.status
+  }
   return (
     <>
       <button className="border p-5 rounded-lg w-full">
         {/* vendor status - hired, invited, invite */}
-        <div
+        <Link
+          to={`${vendor.vendor._id}/chat`}
           className="flex justify-between items-center"
-          onClick={() => {
-            if (vendor.status) navigate(`${vendor.vendor._id}/chat`)
-          }}
         >
           <div className="text-left">
             <div className="text-lg mb-1 font-medium text-gray-700">
@@ -109,23 +122,13 @@ const VendorCard = ({ vendor }: Props) => {
               </div>
             )}
           </div>
-          <div
+          <button
             className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor()}`}
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setSelectedVendorId(vendor.vendor._id)
-              setIsDrawerOpen(true)
-              setSelectedFestivities(
-                vendorSelected?.subEvents.map(
-                  (subEvent) => subEvent.subEvent._id,
-                ) || [],
-              )
-            }}
+            onClick={handleStatusButtonClick}
           >
             {vendor.status || "Invite"}
-          </div>
-        </div>
+          </button>
+        </Link>
       </button>
       <SwipeableDrawer
         anchor="bottom"
@@ -193,7 +196,14 @@ const VendorCard = ({ vendor }: Props) => {
                   />
                 }
               >
-                <ListItemText primary={festivity.name} />
+                <ListItemText
+                  primary={festivity.name}
+                  secondary={
+                    <span className="capitalize">
+                      {getStatus(festivity._id)}
+                    </span>
+                  }
+                />
               </ListItem>
             ))}
           </List>

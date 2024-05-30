@@ -9,25 +9,25 @@ type Props = {}
 
 const vendorData = [
   {
-    id: "11",
+    _id: "11",
     name: "Shivam Caterers",
     type: "food",
     status: "invite",
   },
   {
-    id: "21",
+    _id: "21",
     name: "Vanish Caterings",
     type: "food",
     status: "invite",
   },
   {
-    id: "31",
+    _id: "31",
     name: "Event Managers Inc.",
     type: "event management",
     status: "invited",
   },
   {
-    id: "41",
+    _id: "41",
     name: "Dhillon Managers Inc.",
     type: "event management",
     status: "invited",
@@ -37,11 +37,11 @@ const vendorData = [
 const AssignVendors = (_props: Props) => {
   const [selectedVendors, setSelectedVendors] = useState<string[]>([])
 
-  const handleVendorChange = (vendorId: string) => {
+  const handleVendorChange = (vendor_Id: string) => {
     setSelectedVendors((prevSelectedVendors) =>
-      prevSelectedVendors.includes(vendorId)
-        ? prevSelectedVendors.filter((id) => id !== vendorId)
-        : [...prevSelectedVendors, vendorId],
+      prevSelectedVendors.includes(vendor_Id)
+        ? prevSelectedVendors.filter((_id) => _id !== vendor_Id)
+        : [...prevSelectedVendors, vendor_Id],
     )
   }
 
@@ -53,13 +53,13 @@ const AssignVendors = (_props: Props) => {
       <List>
         {vendorData.map((vendor) => (
           <ListItem
-            key={vendor.id}
+            key={vendor._id}
             secondaryAction={
               <Checkbox
                 color="secondary"
                 edge="end"
-                checked={selectedVendors.includes(vendor.id)}
-                onChange={() => handleVendorChange(vendor.id)}
+                checked={selectedVendors.includes(vendor._id)}
+                onChange={() => handleVendorChange(vendor._id)}
               />
             }
           >

@@ -58,7 +58,7 @@ const ChannelChat = () => {
           onClick={handleSendMessage}
           className="py-2.5 px-3 bg-zinc-600 text-white rounded-full"
         >
-          <SendHorizontal size={18}/>
+          <SendHorizontal size={18} />
         </button>
       </div>
     </div>

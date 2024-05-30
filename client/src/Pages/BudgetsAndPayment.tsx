@@ -6,11 +6,10 @@ import {
   DialogTitle,
   DialogContent,
 } from "@mui/material"
-import { FaEdit } from "react-icons/fa"
 import Button from "../components/Button"
 import { MdCancel } from "react-icons/md"
 import { SiTicktick } from "react-icons/si"
-import { CheckCheck, CircleDot, Ellipsis, SquarePen } from "lucide-react"
+import { CheckCheck, CircleDot, SquarePen } from "lucide-react"
 import { useEventContext } from "../context/EventContext"
 import Loader from "../components/Loader"
 interface Festivity {

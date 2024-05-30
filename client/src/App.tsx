@@ -57,7 +57,7 @@ const Layout = () => {
     "/sign-up",
     "/verify",
     "/forgot-password",
-    "/"
+    "/",
   ]
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname)
   return (
@@ -156,8 +156,8 @@ const router = createBrowserRouter([
                 path: "festivity/:subEventId",
                 children: [
                   { index: true, element: <SubEventChannels /> },
-                  { path: "vendors", element: <AssignVendors /> },
                   { path: "guests", element: <InviteGuests /> },
+                  { path: "vendors", element: <AssignVendors /> },
                   { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },

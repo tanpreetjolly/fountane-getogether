@@ -13,6 +13,8 @@ import dotenv from "dotenv"
 import bcrypt from "bcryptjs"
 import { CHANNEL_TYPES, ROLES } from "./values"
 import { IEvent } from "./types/models"
+import { faker } from "@faker-js/faker"
+import { profile } from "console"
 
 dotenv.config()
 
@@ -66,6 +68,7 @@ async function main() {
             _id: "60f1b9e3b3f1f3b3b3f1f3b3",
             name: "John Doe",
             email: "hello@hello.com",
+            profileImage: faker.image.avatar(),
             phoneNo: "1234567890",
             password: "hello@hello.com",
             status: "active",
@@ -78,6 +81,7 @@ async function main() {
             _id: new mongoose.Types.ObjectId(),
             name: `John Doe ${i}`,
             email: `user${i}@example.com`,
+            profileImage: faker.image.avatar(),
             phoneNo: Math.floor(
                 1000000000 + Math.random() * 9000000000,
             ).toString(),

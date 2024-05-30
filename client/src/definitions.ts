@@ -164,6 +164,8 @@ export interface NotificationsType {
 export interface InvitesType {
   id: string
   eventId: string
+  eventStartDate: string
+  eventEndDate: string
   subEventName: string
   eventName: string
   startDate: string
