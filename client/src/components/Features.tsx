@@ -19,11 +19,11 @@ const Features: React.FC = () => {
         features.
       </p>
       <section className="flex pt-10 lg:pt-20 flex-col w-11/12 mx-auto lg:my-10 md:flex-row justify-center  lg:gap-10">
-        <div className="lg:w-1/2  p-2">
-          <h1 className="text-left lg:mt-7  font-semibold text-2xl  text-slate-800 lg:text-5xl whitespace-nowrap mb-4">
+        <div className="lg:w-1/2 flex flex-col items-center lg:items-start  text-center lg:text-left p-2">
+          <h1 className=" lg:mt-7  font-semibold text-2xl  text-slate-800 lg:text-5xl whitespace-nowrap mb-4">
             Easy Event Management
           </h1>
-          <div className="text-lg text-slate-600 w-4/5 mb-5">
+          <div className="text-lg text-slate-600 lg:w-4/5 mb-5">
             Keep track of your event details and guests in real time. Manage
             your event without headaches! Just a few clicks and you are done.
           </div>
