@@ -39,7 +39,7 @@ export interface IVendorProfile extends Document {
 
 export interface IVendorList extends Document {
     _id: string
-    vendor: Schema.Types.ObjectId
+    vendorProfile: Schema.Types.ObjectId
     // permission: [string]
     subEvents: [
         {

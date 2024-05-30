@@ -26,7 +26,7 @@ export const getEvent = async (req: Request, res: Response) => {
             path: "vendorList",
             populate: [
                 {
-                    path: "vendor",
+                    path: "vendorProfile",
                     populate: {
                         path: "user",
                         select: "name email phoneNo profileImage",
@@ -103,7 +103,7 @@ export const createSubEvent = async (req: Request, res: Response) => {
         allUserListId.add(user.user)
     })
     event.vendorList.forEach((vendor) => {
-        allUserListId.add(vendor.vendor)
+        allUserListId.add(vendor.vendorProfile)
     })
 
     const newSubEventChannels = [

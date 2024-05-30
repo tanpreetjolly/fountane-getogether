@@ -41,7 +41,6 @@ const calculateAvailableBudget = (
 interface Props {}
 
 const BudgetsAndPayment: React.FC<Props> = () => {
-  const { event, loadingEvent } = useEventContext()
   const [totalBudget, setTotalBudget] = useState<number>(initialBudget)
   const [availableBudget, setAvailableBudget] = useState<number>(
     calculateAvailableBudget(initialBudget, initialFestivities),
@@ -51,6 +50,9 @@ const BudgetsAndPayment: React.FC<Props> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [newTotalBudget, setNewTotalBudget] = useState<number>(totalBudget)
 
+  const { event, loadingEvent } = useEventContext()
+
+  // const 
   const handleOpenModal = () => {
     setIsModalOpen(true)
   }
@@ -64,12 +66,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
     setAvailableBudget(calculateAvailableBudget(newTotalBudget, festivities))
     handleCloseModal()
   }
-  if (loadingEvent)
-    return (
-      <div>
-        <Loader />
-      </div>
-    )
+  if (loadingEvent) return <Loader />
   if (event == null) return null
   return (
     <div className="px-4">

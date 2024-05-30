@@ -43,7 +43,7 @@ UserList.index({ user: 1 })
 
 const VendorList = new Schema<IVendorList>(
     {
-        vendor: {
+        vendorProfile: {
             type: Schema.Types.ObjectId,
             ref: "VendorProfile",
             required: [true, "Please Provide Vendor."],

@@ -1,49 +1,71 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
 import Typography from "@mui/material/Typography"
+import { VendorListType } from "@/definitions"
+import { useEventContext } from "@/context/EventContext"
+import { Loader } from "lucide-react"
+import { useParams } from "react-router-dom"
 
-type Props = {}
+interface AssignVendorsType {
+  vendorProfileId: string
+  serviceId: string
+}
 
-const vendorData = [
-  {
-    _id: "11",
-    name: "Shivam Caterers",
-    type: "food",
-    status: "invite",
-  },
-  {
-    _id: "21",
-    name: "Vanish Caterings",
-    type: "food",
-    status: "invite",
-  },
-  {
-    _id: "31",
-    name: "Event Managers Inc.",
-    type: "event management",
-    status: "invited",
-  },
-  {
-    _id: "41",
-    name: "Dhillon Managers Inc.",
-    type: "event management",
-    status: "invited",
-  },
-]
+const AssignVendors = () => {
+  const [selectedVendors, setSelectedVendors] = useState<AssignVendorsType[]>(
+    [],
+  )
 
-const AssignVendors = (_props: Props) => {
-  const [selectedVendors, setSelectedVendors] = useState<string[]>([])
+  const { event, loadingEvent } = useEventContext()
+  const { subEventId } = useParams()
 
-  const handleVendorChange = (vendor_Id: string) => {
+  useEffect(() => {
+    if (!event) return
+    if (!subEventId) return
+    // const userList = event.userList
+    //   .filter((user) => user.subEvents.includes(subEventId))
+    //   .map((guest) => guest.user)
+
+    const vendorSelected: AssignVendorsType[] = []
+    event.vendorList.forEach((vendor: VendorListType) => {
+      vendor.subEvents.forEach((subEvent) => {
+        if (subEvent._id === subEventId) {
+          subEvent.servicesOffering.forEach((serviceId) => {
+            vendorSelected.push({
+              vendorProfileId: vendor.vendorProfile._id,
+              serviceId,
+            })
+          })
+        }
+      })
+    })
+
+    setSelectedVendors(vendorSelected)
+  }, [event, loadingEvent, subEventId])
+
+  if (loadingEvent) return <Loader />
+  if (!event) return <div>No Event Found</div>
+  if (!subEventId) return <div>No SubEvent Found</div>
+
+  const handleVendorChange = (vendorProfileId: string, serviceId: string) => {
     setSelectedVendors((prevSelectedVendors) =>
-      prevSelectedVendors.includes(vendor_Id)
-        ? prevSelectedVendors.filter((_id) => _id !== vendor_Id)
-        : [...prevSelectedVendors, vendor_Id],
+      prevSelectedVendors.some(
+        (p) =>
+          p.vendorProfileId === vendorProfileId && p.serviceId === serviceId,
+      )
+        ? prevSelectedVendors.filter(
+            (p) =>
+              p.vendorProfileId !== vendorProfileId &&
+              p.serviceId !== serviceId,
+          )
+        : [...prevSelectedVendors, { vendorProfileId, serviceId }],
     )
   }
+
+  const vendorList = event.vendorList
 
   return (
     <div>
@@ -51,21 +73,39 @@ const AssignVendors = (_props: Props) => {
         Assign Vendors for the Festivity
       </Typography>
       <List>
-        {vendorData.map((vendor) => (
-          <ListItem
-            key={vendor._id}
-            secondaryAction={
-              <Checkbox
-                color="secondary"
-                edge="end"
-                checked={selectedVendors.includes(vendor._id)}
-                onChange={() => handleVendorChange(vendor._id)}
-              />
-            }
-          >
+        {vendorList.map((vendor) => (
+          <ListItem key={vendor._id}>
             <ListItemText
-              primary={vendor.name}
-              secondary={`Type: ${vendor.type}`}
+              primary={vendor.vendorProfile.user.name}
+              // secondary={`Type: ${vendor.vendor.services}`}
+              secondary={
+                <List>
+                  {vendor.vendorProfile.services.map((service) => (
+                    <ListItem
+                      key={service._id}
+                      secondaryAction={
+                        <Checkbox
+                          color="secondary"
+                          edge="end"
+                          checked={selectedVendors.some(
+                            (p) =>
+                              p.vendorProfileId === vendor.vendorProfile._id &&
+                              p.serviceId === service._id,
+                          )}
+                          onChange={() =>
+                            handleVendorChange(
+                              vendor.vendorProfile._id,
+                              service._id,
+                            )
+                          }
+                        />
+                      }
+                    >
+                      <ListItemText primary={service.serviceName} />
+                    </ListItem>
+                  ))}
+                </List>
+              }
             />
           </ListItem>
         ))}

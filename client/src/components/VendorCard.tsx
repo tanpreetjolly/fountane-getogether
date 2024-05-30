@@ -8,7 +8,7 @@ import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
 import { OtherUserType, ServiceType, SubEventType } from "@/definitions"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 
@@ -39,7 +39,7 @@ const VendorCard = ({ vendor }: Props) => {
   const vendorList = event.vendorList
 
   const vendorSelected = vendorList.find(
-    (vendor) => vendor.vendor.user._id === selectedVendorId,
+    (vendor) => vendor.vendorProfile.user._id === selectedVendorId,
   )
 
   const getStatusColor = () => {

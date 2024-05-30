@@ -26,8 +26,11 @@ export interface ServiceType {
 }
 
 export interface VendorProfileType {
+  //this is vendorProfileId
+  _id: string
   user: OtherUserType
   services: ServiceType[]
+  createdAt: string
 }
 
 export interface EventShortType {
@@ -88,7 +91,7 @@ export interface UserListType {
 
 export interface VendorListType {
   _id: string
-  vendor: VendorProfileType
+  vendorProfile: VendorProfileType
   // permission: [string]
   subEvents: SubEventsVendorType[]
   createdAt: string

@@ -14,7 +14,6 @@ import bcrypt from "bcryptjs"
 import { CHANNEL_TYPES, ROLES } from "./values"
 import { IEvent } from "./types/models"
 import { faker } from "@faker-js/faker"
-import { profile } from "console"
 
 dotenv.config()
 
@@ -27,7 +26,7 @@ const createChannelsForSubEvents = async (
         allUserListId.add(user.user)
     })
     vendorList.forEach((vendor) => {
-        allUserListId.add(vendor.vendor)
+        allUserListId.add(vendor.vendorProfile)
     })
 
     const newSubEventChannels = [
@@ -66,10 +65,10 @@ async function main() {
         // Create a new user
         const user = await User.create({
             _id: "60f1b9e3b3f1f3b3b3f1f3b3",
-            name: "John Doe",
+            name: faker.person.fullName(),
             email: "hello@hello.com",
             profileImage: faker.image.avatar(),
-            phoneNo: "1234567890",
+            phoneNo: faker.string.numeric(10),
             password: "hello@hello.com",
             status: "active",
             vendorProfile: null,
@@ -79,20 +78,18 @@ async function main() {
 
         const manyUser = Array.from({ length: 10 }, (_, i) => ({
             _id: new mongoose.Types.ObjectId(),
-            name: `John Doe ${i}`,
+            name: faker.person.fullName(),
             email: `user${i}@example.com`,
             profileImage: faker.image.avatar(),
-            phoneNo: Math.floor(
-                1000000000 + Math.random() * 9000000000,
-            ).toString(),
+            phoneNo: faker.string.numeric(10),
             password: hashedPassword,
             status: "active",
         }))
 
         await User.insertMany(manyUser)
 
-        //select some random users to be vendors
         const vendorUsers = manyUser.slice(0, 4)
+        const guestUsers = manyUser.slice(4)
 
         const sampleService = [
             "Photography",
@@ -108,25 +105,15 @@ async function main() {
             ...vendorUsers.map((user) => ({
                 _id: new mongoose.Types.ObjectId(),
                 user: user._id,
-                services: [
-                    {
-                        //random service from sampleService
-                        serviceName:
-                            sampleService[
-                                Math.floor(Math.random() * sampleService.length)
-                            ],
-                        serviceDescription: "Description of service 1",
-                        price: 100,
-                    },
-                    {
-                        serviceName:
-                            sampleService[
-                                Math.floor(Math.random() * sampleService.length)
-                            ],
-                        serviceDescription: "Description of service 2",
-                        price: 200,
-                    },
-                ],
+                services: Array.from({ length: 2 }, () => ({
+                    //random service from sampleService
+                    serviceName:
+                        sampleService[
+                            Math.floor(Math.random() * sampleService.length)
+                        ],
+                    serviceDescription: faker.lorem.sentence(),
+                    price: faker.finance.amount(),
+                })),
             })),
         ]
 
@@ -135,14 +122,16 @@ async function main() {
             user: user._id,
             services: [
                 {
-                    serviceName: "Service 1",
-                    serviceDescription: "Description of service 1",
-                    price: 100,
+                    serviceName: "Photographer",
+                    serviceDescription:
+                        "We provide the best photography services! for weddings, birthdays, and other events.",
+                    price: faker.finance.amount(),
                 },
                 {
-                    serviceName: "Service 2",
-                    serviceDescription: "Description of service 2",
-                    price: 200,
+                    serviceName: "Caterer",
+                    serviceDescription:
+                        "We provide the best catering services!",
+                    price: faker.finance.amount(),
                 },
             ],
         })
@@ -157,25 +146,25 @@ async function main() {
         let subEventToCreate = [
             {
                 _id: new mongoose.Types.ObjectId(),
-                name: "Sub Event 1",
-                startDate: new Date("2023-01-01T09:00:00Z"),
-                endDate: new Date("2023-01-01T13:00:00Z"),
-                venue: "Venue 1",
+                name: "Pre-Wedding",
+                startDate: new Date("2024-05-24T09:00:00Z"),
+                endDate: new Date("2024-05-24T13:00:00Z"),
+                venue: "Miami Cafe, Delhi",
                 channels: [] as mongoose.Schema.Types.ObjectId[],
             },
             {
                 _id: new mongoose.Types.ObjectId(),
-                name: "Sub Event 2",
-                startDate: new Date("2023-01-02T09:00:00Z"),
-                endDate: new Date("2023-01-02T13:00:00Z"),
-                venue: "Venue 2",
+                name: "Wedding Day",
+                startDate: new Date("2024-05-25T09:00:00Z"),
+                endDate: new Date("2024-05-26T13:00:00Z"),
+                venue: "Taj Hotel, Mumbai",
                 channels: [] as mongoose.Schema.Types.ObjectId[],
             },
             {
                 _id: new mongoose.Types.ObjectId(),
-                name: "Sub Event 3",
-                startDate: new Date("2023-01-03T09:00:00Z"),
-                endDate: new Date("2023-01-03T13:00:00Z"),
+                name: "Reception and Dinner",
+                startDate: new Date("2024-05-27T09:00:00Z"),
+                endDate: new Date("2024-05-27T13:00:00Z"),
                 venue: "Venue 3",
                 channels: [] as mongoose.Schema.Types.ObjectId[],
             },
@@ -197,24 +186,26 @@ async function main() {
 
         // Create an event for the user
         const event = await Event.create({
-            name: "Event 1",
+            name: "Rakesh weds Ritu",
             host: user._id,
-            startDate: new Date("2023-01-01T09:00:00Z"),
-            endDate: new Date("2023-01-01T13:00:00Z"),
-            budget: 1000,
+            startDate: new Date("2024-05-24T09:00:00Z"),
+            endDate: new Date("2024-05-27T13:00:00Z"),
+            budget: 100000,
             eventType: "wedding",
             userList: [
-                ...manyUser.map((user) => ({
+                ...guestUsers.map((user) => ({
                     user: user._id,
-                    // role: Math.random() > 0.5 ? ROLES.VENDOR : ROLES.GUEST,
                     subEvents: assignRandomSubEvents(subEventToCreate),
                 })),
             ],
             vendorList: [
-                ...manyUser.map((user) => ({
-                    vendor: vendorProfileToCreate[
-                        Math.floor(Math.random() * vendorProfileToCreate.length)
-                    ]._id,
+                ...vendorUsers.map((user) => ({
+                    vendorProfile:
+                        vendorProfileToCreate[
+                            Math.floor(
+                                Math.random() * vendorProfileToCreate.length,
+                            )
+                        ]._id,
                     subEvents: assignRandomSubEvents(subEventToCreate).map(
                         (sId) => ({
                             subEvent: sId,
@@ -262,7 +253,7 @@ async function main() {
 
         // Create a channel for the event
         const channel = await Channel.create({
-            name: "Channel 1",
+            name: "Photo Sharing",
             allowedUsers: [user._id],
         })
 
@@ -272,6 +263,8 @@ async function main() {
             channelId: channel._id,
             message: "Hello, world!",
         })
+
+        subEventToCreate[1].channels.push(channel._id)
 
         // Create a sub-event for the event
         const subEvent = await SubEvent.insertMany(subEventToCreate)

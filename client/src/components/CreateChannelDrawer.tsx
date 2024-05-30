@@ -83,36 +83,30 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
   }
 
   const [vendorUser, guestUsers, combineList] = useMemo(() => {
-    const vendorUser = vendorList
-      .filter((vendor) =>
-        vendor.subEvents.some((subEvent) => subEvent._id === subEventId),
-      )
-      .map((vendor) => vendor.vendor.user)
+    const vendorUser = vendorList.map((vendor) => vendor.vendorProfile.user)
 
-    const users = userList
-      .filter((user) => user.subEvents.includes(subEventId))
-      .map((user) => user.user)
+    const guestUsers = userList.map((user) => user.user)
 
-    const combineSet = new Map<string, OtherUserType>()
-    vendorUser.forEach((user) => combineSet.set(user._id, user))
-    users.forEach((user) => combineSet.set(user._id, user))
-    return [vendorUser, users, Array.from(combineSet.values())]
-  }, [userList, vendorList, subEventId])
+    const combineList = new Map<string, OtherUserType>()
+    vendorUser.forEach((user) => combineList.set(user._id, user))
+    guestUsers.forEach((user) => combineList.set(user._id, user))
+    return [vendorUser, guestUsers, Array.from(combineList.values())]
+  }, [vendorList, userList])
 
-  let filteredUsers: OtherUserType[] = []
+  let usersToShow: OtherUserType[] = []
   switch (filterRole) {
     case "vendor":
-      filteredUsers = vendorUser
+      usersToShow = vendorUser
       break
     case "guest":
-      filteredUsers = guestUsers
+      usersToShow = guestUsers
       break
     case "all":
-      filteredUsers = combineList
+      usersToShow = combineList
       break
   }
   // const users = userList
-  filteredUsers = filteredUsers.filter(
+  const filteredUsers = usersToShow.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -120,11 +114,11 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
   )
 
   const getUserRole = (user: OtherUserType) => {
-    if (vendorUser.includes(user)) {
-      return "vendor"
-    }
     if (guestUsers.includes(user)) {
       return "guest"
+    }
+    if (vendorUser.includes(user)) {
+      return "vendor"
     }
     return "guest"
   }
@@ -237,14 +231,21 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
               secondary={
                 <div>
                   <span>{user.email}</span>
-                  <span className="capitalize"> - {getUserRole(user)}</span>
+                  <span className="capitalize">
+                    {" "}
+                    -{" "}
+                    {filterRole === "all"
+                      ? getUserRole(user)
+                      : filterRole === "guest"
+                        ? "Guest"
+                        : "Vendor"}
+                  </span>
                 </div>
               }
             />
           </ListItem>
         ))}
       </List>
-
       <Button
         text="Create Channel"
         onClick={handleCreateChannel}

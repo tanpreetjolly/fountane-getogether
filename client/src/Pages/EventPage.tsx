@@ -64,7 +64,7 @@ const EventPage = () => {
         </div>
       )}
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[45.5dvh] overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[50dvh] overflow-y-auto">
           {event.subEvents
             .sort(
               (a: SubEventType, b: SubEventType) =>
