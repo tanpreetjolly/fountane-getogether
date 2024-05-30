@@ -48,7 +48,7 @@ export default function SignUp() {
   }, [loading, verificationRequired])
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen ">
       <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
         <img
           src={img}
@@ -58,7 +58,7 @@ export default function SignUp() {
       </div>
 
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
-        <div className="max-w-md w-full p-6 scale-105">
+        <div className="max-w-md w-full p-6 my-">
           <Link to="/" className="text-gray-500 text-lg">
             <span className="mr-1">&#8592;</span>
           </Link>

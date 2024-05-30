@@ -43,7 +43,7 @@ export default function SignIn() {
       </div>
 
       <div className="w-full bg-gray-100 lg:w-1/2 flex pt-20 md:pt-0 `md:items-center justify-center">
-        <div className="max-w-md w-full p-6 scale-105">
+        <div className="max-w-md w-full p-6 scale-105 my-auto">
           <Link to="/" className="text-gray-500 text-lg">
             <span className="mr-1">&#8592;</span>
           </Link>
