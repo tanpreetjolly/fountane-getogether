@@ -85,7 +85,7 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
   const [vendorUser, guestUsers, combineList] = useMemo(() => {
     const vendorUser = vendorList
       .filter((vendor) =>
-        vendor.subEvents.some((subEvent) => subEvent.subEventId === subEventId),
+        vendor.subEvents.some((subEvent) => subEvent._id === subEventId),
       )
       .map((vendor) => vendor.vendor.user)
 

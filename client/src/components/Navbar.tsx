@@ -1,4 +1,4 @@
-import { ArrowLeft, Bell, MailPlus, MoveRightIcon } from "lucide-react"
+import { ArrowLeft, MailPlus, MoveRightIcon } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import {
   DropdownMenu,
@@ -9,39 +9,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { NotificationsType, InvitesType } from "@/definitions"
-import { useAppDispatch, useAppSelector } from "@/hooks"
+import { useAppSelector } from "@/hooks"
 
-function convertNotificationsToInvites(
+function convertNotificationsToInvitesForGuest(
+  notifications: NotificationsType[],
+) {
+  return notifications.map((notification) => {
+    return {
+      ...notification,
+      vendorList: undefined,
+    }
+  })
+}
+
+function convertNotificationsToInvitesForVendor(
   notifications: NotificationsType[],
 ): InvitesType[] {
   const invites: InvitesType[] = []
 
   notifications.forEach((notification) => {
-    notification.userList.forEach((userItem) => {
-      userItem.subEvents.forEach((subEvent) => {
-        const invite: InvitesType = {
-          id: userItem._id,
-          eventId: notification._id,
-          subEventName: subEvent.name,
-          eventName: notification.name,
-          startDate: notification.startDate,
-          endDate: notification.endDate,
-          venue: subEvent.venue,
-          host: notification.host.name,
-          status: userItem.status,
-          userListId: userItem._id,
-        }
-        invites.push(invite)
-      })
-    })
-
     notification.vendorList.forEach((vendorItem) => {
       vendorItem.subEvents.forEach((subEvent) => {
         const invite: InvitesType = {
           id: vendorItem._id,
           eventId: notification._id,
-          subEventName: subEvent.subEvent.name,
+          eventStartDate: notification.startDate,
           eventName: notification.name,
+          eventEndDate: notification.endDate,
+          subEventName: subEvent.subEvent.name,
           startDate: notification.startDate,
           endDate: notification.endDate,
           venue: subEvent.subEvent.venue,
@@ -60,10 +55,10 @@ function convertNotificationsToInvites(
 const Navbar = () => {
   const navigate = useNavigate()
   const { user } = useAppSelector((state) => state.user)
-  const invites = user?.notifications || []
+  const notifications = user?.notifications || []
 
-  const notifications = convertNotificationsToInvites(invites)
-  console.log(notifications)
+  const guestInvites = convertNotificationsToInvitesForGuest(notifications)
+  const vendorInvites = convertNotificationsToInvitesForVendor(notifications)
 
   return (
     <nav className="bg-white border-b  pb-2 justify-between fixed w-screen z-20 top-0 start-0 border-gray-200">
@@ -80,7 +75,7 @@ const Navbar = () => {
           <DropdownMenuTrigger className="w-fit">
             <button className="p-2 rounded-full hover:bg-gray-200 focus:outline-none relative ">
               <MailPlus size={22} />
-              {notifications.length > 0 && (
+              {(guestInvites.length > 0 || vendorInvites.length > 0) && (
                 <span className="bg-orange-500 h-2.5 w-2.5 absolute top-2 right-2 rounded-full"></span>
               )}
             </button>
@@ -89,14 +84,14 @@ const Navbar = () => {
         <DropdownMenuContent>
           <DropdownMenuLabel>Notifications</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {notifications.length === 0 && (
+          {guestInvites.length === 0 && vendorInvites.length == 0 && (
             <DropdownMenuItem>
               <div className="w-40 italic text-gray-600">
                 No new notifications
               </div>
             </DropdownMenuItem>
           )}
-          {notifications.map((notification) => (
+          {vendorInvites.map((notification) => (
             <>
               <DropdownMenuItem key={notification.id}>
                 <div
@@ -106,9 +101,32 @@ const Navbar = () => {
                 >
                   You have an invitation from{" "}
                   <span className="text-orange-500 font-medium">
-                    {notification.host} for {notification.eventName}
+                    {notification.host} for {notification.subEventName}
                   </span>{" "}
                   <span className="inline">
+                    <MoveRightIcon size={12} className="inline" />
+                  </span>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          ))}
+          {guestInvites.map((notification) => (
+            <>
+              <DropdownMenuItem key={notification._id}>
+                <div
+                  onClick={() => navigate(`/invites`)}
+                  role="button"
+                  className="w-64 text-gray-700 hover:bg-gray-100 p-2 rounded-md"
+                >
+                  <span className="text-orange-500 font-semibold">
+                    {notification.host.name}
+                  </span>{" "}
+                  has invited you to
+                  <span className="text-orange-500 font-semibold">
+                    {" " + notification.name}
+                  </span>
+                  <span className="inline-block ml-2">
                     <MoveRightIcon size={12} className="inline" />
                   </span>
                 </div>

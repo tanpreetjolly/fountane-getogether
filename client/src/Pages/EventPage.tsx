@@ -65,13 +65,19 @@ const EventPage = () => {
       )}
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3 h-[45.5dvh] overflow-y-auto">
-          {event.subEvents.map((subEvent: SubEventType) => (
-            <SubEventCard
-              key={subEvent._id}
-              subEvent={subEvent}
-              url={`festivity/${subEvent._id}`}
-            />
-          ))}
+          {event.subEvents
+            .sort(
+              (a: SubEventType, b: SubEventType) =>
+                new Date(a.startDate).getTime() -
+                new Date(b.startDate).getTime(),
+            )
+            .map((subEvent: SubEventType) => (
+              <SubEventCard
+                key={subEvent._id}
+                subEvent={subEvent}
+                url={`festivity/${subEvent._id}`}
+              />
+            ))}
         </div>
       </div>
 

@@ -1,4 +1,3 @@
-import { useState } from "react"
 import {
   Card,
   CardContent,
@@ -23,38 +22,36 @@ import { acceptRejectNotification } from "@/features/userSlice"
 const formatDate = (date: string) => {
   return format(new Date(date), "dd MMMM yyyy")
 }
+const formatDateShort = (date: string) => {
+  return format(new Date(date), "dd MMM")
+}
 
-function convertNotificationsToInvites(
+function convertNotificationsToInvitesForGuest(
+  notifications: NotificationsType[],
+) {
+  return notifications.map((notification) => {
+    return {
+      ...notification,
+      vendorList: undefined,
+    }
+  })
+}
+
+function convertNotificationsToInvitesForVendor(
   notifications: NotificationsType[],
 ): InvitesType[] {
   const invites: InvitesType[] = []
 
   notifications.forEach((notification) => {
-    notification.userList.forEach((userItem) => {
-      userItem.subEvents.forEach((subEvent) => {
-        const invite: InvitesType = {
-          id: userItem._id,
-          eventId: notification._id,
-          subEventName: subEvent.name,
-          eventName: notification.name,
-          startDate: notification.startDate,
-          endDate: notification.endDate,
-          venue: subEvent.venue,
-          host: notification.host.name,
-          status: userItem.status,
-          userListId: userItem._id,
-        }
-        invites.push(invite)
-      })
-    })
-
     notification.vendorList.forEach((vendorItem) => {
       vendorItem.subEvents.forEach((subEvent) => {
         const invite: InvitesType = {
           id: vendorItem._id,
           eventId: notification._id,
-          subEventName: subEvent.subEvent.name,
+          eventStartDate: notification.startDate,
           eventName: notification.name,
+          eventEndDate: notification.endDate,
+          subEventName: subEvent.subEvent.name,
           startDate: notification.startDate,
           endDate: notification.endDate,
           venue: subEvent.subEvent.venue,
@@ -78,14 +75,25 @@ const Invites = () => {
   const { user } = useAppSelector((state) => state.user)
   const notifications = user?.notifications || []
 
-  const invites = convertNotificationsToInvites(notifications)
-  console.log(invites)
+  const guestInvites = convertNotificationsToInvitesForGuest(notifications)
+  const vendorInvites = convertNotificationsToInvitesForVendor(notifications)
+
+  const handleAcceptGuest = (
+    invite: (typeof guestInvites)[0],
+    status: string,
+  ) => {
+    dispatch(
+      acceptRejectNotification(invite._id, {
+        status: status,
+        userListId: invite.userList[0]._id,
+      }),
+    )
+  }
 
   const handleAccept = (invite: InvitesType, status: string) => {
     dispatch(
       acceptRejectNotification(invite.eventId, {
         status: status,
-        userListId: invite.userListId,
         vendorListSubEventId: invite.vendorListSubEventId,
       }),
     )
@@ -97,8 +105,69 @@ const Invites = () => {
         Your Invites
       </div>
       <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {invites.length === 0 && <span>You don't have any invites yet</span>}
-        {invites.map((invite) => (
+        {guestInvites.length === 0 && vendorInvites.length === 0 && (
+          <span>You don't have any invites yet</span>
+        )}
+        {guestInvites.map((invite) => (
+          <Card key={invite._id} className="rounded-lg">
+            <CardHeader className="p-4 relative">
+              <CardTitle className="text-lg">{invite.name}</CardTitle>
+              <CardDescription className="flex flex-col ml-2">
+                <span className="flex items-center">
+                  <CalendarIcon className="text-blue-500 mr-2" size={14} />
+                  {formatDate(invite.startDate)} - {formatDate(invite.endDate)}
+                </span>
+
+                <span className="flex items-center">
+                  <UserIcon className="text-blue-500 mr-2" size={16} />
+                  <p>{invite.host.name}</p>
+                </span>
+                <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
+                  {invite.userList[0].status}
+                </div>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className=" p-4 pt-0 space-y-2 text-sm text-zinc-700">
+              {invite.userList[0].subEvents.map((subEvent) => (
+                <div
+                  key={subEvent._id}
+                  className="flex flex-col space-x-2 p-4 pb-3 border border-zinc-300 rounded-md"
+                >
+                  <span className="font-semibold text-base text-zinc-900 capitalize">
+                    {subEvent.name}
+                  </span>
+                  <span className="flex items-center">
+                    <MapPinIcon className="mr-2" size={14} />
+                    {subEvent.venue}
+                  </span>
+                  <span className="flex items-center">
+                    <CalendarIcon className="mr-2" size={14} />
+                    {formatDateShort(subEvent.startDate)} -{" "}
+                    {formatDateShort(subEvent.endDate)}
+                  </span>
+                </div>
+              ))}
+            </CardContent>
+            <CardFooter className="flex justify-end p-4 pt-0">
+              <Button
+                variant="outline"
+                className="mr-2"
+                onClick={() => handleAcceptGuest(invite, "accepted")}
+              >
+                <CircleCheck className="inline mr-1" size={16} />
+                Accept
+              </Button>
+              <Button
+                className="bg-indigo-500"
+                onClick={() => handleAcceptGuest(invite, "rejected")}
+              >
+                <CircleX className="inline mr-1" size={16} />
+                Reject
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+        {vendorInvites.map((invite) => (
           <Card key={invite.id} className="rounded-lg">
             <CardHeader className="p-4 relative">
               <CardTitle>{invite.subEventName}</CardTitle>

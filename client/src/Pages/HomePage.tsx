@@ -5,7 +5,7 @@ import left from "../assets/img/LandingPage/left.avif"
 import right from "../assets/img/LandingPage/right.avif"
 import middle from "../assets/img/LandingPage/middle.avif"
 import Features from "../components/Features"
-import Footer from "../components/Footer"
+// import Footer from "../components/Footer"
 import Testimonials from "../components/Testimonials"
 
 const HomePage = () => {

@@ -41,7 +41,7 @@ const ManageVendors = () => {
         </div>
         <div className="flex flex-col gap-2 py-2">
           {vendorList.map((vendor) => {
-            if (vendor.status !== "hired") return null
+            if (vendor.status !== "accepted") return null
             return <VendorCard key={vendor.subEvent._id} vendor={vendor} />
           })}
         </div>
@@ -51,7 +51,7 @@ const ManageVendors = () => {
         </div>
         <div className="flex flex-col gap-2 py-2">
           {vendorList.map((vendor) => {
-            if (vendor.status !== "invited") return null
+            if (vendor.status !== "pending") return null
             return <VendorCard key={vendor.subEvent._id} vendor={vendor} />
           })}
         </div>

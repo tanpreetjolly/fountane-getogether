@@ -72,7 +72,9 @@ const TodoList = () => {
 
   return (
     <div className="px-4">
-      <h1 className="text-2xl pl-21 font-bold my-2">Wedding Planning Checklist</h1>
+      <h1 className="text-2xl pl-21 font-bold my-2">
+        Wedding Planning Checklist
+      </h1>
       <div className="flex items-center mb-4">
         <Input
           placeholder="Add a new todo"

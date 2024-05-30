@@ -21,6 +21,7 @@ const defUser: UserType = {
   phoneNo: "",
   isVendor: false,
   events: [],
+  notifications: [],
   createdAt: "",
   updatedAt: "",
 }

@@ -1,14 +1,14 @@
-import React from "react";
-import { Calendar, User, MessageCircle, Home } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "@/hooks";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React from "react"
+import { Calendar, User, MessageCircle, Home } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { useAppSelector } from "@/hooks"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const BottomNav = () => {
-  const [value, setValue] = React.useState<any>(0);
-  const navigate = useNavigate();
+  const [value, setValue] = React.useState<any>(0)
+  const navigate = useNavigate()
 
-  const { isAuthenticated } = useAppSelector((state) => state.user);
+  const { isAuthenticated } = useAppSelector((state) => state.user)
 
   return (
     <div className="fixed bottom-0 left-0 right-0 py-3 bg-white border-t border-gray-200 z-20">
@@ -48,7 +48,7 @@ const BottomNav = () => {
         </TabsList>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default BottomNav;
+export default BottomNav

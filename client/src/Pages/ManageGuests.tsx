@@ -4,7 +4,7 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
-import { ListItemText, TextField } from "@mui/material"
+import { Avatar, ListItemText, TextField } from "@mui/material"
 import Checkbox from "@mui/material/Checkbox"
 import CardContent from "@mui/material/CardContent"
 import Button from "../components/Button"
@@ -17,6 +17,13 @@ import { inviteGuest, inviteNewGuest, search } from "@/api"
 import { OtherUserType, SubEventType } from "@/definitions"
 import toast from "react-hot-toast"
 import { Input } from "@/components/ui/input"
+
+function capitalizeFirstLetter(string: string) {
+  if (string.length === 0) {
+    return string
+  }
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
 
 const ManageGuests = () => {
   const [selectedGuest, setSelectedGuest] = useState<OtherUserType | null>(null)
@@ -47,7 +54,7 @@ const ManageGuests = () => {
     setSelectedSubEvents((prevSelectedSubEvents) =>
       prevSelectedSubEvents.includes(subEventId)
         ? prevSelectedSubEvents.filter((id) => id !== subEventId)
-        : [...prevSelectedSubEvents, subEventId]
+        : [...prevSelectedSubEvents, subEventId],
     )
   }
 
@@ -105,8 +112,11 @@ const ManageGuests = () => {
           className="border rounded-xl"
         >
           <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center">
+              <Avatar src={guest.profileImage} className="mr-3">
+                {guest.name[0]}
+              </Avatar>
+              <div className="mr-auto">
                 <Typography variant="h6" component="div">
                   {guest.name}
                 </Typography>
@@ -118,7 +128,12 @@ const ManageGuests = () => {
                 </Typography>
               </div>
               <ButtonSecondary
-                text={isInvited(guest._id) ? "Invited" : "Invite"}
+                // text={isInvited(guest._id) ? "Invited" : "Invite"}
+                text={capitalizeFirstLetter(
+                  guestList.find((user) => user.user._id === guest._id)
+                    ?.status || "Invite",
+                )}
+                // className="capitalize"
                 onClick={() => setSelectedGuest(guest)}
                 icon={<RsvpOutlined />}
               />
@@ -210,7 +225,6 @@ const ManageGuests = () => {
     </div>
   )
 }
-
 
 const SearchField = ({
   setSearchResult,

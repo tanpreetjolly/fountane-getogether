@@ -25,6 +25,8 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [editedEvent, setEditedEvent] = useState<EventShortType>(event)
+  const [startDate, setStartDate] = useState<Date>(new Date(event.startDate))
+  const [endDate, setEndDate] = useState<Date>(new Date(event.startDate))
 
   const [updatingEvent, setUpdatingEvent] = useState(false)
 
@@ -50,7 +52,11 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
     console.log(editedEvent)
 
     setUpdatingEvent(true)
-    updateEvent(editedEvent)
+    updateEvent({
+      ...editedEvent,
+      startDate: startDate.toString(),
+      endDate: endDate.toString(),
+    })
       .then((res: { data: EventShortType }) => {
         dispatch(updateEventSlice(res.data))
       })
@@ -98,18 +104,20 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
               </div>
             </div>
           </div>
-          <div className="flex gap-1 p-2">
-            <SquarePen
-              onClick={handleEditEvent}
-              size={18}
-              className="text-gray-700"
-            />
-            <Trash
-              onClick={handleDeleteEvent}
-              size={18}
-              className="text-red-500"
-            />
-          </div>
+          {user.userId === event.host._id && (
+            <div className="flex gap-1 p-2">
+              <SquarePen
+                onClick={handleEditEvent}
+                size={18}
+                className="text-gray-700"
+              />
+              <Trash
+                onClick={handleDeleteEvent}
+                size={18}
+                className="text-red-500"
+              />
+            </div>
+          )}
         </div>
         <div
           className={`text-sm mb-2 px-2 ml-2 rounded-full mt-1 w-fit text-white ${user.userId === event.host._id ? "bg-orange-400 " : "bg-blue-400"}`}
@@ -167,14 +175,10 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             <MenuItem value="concert">Concert</MenuItem>
           </Select>
           <DatePickerWithRange
-            startDate={new Date(editedEvent.startDate)}
-            endDate={new Date(editedEvent.endDate)}
-            setStartDate={(date: Date) =>
-              setEditedEvent({ ...editedEvent, startDate: date.toString() })
-            }
-            setEndDate={(date: Date) =>
-              setEditedEvent({ ...editedEvent, endDate: date.toString() })
-            }
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
           />
 
           <Button onClick={handleSaveEvent} text="Update Event" />

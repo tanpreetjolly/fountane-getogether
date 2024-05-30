@@ -1,6 +1,6 @@
 import React from "react"
-import Tabs from "@mui/material/Tabs"
-import Tab from "@mui/material/Tab"
+// import Tabs from "@mui/material/Tabs"
+// import Tab from "@mui/material/Tab"
 import Typography from "@mui/material/Typography"
 import Box from "@mui/material/Box"
 import MyProfile from "../components/MyProfile"
@@ -35,12 +35,12 @@ const CustomTabPanel: React.FC<CustomTabPanelType> = ({
   )
 }
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  }
-}
+// function a11yProps(index: number) {
+//   return {
+//     id: `simple-tab-${index}`,
+//     "aria-controls": `simple-tabpanel-${index}`,
+//   }
+// }
 const tabMap = [
   {
     label: "Profile",
@@ -54,9 +54,9 @@ const ProfilePage = () => {
   const tabValue = searchParams.get("tab") || tabMap[0].value
   const value = tabMap.findIndex((tab) => tab.value === tabValue)
 
-  const handleChange = (_event: any, newValue: any) => {
-    setSearchParams({ tab: tabMap[newValue].value })
-  }
+  // const handleChange = (_event: any, newValue: any) => {
+  //   setSearchParams({ tab: tabMap[newValue].value })
+  // }
 
   React.useEffect(() => {
     if (!searchParams.get("tab")) setSearchParams({ tab: tabMap[0].value })
