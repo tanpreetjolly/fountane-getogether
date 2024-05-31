@@ -18,7 +18,7 @@ function convertNotificationsToInvitesForGuest(
   return notifications.map((notification) => {
     return {
       ...notification,
-      vendorList: undefined,
+      serviceList: undefined,
     }
   })
 }
@@ -28,8 +28,9 @@ const Navbar = () => {
   const { user, loading } = useAppSelector((state) => state.user)
   const notifications = user?.notifications || []
 
-  const guestNotifications =
-    convertNotificationsToInvitesForGuest(notifications)
+  const guestNotifications = convertNotificationsToInvitesForGuest(
+    notifications,
+  ).filter((notification) => notification.userList !== undefined)
   const serviceNotifications = notifications
     .map((notification) => {
       return {

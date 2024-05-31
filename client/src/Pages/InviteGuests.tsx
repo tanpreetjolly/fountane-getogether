@@ -1,40 +1,67 @@
-import { useEffect, useState } from "react"
+import { useMemo, useState } from "react"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
 import Button from "@/components/Button"
 import { FaPlusCircle } from "react-icons/fa"
-import { OtherUserType } from "@/definitions"
 import Loader from "@/components/Loader"
 import { useEventContext } from "@/context/EventContext"
 import { useParams } from "react-router-dom"
 import { Avatar, ListItemAvatar } from "@mui/material"
 import { Input } from "@/components/ui/input"
+import { addRemoveGuestsToSubEvent } from "@/api"
+import toast from "react-hot-toast"
 
 const InviteGuests = () => {
-  const [selectedGuests, setSelectedGuests] = useState<OtherUserType[]>([])
-  const { event, loadingEvent } = useEventContext()
-  const { subEventId } = useParams()
+  const [toggledGuests, setToggledGuests] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState("")
 
-  useEffect(() => {
-    if (!event) return
+  const { event, loadingEvent, updateEvent } = useEventContext()
+  const { subEventId } = useParams()
 
+  const userList = useMemo(() => {
+    if (!event) return []
+    if (!subEventId) return []
+
+    return event.userList
+      .filter((user) => user.subEvents.includes(subEventId))
+      .map((guest) => guest.user._id)
+  }, [event, subEventId])
+
+  const handleGuestChange = (guestId: string) => {
+    setToggledGuests((prevSelectedGuests) =>
+      prevSelectedGuests.some((user) => user === guestId)
+        ? prevSelectedGuests.filter((user) => user !== guestId)
+        : [...prevSelectedGuests, guestId],
+    )
+  }
+
+  const isAlreadyInvited = (guestId: string) => {
+    return userList.includes(guestId)
+  }
+
+  const handleSaveGuests = async () => {
+    if (!event) return
     if (!subEventId) return
 
-    const userList = event.userList
-      .filter((user) => user.subEvents.includes(subEventId))
-      .map((guest) => guest.user)
-
-    setSelectedGuests(userList)
-  }, [event, loadingEvent, subEventId])
-
-  const handleGuestChange = (guest: OtherUserType) => {
-    setSelectedGuests((prevSelectedGuests) =>
-      prevSelectedGuests.some((user) => user._id === guest._id)
-        ? prevSelectedGuests.filter((user) => user._id !== guest._id)
-        : [...prevSelectedGuests, guest],
+    toast.promise(
+      addRemoveGuestsToSubEvent(event._id, subEventId, {
+        guestIds: toggledGuests,
+      }),
+      {
+        loading: "Saving Guests...",
+        success: (data) => {
+          console.log(data)
+          updateEvent()
+          setToggledGuests([])
+          return "Guests Saved Successfully"
+        },
+        error: (error) => {
+          console.log(error)
+          return "Error Saving Guests"
+        },
+      },
     )
   }
 
@@ -50,7 +77,7 @@ const InviteGuests = () => {
   if (!subEventId) return <div>No SubEvent Found</div>
 
   return (
-    <div className="px-4 my-2 mb-8 flex flex-col h-[85vh] justify-between">
+    <div className="px-4 my-2 mb-12 flex flex-col h-[85vh] justify-between">
       <div>
         <div className="text-2xl pl-1 font-semibold text-zinc-800">
           Invite Guests for the Festivity
@@ -84,8 +111,12 @@ const InviteGuests = () => {
               <Checkbox
                 color="secondary"
                 edge="end"
-                checked={selectedGuests.some((user) => user._id === guest._id)}
-                onChange={() => handleGuestChange(guest)}
+                checked={
+                  toggledGuests.includes(guest._id)
+                    ? !isAlreadyInvited(guest._id)
+                    : isAlreadyInvited(guest._id)
+                }
+                onChange={() => handleGuestChange(guest._id)}
               />
             </ListItem>
           ))}
@@ -93,7 +124,7 @@ const InviteGuests = () => {
       </div>
       <Button
         text="Save Selected Guests"
-        onClick={() => {}}
+        onClick={handleSaveGuests}
         icon={<FaPlusCircle />}
       />
     </div>

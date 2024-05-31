@@ -154,16 +154,15 @@ const Invites = () => {
             <Card key={service._id} className="rounded-lg">
               <CardHeader className="p-4 relative">
                 <CardTitle>
-                  {service.servicesOffering.serviceName +
-                    " - " +
-                    notification.eventName}
+                  {service.subEvent.name + " - " + notification.eventName}
                 </CardTitle>
                 <CardDescription>
+                  Service Requested:
                   {service.servicesOffering.serviceName}
                 </CardDescription>
                 <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
                   <Link
-                    to={`/events/${notification.eventId}/festivity/${service.subEvent._id}`}
+                    to={`/events/${notification.eventId}/vendors/${service.vendorProfile}/chat`}
                   >
                     Discuss
                   </Link>

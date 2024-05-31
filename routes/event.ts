@@ -11,6 +11,7 @@ import {
     inviteNewGuest,
     acceptRejectInvite,
     offerAVendor,
+    addRemoveGuestsToSubEvent,
 } from "../controllers/event"
 
 // import Protect from "../middleware/permissionRequired"
@@ -32,6 +33,9 @@ router.use("/:eventId/task", TaskRouter)
 
 router.route("/:eventId/subEvent").post(createSubEvent)
 
+router
+    .route("/:eventId/subEvent/:subEventId/guest/invite/add-remove")
+    .post(addRemoveGuestsToSubEvent)
 router
     .route("/:eventId/subEvent/:subEventId/channel")
     .post(createSubEventChannel)

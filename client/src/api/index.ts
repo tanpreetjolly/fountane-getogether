@@ -190,3 +190,13 @@ export const makeAOffer = (
     serviceId: string
   },
 ) => API.post(`/event/${eventId}/vendor/offer`, offerData)
+
+export const addRemoveGuestsToSubEvent = (
+  eventId: string,
+  subEventId: string,
+  guestData: { guestIds: string[] },
+) =>
+  API.post(
+    `/event/${eventId}/subEvent/${subEventId}/guest/invite/add-remove`,
+    guestData,
+  )

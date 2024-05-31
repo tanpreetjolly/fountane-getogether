@@ -94,8 +94,11 @@ const VendorCard = ({ vendor }: Props) => {
               {vendor.servicesOffering.serviceName} - $
               {vendor.servicesOffering.price}
             </div>
-            <div className="text-base  text-gray-700 capitalize italic">
-              {vendor.vendorName}
+            <div className="text-base text-gray-700 capitalize italic">
+              by {vendor.vendorName}
+            </div>
+            <div className="text-sm text-gray-700 capitalize">
+              {vendor.servicesOffering.serviceDescription}
             </div>
           </div>
           <button

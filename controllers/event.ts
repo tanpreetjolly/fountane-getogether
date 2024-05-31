@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express"
+import { Request, Response } from "express"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import {
     Channel,
@@ -9,7 +9,7 @@ import {
     VendorProfile,
 } from "../models"
 import { StatusCodes } from "http-status-codes"
-import { Types } from "mongoose"
+import { Schema, Types } from "mongoose"
 import { CHANNEL_TYPES, ROLES } from "../values"
 import sendMail from "../utils/sendMail"
 
@@ -62,7 +62,6 @@ export const getEvent = async (req: Request, res: Response) => {
         msg: "Event Fetched Successfully",
     })
 }
-
 export const createEvent = async (req: Request, res: Response) => {
     const { name, startDate, endDate, budget, eventType } = req.body
     const host = req.user
@@ -91,7 +90,6 @@ export const createEvent = async (req: Request, res: Response) => {
         msg: `Event ${name} Created`,
     })
 }
-
 export const createSubEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, venue } = req.body
@@ -147,7 +145,6 @@ export const createSubEvent = async (req: Request, res: Response) => {
         msg: "Sub Event Created Successfully",
     })
 }
-
 export const updateEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, budget, eventType } = req.body
@@ -177,7 +174,6 @@ export const updateEvent = async (req: Request, res: Response) => {
         msg: "Event Updated Successfully",
     })
 }
-
 export const deleteEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
 
@@ -190,7 +186,6 @@ export const deleteEvent = async (req: Request, res: Response) => {
         msg: "Event Deleted Successfully",
     })
 }
-
 export const createSubEventChannel = async (req: Request, res: Response) => {
     const { eventId, subEventId } = req.params
     const { name, allowedUsers } = req.body
@@ -224,7 +219,6 @@ export const createSubEventChannel = async (req: Request, res: Response) => {
         msg: `Channel ${name} Created`,
     })
 }
-
 export const inviteGuest = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { guestId, subEventsIds } = req.body
@@ -293,8 +287,6 @@ export const inviteGuest = async (req: Request, res: Response) => {
                 : "Guest Invited Successfully",
     })
 }
-
-// //not on our platform
 export const inviteNewGuest = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, email, phoneNo, subEventsIds } = req.body
@@ -349,7 +341,6 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
         msg: "Guest Invited Successfully",
     })
 }
-
 export const acceptRejectInvite = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { status, userListId, serviceListId } = req.body
@@ -393,7 +384,6 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
         msg: "Status Updated Successfully",
     })
 }
-
 export const offerAVendor = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { vendorProfileId, subEventIds, serviceId } = req.body
@@ -449,5 +439,43 @@ export const offerAVendor = async (req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({
         success: true,
         msg: "Offer Price Updated Successfully",
+    })
+}
+export const addRemoveGuestsToSubEvent = async (
+    req: Request,
+    res: Response,
+) => {
+    const { eventId, subEventId } = req.params
+    const { guestIds } = req.body
+
+    console.log(eventId, subEventId, guestIds)
+
+    const event = await Event.findById(eventId)
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    //check all guestIds are valid
+    const isValid = guestIds.every((id: any) =>
+        Types.ObjectId.isValid(id as string),
+    )
+    if (!isValid) throw new BadRequestError("Invalid Guest Ids")
+
+    event.userList
+        .filter((user) => guestIds.includes(user.user.toString()))
+        .forEach((user) => {
+            const alreadyExist = user.subEvents.findIndex(
+                (subEvent) => subEvent.toString() === subEventId,
+            )
+            if (alreadyExist === -1) {
+                //@ts-ignore
+                user.subEvents.push(new Types.ObjectId(subEventId))
+            } else {
+                user.subEvents.splice(alreadyExist, 1)
+            }
+        })
+
+    await event.save()
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Guests Updated Successfully",
     })
 }
