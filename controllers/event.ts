@@ -246,9 +246,13 @@ export const inviteGuest = async (req: Request, res: Response) => {
 
     if (guestIndex !== -1) {
         // Guest exists, update their subEvents
-        event.userList[guestIndex].subEvents = subEventsIds
-        event.userList[guestIndex].status = "pending"
-    } else {
+        if (subEventsIds.length === 0) {
+            event.userList.splice(guestIndex, 1)
+        } else {
+            event.userList[guestIndex].subEvents = subEventsIds
+            event.userList[guestIndex].status = "pending"
+        }
+    } else if (subEventsIds.length > 0) {
         // Guest does not exist, add new guest
         event.userList.push({ user: guestId, role, subEvents: subEventsIds })
     }
@@ -259,25 +263,26 @@ export const inviteGuest = async (req: Request, res: Response) => {
     const hostName = event.host.name
 
     // Send mail (implementation omitted for brevity)
-    sendMail({
-        to: user.email,
-        subject: `You have been invited to the event ${event.name}`,
-        // @ts-ignore
-        text: `Dear ${user.name}, You have been invited to the event "${event.name}" by ${hostName}. We are excited to have you join us for this special occasion. Below are the details of the sub-events: ${subEvents
-            .map((subEvent) => {
-                return ` - ${subEvent.name} at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate} `
-            })
-            .join(
-                "",
-            )} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
-        html: `<p>Dear ${user.name},</p> <p>You have been invited to the event <strong>${event.name}</strong> by ${hostName}.</p> <p>We are excited to have you join us for this special occasion. Below are the details of the sub-events:</p> <ul> ${subEvents
-            .map((subEvent) => {
-                return `<li><strong>${subEvent.name}</strong> at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate}</li>`
-            })
-            .join(
-                "",
-            )} </ul> <p>We hope you can make it and look forward to seeing you there.</p> <p>Thank you,<br/>${hostName}</p>`,
-    })
+    if (subEventsIds.length > 0)
+        sendMail({
+            to: user.email,
+            subject: `You have been invited to the event ${event.name}`,
+            // @ts-ignore
+            text: `Dear ${user.name}, You have been invited to the event "${event.name}" by ${hostName}. We are excited to have you join us for this special occasion. Below are the details of the sub-events: ${subEvents
+                .map((subEvent) => {
+                    return ` - ${subEvent.name} at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate} `
+                })
+                .join(
+                    "",
+                )} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
+            html: `<p>Dear ${user.name},</p> <p>You have been invited to the event <strong>${event.name}</strong> by ${hostName}.</p> <p>We are excited to have you join us for this special occasion. Below are the details of the sub-events:</p> <ul> ${subEvents
+                .map((subEvent) => {
+                    return `<li><strong>${subEvent.name}</strong> at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate}</li>`
+                })
+                .join(
+                    "",
+                )} </ul> <p>We hope you can make it and look forward to seeing you there.</p> <p>Thank you,<br/>${hostName}</p>`,
+        })
 
     res.status(StatusCodes.CREATED).json({
         success: true,
@@ -471,11 +476,28 @@ export const addRemoveGuestsToSubEvent = async (
             } else {
                 user.subEvents.splice(alreadyExist, 1)
             }
+            user.status = "pending"
         })
 
     await event.save()
     res.status(StatusCodes.OK).json({
         success: true,
         msg: "Guests Updated Successfully",
+    })
+}
+
+export const updateBudget = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { budget } = req.body
+
+    const event = await Event.findByIdAndUpdate(eventId, {
+        budget,
+    })
+
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Budget Updated Successfully",
     })
 }

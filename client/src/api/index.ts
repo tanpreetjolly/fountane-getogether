@@ -200,3 +200,6 @@ export const addRemoveGuestsToSubEvent = (
     `/event/${eventId}/subEvent/${subEventId}/guest/invite/add-remove`,
     guestData,
   )
+
+export const updateEventBudget = (eventId: string, budget: number) =>
+  API.patch(`/event/${eventId}/budget`, { budget })

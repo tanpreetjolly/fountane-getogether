@@ -12,6 +12,7 @@ import {
     acceptRejectInvite,
     offerAVendor,
     addRemoveGuestsToSubEvent,
+    updateBudget,
 } from "../controllers/event"
 
 // import Protect from "../middleware/permissionRequired"
@@ -22,6 +23,7 @@ const router = Router()
 router.route("/").post(createEvent)
 
 router.route("/:eventId").get(getEvent).delete(deleteEvent).patch(updateEvent)
+router.route("/:eventId/budget").patch(updateBudget)
 
 router.route("/:eventId/guest/invite").post(inviteGuest)
 router.route("/:eventId/guest/invite/accept-reject").post(acceptRejectInvite)

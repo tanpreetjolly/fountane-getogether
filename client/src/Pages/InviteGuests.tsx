@@ -67,9 +67,9 @@ const InviteGuests = () => {
 
   const filteredUserList =
     event?.userList
-      .map((guest) => guest.user)
+      // .map((guest) => guest.user)
       .filter((guest) =>
-        guest.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        guest.user.name.toLowerCase().includes(searchTerm.toLowerCase()),
       ) || []
 
   if (loadingEvent) return <Loader />
@@ -91,32 +91,37 @@ const InviteGuests = () => {
         />
         <List>
           {filteredUserList.map((guest) => (
-            <ListItem key={guest._id}>
+            <ListItem key={guest.user._id}>
               <ListItemAvatar>
-                <Avatar src={guest.profileImage} className="mr-3">
-                  {guest.name[0]}
+                <Avatar src={guest.user.profileImage} className="mr-3">
+                  {guest.user.name[0]}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
-                primary={guest.name}
+                primary={guest.user.name}
                 secondary={
                   <span>
-                    Email: {guest.email}
+                    Email: {guest.user.email}
                     <br />
-                    PhoneNo: {guest.phoneNo}
+                    PhoneNo: {guest.user.phoneNo}
                   </span>
                 }
                 secondaryTypographyProps={{ className: "pl-1" }}
               />
+              {isAlreadyInvited(guest.user._id) && (
+                <span className="text-green-500 capitalize">
+                  {guest.status}
+                </span>
+              )}
               <Checkbox
                 color="secondary"
                 edge="end"
                 checked={
-                  toggledGuests.includes(guest._id)
-                    ? !isAlreadyInvited(guest._id)
-                    : isAlreadyInvited(guest._id)
+                  toggledGuests.includes(guest.user._id)
+                    ? !isAlreadyInvited(guest.user._id)
+                    : isAlreadyInvited(guest.user._id)
                 }
-                onChange={() => handleGuestChange(guest._id)}
+                onChange={() => handleGuestChange(guest.user._id)}
               />
             </ListItem>
           ))}
