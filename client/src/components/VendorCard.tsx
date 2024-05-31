@@ -134,7 +134,7 @@ const VendorCard = ({ vendor }: Props) => {
             className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor()}`}
             onClick={handleStatusButtonClick}
           >
-            {vendor.status || "Invite"}
+            {vendor.status === "accepted" ? "Hired" : vendor.status || "Invite"}
           </button>
         </Link>
       </button>
@@ -191,7 +191,11 @@ const VendorCard = ({ vendor }: Props) => {
               </ListItem>
             ))}
           </List>
-          <Button text="Invite" onClick={inviteVendor} icon={<IoPersonAdd />} />
+          <Button
+            text="Make a Offer"
+            onClick={inviteVendor}
+            icon={<IoPersonAdd />}
+          />
         </Box>
       </SwipeableDrawer>
     </>

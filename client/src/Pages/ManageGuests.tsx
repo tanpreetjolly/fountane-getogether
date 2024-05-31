@@ -106,6 +106,11 @@ const ManageGuests = () => {
       <div className="text-xl mb-2 font-medium text-gray-700">
         Manage Guests for <span className="text-indigo-600">{event.name}</span>
       </div>
+      <Button
+        text="Invite New Contact"
+        onClick={() => setIsInviteDrawerOpen(true)}
+        icon={<FaPlusCircle />}
+      />
       <SearchField setSearchResult={setSearchResult} />
       {filteredGuests.map((guest) => (
         <div
@@ -144,17 +149,6 @@ const ManageGuests = () => {
           </CardContent>
         </div>
       ))}
-      <div className="border p-2 py-4 rounded-lg text-gray-700 flex flex-col gap-3">
-        <span className="px-3">
-          Match not found. Click here to invite a new guest.
-        </span>
-        <Button
-          text="Invite a Guest"
-          onClick={() => setIsInviteDrawerOpen(true)}
-          icon={<FaPlusCircle />}
-        />
-      </div>
-
       {selectedGuest && (
         <SwipeableDrawer
           anchor="bottom"
@@ -261,7 +255,7 @@ const SearchField = ({
   return (
     <>
       <Input
-        placeholder="Search for a guest"
+        placeholder="Search Contacts"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         className="!mb-2"

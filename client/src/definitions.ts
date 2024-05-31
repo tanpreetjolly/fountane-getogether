@@ -121,7 +121,7 @@ export interface UserType {
   email: string
   profileImage?: string
   isVendor: boolean
-  vendorProfile?: VendorProfileType
+  vendorProfile: VendorProfileType | null
   phoneNo: string | undefined
   socketToken: string
   events: EventShortType[]

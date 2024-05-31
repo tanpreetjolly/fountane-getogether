@@ -12,7 +12,12 @@ import {
 import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
 
 const getMe = async (req: Request, res: Response) => {
-    const user = await User.findById(req.user.userId)
+    const user = await User.findById(req.user.userId).populate({
+        path: "vendorProfile",
+        populate: {
+            path: "services",
+        },
+    })
     if (!user) throw new NotFoundError("User Not Found")
     if (user.status === "blocked")
         throw new UnauthenticatedError("User is blocked.")
