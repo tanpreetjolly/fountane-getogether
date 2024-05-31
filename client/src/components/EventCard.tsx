@@ -120,7 +120,7 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
           )}
         </div>
         <div
-          className={`text-sm mb-2 px-2 ml-2 rounded-full mt-1 w-fit text-white ${user.userId === event.host._id ? "bg-orange-400 " : "bg-blue-400"}`}
+          className={`text-sm mb-2 ml-2 px-2 py-0.5 border rounded-full mt-2 w-fit  ${user.userId === event.host._id ? "text-orange-700 border-orange-700 " : " border-zinc-700 text-zinc-700"}`}
         >
           {user.userId === event.host._id
             ? "Hosted"

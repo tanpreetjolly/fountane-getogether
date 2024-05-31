@@ -155,7 +155,7 @@ const VendorCard = ({ vendor }: Props) => {
           <br />
           <span className="ml-2 text-sm text-gray-500">
             {vendor.servicesOffering.serviceName} - $
-            {vendor.servicesOffering.price}
+            {vendor.subEvent?.amount || vendor.servicesOffering.price}
           </span>
           <br />
           <span className="text-sm text-gray-500">
