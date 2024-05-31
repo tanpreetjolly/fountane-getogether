@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Box from "@mui/material/Box"
 import Button from "./Button"
@@ -8,7 +8,7 @@ import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
 import { VendorSaveType } from "@/definitions"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 import toast from "react-hot-toast"
@@ -23,6 +23,15 @@ const VendorCard = ({ vendor }: Props) => {
   const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
 
   const { event, loadingEvent, updateEvent } = useEventContext()
+
+  const { subEventId } = useParams()
+
+  useEffect(() => {
+    if (!event) return
+    if (!subEventId) return
+
+    setSelectedFestivities([subEventId])
+  }, [event, subEventId])
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
@@ -77,7 +86,7 @@ const VendorCard = ({ vendor }: Props) => {
     <>
       <button className="border p-5 rounded-lg w-full">
         <Link
-          to={`${vendor.vendorProfileId}/chat`}
+          to={`/events/${event._id}/vendors/${vendor.vendorProfileId}/chat`}
           className="flex justify-between items-center"
         >
           <div className="text-left">
