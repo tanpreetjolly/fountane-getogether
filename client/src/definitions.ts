@@ -74,7 +74,7 @@ export interface SubEventsVendorType {
   _id: string
   subEvent: Omit<SubEventType, "channels">
   status: string
-  servicesOffering: [string]
+  servicesOffering: ServiceType
   paymentStatus: string
   amount: number
 }
@@ -105,10 +105,15 @@ export interface EventFull extends EventShortType {
   vendorList: VendorListType[]
 }
 
-export interface VendorSearchType {
+export interface VendorSearchType extends OtherUserType {
+  //_id is vendorProfile id here
   _id: string
-  user: OtherUserType
-  services: ServiceType[]
+  name: string
+  email: string
+  profileImage: string
+  phoneNo: string
+  userId: string
+  servicesData: ServiceType[]
 }
 
 export interface UserType {
@@ -147,7 +152,7 @@ export interface NotificationsType {
     status: string
     createdAt: string
     updatedAt: string
-  }[]
+  }
   vendorList: {
     _id: string
     vendor: string
@@ -155,7 +160,7 @@ export interface NotificationsType {
       _id: string
       subEvent: SubEventShort
       status: string
-      servicesOffering: string[]
+      servicesOffering: ServiceType
       amount: number
       paymentStatus: string
     }[]
@@ -178,4 +183,5 @@ export interface InvitesType {
   status: string
   userListId?: string
   vendorListSubEventId?: string
+  servicesOffering?: string
 }

@@ -16,7 +16,7 @@ const ManageVendors = () => {
     .map((vendor) => {
       const subEvents = vendor.subEvents.map((subEvent) => {
         return {
-          subEvent: subEvent.subEvent,
+          subEvent: subEvent,
           vendor: vendor.vendorProfile.user,
           status: subEvent.status,
           servicesOffering: subEvent.servicesOffering,

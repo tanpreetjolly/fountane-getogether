@@ -66,7 +66,11 @@ const VendorList = new Schema<IVendorList>(
                     enum: ["accepted", "rejected", "pending"],
                     default: "pending",
                 },
-                servicesOffering: [{ type: String, required: true }],
+                servicesOffering: {
+                    type: Schema.Types.ObjectId,
+                    required: [true, "servicesOffering is required"],
+                    ref: "Services",
+                },
                 amount: {
                     type: Number,
                     required: [true, "Please Provide Amount."],

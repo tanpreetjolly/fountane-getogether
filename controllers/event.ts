@@ -35,7 +35,7 @@ export const getEvent = async (req: Request, res: Response) => {
                 {
                     path: "subEvents",
                     populate: {
-                        path: "subEvent",
+                        path: "subEvent servicesOffering",
                     },
                 },
             ],

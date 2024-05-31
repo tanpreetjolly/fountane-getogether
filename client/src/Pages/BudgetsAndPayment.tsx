@@ -51,8 +51,6 @@ const BudgetsAndPayment: React.FC<Props> = () => {
   const [newTotalBudget, setNewTotalBudget] = useState<number>(totalBudget)
 
   const { event, loadingEvent } = useEventContext()
-
-  // const 
   const handleOpenModal = () => {
     setIsModalOpen(true)
   }

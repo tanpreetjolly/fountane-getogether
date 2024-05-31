@@ -33,11 +33,9 @@ const AssignVendors = () => {
     event.vendorList.forEach((vendor: VendorListType) => {
       vendor.subEvents.forEach((subEvent) => {
         if (subEvent._id === subEventId) {
-          subEvent.servicesOffering.forEach((serviceId) => {
-            vendorSelected.push({
-              vendorProfileId: vendor.vendorProfile._id,
-              serviceId,
-            })
+          vendorSelected.push({
+            vendorProfileId: vendor.vendorProfile._id,
+            serviceId: subEvent.servicesOffering._id,
           })
         }
       })

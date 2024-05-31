@@ -24,15 +24,15 @@ export interface IUser extends Document {
     removeVendor: () => Promise<void>
 }
 
+export interface IServices extends Document {
+    serviceName: string
+    serviceDescription: string
+    price: number
+}
+
 export interface IVendorProfile extends Document {
     user: Schema.Types.ObjectId
-    services: [
-        {
-            serviceName: string
-            serviceDescription: string
-            price: number
-        },
-    ]
+    services: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
 }
@@ -46,7 +46,7 @@ export interface IVendorList extends Document {
             _id: string
             subEvent: Schema.Types.ObjectId
             status: string
-            servicesOffering: [string]
+            servicesOffering: Schema.Types.ObjectId
             paymentStatus: string
             amount: number
         },

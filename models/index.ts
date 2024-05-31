@@ -5,5 +5,15 @@ import Event from "./event"
 import SubEvent from "./subEvent"
 import VendorProfile from "./vendorProfile"
 import Task from "./task"
+import Services from "./services"
 
-export { User, Channel, ChatMessage, Event, SubEvent, VendorProfile, Task }
+export {
+    User,
+    Channel,
+    ChatMessage,
+    Event,
+    SubEvent,
+    VendorProfile,
+    Task,
+    Services,
+}
