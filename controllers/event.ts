@@ -1,10 +1,16 @@
-import { Request, Response } from "express"
+import e, { Request, Response } from "express"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
-import { Channel, Event, SubEvent, User } from "../models"
+import {
+    Channel,
+    Event,
+    Services,
+    SubEvent,
+    User,
+    VendorProfile,
+} from "../models"
 import { StatusCodes } from "http-status-codes"
 import { Types } from "mongoose"
-import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
-import { populate } from "dotenv"
+import { CHANNEL_TYPES, ROLES } from "../values"
 import sendMail from "../utils/sendMail"
 
 export const getEvent = async (req: Request, res: Response) => {
@@ -385,5 +391,63 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({
         success: true,
         msg: "Status Updated Successfully",
+    })
+}
+
+export const offerAVendor = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { vendorProfileId, subEventIds, serviceId } = req.body
+
+    //check vendorProfileId is valid
+    const vendorProfile = await VendorProfile.findById(vendorProfileId)
+    if (!vendorProfile) throw new NotFoundError("Vendor Not Found")
+
+    if (!serviceId) throw new BadRequestError("Service Id is required")
+
+    if (
+        vendorProfile.services.findIndex(
+            (service) => service.toString() === serviceId.toString(),
+        ) === -1
+    )
+        throw new BadRequestError("Vendor does not offer this service")
+
+    //find service
+    const service = await Services.findById(serviceId)
+    if (!service) throw new NotFoundError("Service Not Found")
+
+    //if subEventIds is not array throw error
+    if (!Array.isArray(subEventIds))
+        throw new BadRequestError("SubEventIds should be an array")
+
+    const isValid = subEventIds.every((id: any) =>
+        Types.ObjectId.isValid(id as string),
+    )
+    if (!isValid) throw new BadRequestError("Invalid SubEvent Ids")
+
+    const event = await Event.findById(eventId)
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    subEventIds.forEach((subEventId) => {
+        const subEvent = event.subEvents.find(
+            (subEvent) => subEvent.toString() === subEventId.toString(),
+        )
+        if (!subEvent)
+            throw new NotFoundError(`SubEvent ${subEventId} Not Found`)
+    })
+
+    subEventIds.forEach((subEventId) => {
+        event.serviceList.push({
+            vendorProfile: vendorProfileId,
+            subEvent: subEventId,
+            servicesOffering: serviceId,
+            amount: service.price,
+        })
+    })
+
+    await event.save()
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Offer Price Updated Successfully",
     })
 }

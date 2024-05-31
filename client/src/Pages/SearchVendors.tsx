@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react"
 import { search } from "@/api"
-import { OtherUserType, ServiceType, VendorSearchType } from "@/definitions"
+import { VendorSaveType, VendorSearchType } from "@/definitions"
 import VendorCard from "@/components/VendorCard"
 import { useEventContext } from "@/context/EventContext"
 
 const SearchVendors = () => {
   const [searchQuery, setSearchQuery] = useState("")
-  const [vendors, setVendors] = useState<
-    { vendor: OtherUserType; servicesOffering: ServiceType }[]
-  >([])
+  const [vendors, setVendors] = useState<VendorSaveType[]>([])
   const [timeoutId, setTimeoutId] = useState<ReturnType<
     typeof setTimeout
   > | null>(null)
@@ -28,7 +26,12 @@ const SearchVendors = () => {
             response.data.vendors
               .map((vendor) =>
                 vendor.servicesData.map((service) => ({
-                  vendor: vendor,
+                  vendorUserId: vendor.userId,
+                  vendorProfileId: vendor._id,
+                  vendorName: vendor.name,
+                  vendorProfileImage: vendor.profileImage,
+                  vendorEmail: vendor.email,
+                  vendorPhoneNo: vendor.phoneNo,
                   servicesOffering: service,
                 })),
               )
@@ -74,13 +77,7 @@ const SearchVendors = () => {
             <div className="text-center text-gray-500">No Vendors Found</div>
           ) : (
             displayVendors.map((vendor) => (
-              <VendorCard
-                key={vendor.servicesOffering._id}
-                vendor={{
-                  vendor: vendor.vendor,
-                  servicesOffering: vendor.servicesOffering,
-                }}
-              />
+              <VendorCard key={vendor.servicesOffering._id} vendor={vendor} />
             ))
           )}
         </div>

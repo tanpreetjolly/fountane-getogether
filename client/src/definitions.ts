@@ -69,15 +69,6 @@ export interface SubEventType {
   createdAt: string
 }
 
-export interface SubEventsVendorType {
-  _id: string
-  subEvent: Omit<SubEventType, "channels">
-  status: string
-  servicesOffering: ServiceType
-  paymentStatus: string
-  amount: number
-}
-
 export interface UserListType {
   _id: string
   user: OtherUserType
@@ -88,11 +79,15 @@ export interface UserListType {
   status: string
 }
 
-export interface VendorListType {
+export interface ServiceListType {
   _id: string
-  vendorProfile: VendorProfileType
+  vendorProfile: Omit<VendorProfileType, "services">
   // permission: [string]
-  subEvents: SubEventsVendorType[]
+  subEvent: Omit<SubEventType, "channels">
+  status: string
+  servicesOffering: ServiceType
+  amount: number
+  paymentStatus: string
   createdAt: string
 }
 
@@ -101,10 +96,10 @@ export interface EventFull extends EventShortType {
   venue: string
   subEvents: SubEventType[]
   userList: UserListType[]
-  vendorList: VendorListType[]
+  serviceList: ServiceListType[]
 }
 
-export interface VendorSearchType extends OtherUserType {
+export interface VendorSearchType {
   //_id is vendorProfile id here
   _id: string
   name: string
@@ -164,4 +159,13 @@ export interface NotificationsType {
     updatedAt: string
   }
   serviceList: ServiceTypeNotifications[]
+}
+export interface VendorSaveType {
+  vendorUserId: string
+  vendorProfileId: string
+  vendorName: string
+  vendorProfileImage: string
+  vendorEmail: string
+  vendorPhoneNo: string
+  servicesOffering: ServiceType
 }
