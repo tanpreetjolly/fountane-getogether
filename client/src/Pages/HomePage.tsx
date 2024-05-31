@@ -15,9 +15,7 @@ const HomePage = () => {
           loading="eager"
           className="hidden lg:block absolute w-1/2 m-auto inset-0 top-0 shadow-2xl rounded-xl z-10"
         /> */}
-      
 
-      
       {/* <Testimonials /> */}
       <Features />
       <ContactUs />

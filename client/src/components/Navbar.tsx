@@ -82,7 +82,9 @@ const Navbar = () => {
                   </span>
                   has requested service
                   <span className="text-indigo-500 font-semibold">
-                    {" " + notification.subEvent.servicesOffering.serviceName + " "}
+                    {" " +
+                      notification.subEvent.servicesOffering.serviceName +
+                      " "}
                   </span>
                   for{" "}
                   <span className="text-indigo-500 font-semibold">
