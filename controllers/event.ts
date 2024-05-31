@@ -23,7 +23,7 @@ export const getEvent = async (req: Request, res: Response) => {
             },
         },
         {
-            path: "vendorList",
+            path: "serviceList",
             populate: [
                 {
                     path: "vendorProfile",
@@ -33,10 +33,7 @@ export const getEvent = async (req: Request, res: Response) => {
                     },
                 },
                 {
-                    path: "subEvents",
-                    populate: {
-                        path: "subEvent servicesOffering",
-                    },
+                    path: "subEvent servicesOffering",
                 },
             ],
         },
@@ -94,7 +91,7 @@ export const createSubEvent = async (req: Request, res: Response) => {
     const { name, startDate, endDate, venue } = req.body
 
     const event = await Event.findById(eventId).select(
-        "userList vendorList subEvents",
+        "userList serviceList subEvents",
     )
     if (!event) throw new NotFoundError("Event Not Found")
 
@@ -102,8 +99,8 @@ export const createSubEvent = async (req: Request, res: Response) => {
     event.userList.forEach((user) => {
         allUserListId.add(user.user)
     })
-    event.vendorList.forEach((vendor) => {
-        allUserListId.add(vendor.vendorProfile)
+    event.serviceList.forEach((service) => {
+        allUserListId.add(service.vendorProfile)
     })
 
     const newSubEventChannels = [
@@ -349,16 +346,20 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
 
 export const acceptRejectInvite = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const { status, userListId, vendorListSubEventId } = req.body
+    const { status, userListId, serviceListId } = req.body
 
-    console.log(eventId, status, userListId, vendorListSubEventId)
+    console.log(eventId, status, userListId, serviceListId)
 
-    if (!userListId && !vendorListSubEventId)
+    if (!userListId && !serviceListId)
         throw new BadRequestError(
-            "At least one of userListId or vendorListSubEventId is required",
+            "At least one of userListId or serviceListId is required",
         )
 
     if (!status) throw new BadRequestError("Status is required")
+    if (status !== "accepted" && status !== "rejected")
+        throw new BadRequestError(
+            "Status value should be either 'accepted' or 'rejected'",
+        )
 
     const event = await Event.findById(eventId)
     if (!event) throw new NotFoundError("Event Not Found")
@@ -371,28 +372,13 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
             throw new NotFoundError("User Is Not Part Of This Event")
         event.userList[userIndex].status = status
         await event.save()
-    } else if (vendorListSubEventId) {
-        const subEventId = event.vendorList
-            .map((vendor) => {
-                return vendor.subEvents.map((subEvent) => subEvent._id)
-            })
-            .flat()
-            .find((subEventId) => {
-                return subEventId.toString() === vendorListSubEventId
-            })
-        if (subEventId === undefined)
-            throw new NotFoundError("Vendor Is Not Part Of This Event")
-        const vendorIndex = event.vendorList.findIndex((vendor) =>
-            vendor.subEvents.some((subEvent) => {
-                if (subEvent._id.toString() === vendorListSubEventId) {
-                    subEvent.status = status
-                    return true
-                }
-                return false
-            }),
+    } else if (serviceListId) {
+        const serviceListItem = event.serviceList.find(
+            (service) => service._id.toString() === serviceListId.toString(),
         )
-        if (vendorIndex === -1)
+        if (serviceListItem === undefined)
             throw new NotFoundError("Vendor Is Not Part Of This Event")
+        serviceListItem.status = status
         await event.save()
     }
 

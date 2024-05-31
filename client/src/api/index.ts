@@ -178,6 +178,6 @@ export const acceptRejectInvite = (
   eventUpdate: {
     status: string
     userListId?: string
-    vendorListSubEventId?: string
+    serviceListId?: string
   },
 ) => API.post(`/event/${eventId}/guest/invite/accept-reject`, eventUpdate)

@@ -268,7 +268,7 @@ export const acceptRejectNotification =
     eventUpdate: {
       status: string
       userListId?: string
-      vendorListSubEventId?: string
+      serviceListId?: string
     },
   ) =>
   async (dispatch: any) => {

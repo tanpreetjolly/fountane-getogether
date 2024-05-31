@@ -138,6 +138,17 @@ export interface SubEventShort {
   venue: string
 }
 
+export interface ServiceTypeNotifications {
+  _id: string
+  amount: number
+  paymentStatus: string
+  vendorProfile: string
+  subEvent: SubEventShort
+  status: string
+  servicesOffering: ServiceType
+  createdAt: string
+  updatedAt: string
+}
 export interface NotificationsType {
   _id: string
   name: string
@@ -152,35 +163,5 @@ export interface NotificationsType {
     createdAt: string
     updatedAt: string
   }
-  vendorList: {
-    _id: string
-    vendor: string
-    subEvents: {
-      _id: string
-      subEvent: SubEventShort
-      status: string
-      servicesOffering: ServiceType
-      amount: number
-      paymentStatus: string
-    }[]
-    createdAt: string
-    updatedAt: string
-  }[]
-}
-
-export interface InvitesType {
-  id: string
-  eventId: string
-  eventStartDate: string
-  eventEndDate: string
-  subEventName: string
-  eventName: string
-  startDate: string
-  endDate: string
-  venue: string
-  host: string
-  status: string
-  userListId?: string
-  vendorListSubEventId?: string
-  servicesOffering?: string
+  serviceList: ServiceTypeNotifications[]
 }

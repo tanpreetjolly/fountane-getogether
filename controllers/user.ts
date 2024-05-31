@@ -6,8 +6,6 @@ import mongoose from "mongoose"
 import {
     uploadProfileImage as cloudinaryUploadProfileImage,
     deleteProfileImage as cloudinaryDeleteProfileImage,
-    uploadAssetsImages as cloudinaryUploadAssetsImages,
-    deleteAssetImages as cloudinaryDeleteAssetImages,
 } from "../utils/imageHandlers/cloudinary"
 import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
 
@@ -48,20 +46,16 @@ const getMe = async (req: Request, res: Response) => {
                 },
             },
             {
-                vendorList: {
+                serviceList: {
                     $elemMatch: {
                         vendorProfile: user.vendorProfile,
-                        subEvents: {
-                            $elemMatch: {
-                                status: "pending",
-                            },
-                        },
+                        status: "pending",
                     },
                 },
             },
         ],
     })
-        .select("name host startDate endDate userList vendorList")
+        .select("name host startDate endDate userList serviceList")
         .populate({
             path: "host",
             select: "name profileImage email phoneNo",
@@ -71,10 +65,12 @@ const getMe = async (req: Request, res: Response) => {
             select: "name startDate endDate venue",
         })
         .populate({
-            path: "vendorList.subEvents.subEvent",
+            path: "serviceList.subEvent",
             select: "name startDate endDate venue",
         })
-        .populate("vendorList.subEvents.servicesOffering")
+        .populate("serviceList.servicesOffering")
+
+    // console.log(eventsNotifications);
 
     const notifications = eventsNotifications.map((event) => {
         return {
@@ -84,20 +80,14 @@ const getMe = async (req: Request, res: Response) => {
                     user.user.toString() === req.user.userId.toString() &&
                     user.status === "pending",
             ),
-            vendorList: event.vendorList.filter((vendor) => {
-                if (
-                    vendor.vendorProfile.toString() !==
-                        user?.vendorProfile?.toString() ||
-                    null
-                )
-                    return false
-                //@ts-ignore
-                vendor.subEvents = vendor.subEvents.filter(
-                    (subEvent) => subEvent.status === "pending",
-                )
-
-                return true
-            }),
+            serviceList: event.serviceList.filter(
+                (service) =>
+                    (service.vendorProfile.toString() ===
+                        //@ts-ignore
+                        user?.vendorProfile?._id?.toString() ||
+                        null) &&
+                    service.status === "pending",
+            ),
         }
     })
 
