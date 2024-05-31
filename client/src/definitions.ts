@@ -66,7 +66,6 @@ export interface SubEventType {
   endDate: string
   venue: string
   channels: ChannelType[]
-  updatedAt: string
   createdAt: string
 }
 

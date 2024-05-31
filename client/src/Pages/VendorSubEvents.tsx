@@ -4,28 +4,40 @@ import SubEventCard from "./SubEventCard"
 type Props = {}
 const data = [
   {
-    id: "100",
+    _id: "100",
     name: "Wedding",
-    date: "12th August 2022",
     venue: "Mumbai",
+    startDate: "2022-08-12T00:00:00.000Z",
+    endDate: "2024-08-23T00:00:00.000Z",
+    channels: [],
+    createdAt: "2022-08-12T00:00:00.000Z",
   },
   {
-    id: "200",
+    _id: "200",
     name: "Birthday",
-    date: "12th August 2022",
     venue: "Mumbai",
+    startDate: "2022-08-12T00:00:00.000Z",
+    endDate: "2024-08-23T00:00:00.000Z",
+    channels: [],
+    createdAt: "2022-08-12T00:00:00.000Z",
   },
   {
-    id: "300",
+    _id: "300",
     name: "Anniversary",
-    date: "12th August 2022",
     venue: "Mumbai",
+    startDate: "2022-08-12T00:00:00.000Z",
+    endDate: "2024-08-23T00:00:00.000Z",
+    channels: [],
+    createdAt: "2022-08-12T00:00:00.000Z",
   },
   {
-    id: "400",
+    _id: "400",
     name: "Party",
-    date: "12th August 2022",
     venue: "Mumbai",
+    startDate: "2022-08-12T00:00:00.000Z",
+    endDate: "2024-08-23T00:00:00.000Z",
+    channels: [],
+    createdAt: "2022-08-12T00:00:00.000Z",
   },
 ]
 const VendorSubEvents = (_props: Props) => {
@@ -39,13 +51,13 @@ const VendorSubEvents = (_props: Props) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-3">
         {data.map((event) => (
           <button
-            key={event.id}
+            key={event._id}
             onClick={() => {
-              navigate(`festivity/${event.id}`)
+              navigate(`festivity/${event._id}`)
             }}
             className="focus:outline-none"
           >
-            <SubEventCard event={event} />
+            <SubEventCard subEvent={event} />
           </button>
         ))}
       </div>
