@@ -79,21 +79,26 @@ const InviteGuests = () => {
                 secondary={
                   <span>
                     Offered: ${service.amount}
-                    <br />
-                    PaymentStatus:{" "}
-                    {service.paymentStatus[0].toUpperCase() +
-                      service.paymentStatus.slice(1)}
+                    {service.status === "accepted" && (
+                      <>
+                        <br />
+                        PaymentStatus:{" "}
+                        {service.paymentStatus[0].toUpperCase() +
+                          service.paymentStatus.slice(1)}
+                      </>
+                    )}
                   </span>
                 }
                 secondaryTypographyProps={{ className: "pl-1" }}
               />
-              <div
+              <button
                 className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor(service.status)}`}
+                onClick={() => navigate(`${service.vendorProfile._id}`)}
               >
                 {service.status === "accepted"
                   ? "Hired"
                   : service.status || "Invite"}
-              </div>
+              </button>
             </ListItem>
           ))}
         </List>

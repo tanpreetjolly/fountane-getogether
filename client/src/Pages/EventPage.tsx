@@ -14,6 +14,8 @@ const EventPage = () => {
 
   const { event, loadingEvent } = useEventContext()
   const { user } = useAppSelector((state) => state.user)
+
+  if (!user) return <div>Not logged in</div>
   if (loadingEvent) return <Loader />
   if (!event) return <div>Event not found</div>
 
@@ -71,6 +73,28 @@ const EventPage = () => {
             </div>
           )}
           {event.subEvents
+            .filter(
+              (subEvent) =>
+                event.host._id == user.userId ||
+                event.userList
+                  .find(
+                    (userListItem) =>
+                      userListItem.user._id == user.userId &&
+                      userListItem.status === "accepted",
+                  )
+                  ?.subEvents.find(
+                    (subEventId) => subEventId == subEvent._id,
+                  ) ||
+                event.serviceList
+                  .filter((service) => {
+                    return service.vendorProfile._id === user.vendorProfile?._id
+                  })
+                  .some(
+                    (service) =>
+                      service.subEvent._id === subEvent._id &&
+                      service.status === "accepted",
+                  ),
+            )
             .sort(
               (a: SubEventType, b: SubEventType) =>
                 new Date(a.startDate).getTime() -
