@@ -20,13 +20,13 @@ dotenv.config()
 
 const createChannelsForSubEvents = async (
     userList: IEvent["userList"][0][],
-    vendorList: IEvent["vendorList"][0][],
+    serviceList: IEvent["serviceList"][0][],
 ) => {
     const allUserListId = new Set()
     userList.forEach((user) => {
         allUserListId.add(user.user)
     })
-    vendorList.forEach((vendor) => {
+    serviceList.forEach((vendor) => {
         allUserListId.add(vendor.vendorProfile)
     })
 
@@ -94,6 +94,11 @@ const createVendorServices = async () => {
     return newChannels.map((channel) => channel._id)
 }
 
+function getRandomElement(arr: any[]) {
+    const randomIndex = Math.floor(Math.random() * arr.length)
+    return arr[randomIndex]
+}
+
 // Connect to the database and drop the existing data
 async function main() {
     try {
@@ -144,6 +149,7 @@ async function main() {
 
         const vendorProfileToCreatePromise = [
             ...manyUser
+                .slice(0, 4)
                 .filter((user) => user.vendorProfile)
                 .map(async (user) => ({
                     _id: new mongoose.Types.ObjectId(),
@@ -245,30 +251,14 @@ async function main() {
                     subEvents: assignRandomSubEvents(subEventToCreate),
                 })),
             ],
-            vendorList: [
-                ...vendorProfileToCreate.map((vendorUser) => ({
-                    vendorProfile: vendorUser._id,
-                    subEvents: assignRandomSubEvents(subEventToCreate).map(
-                        (sId) => ({
-                            subEvent: sId,
-                            status: ["accepted", "rejected", "pending"][
-                                Math.floor(Math.random() * 3)
-                            ],
-                            servicesOffering:
-                                vendorUser.services[
-                                    Math.floor(
-                                        Math.random() *
-                                            vendorUser.services.length,
-                                    )
-                                ],
-                            amount: Math.floor(Math.random() * 1000),
-                            paymentStatus: ["pending", "paid", "failed"][
-                                Math.floor(Math.random() * 3)
-                            ],
-                        }),
-                    ),
-                })),
-            ],
+            serviceList: vendorProfileToCreate.map((vendorUser) => ({
+                vendorProfile: vendorUser._id,
+                subEvent: getRandomElement(subEventToCreate)._id,
+                status: getRandomElement(["accepted", "rejected", "pending"]),
+                servicesOffering: getRandomElement(vendorUser.services),
+                amount: faker.finance.amount(),
+                paymentStatus: getRandomElement(["pending", "paid", "failed"]),
+            })),
         })
 
         const inviteEvent = await Event.create({
@@ -288,51 +278,34 @@ async function main() {
                     subEvents: assignRandomSubEvents(inviteSubEventToCreate),
                 })),
             ],
-            vendorList: [
+            serviceList: [
                 {
                     vendorProfile: user.vendorProfile,
-                    subEvents: assignRandomSubEvents(
-                        inviteSubEventToCreate,
-                    ).map((sId) => ({
-                        subEvent: sId,
-                        status: ["accepted", "rejected", "pending"][
-                            Math.floor(Math.random() * 3)
-                        ],
-                        //select any one service vendor is offering
-                        servicesOffering:
-                            vendorProfile.services[
-                                Math.floor(
-                                    Math.random() *
-                                        vendorProfile.services.length,
-                                )
-                            ],
-                        amount: Math.floor(Math.random() * 1000),
-                        paymentStatus: ["pending", "paid", "failed"][
-                            Math.floor(Math.random() * 3)
-                        ],
-                    })),
+                    subEvent: getRandomElement(inviteSubEventToCreate)._id,
+                    status: "pending",
+                    servicesOffering: getRandomElement(vendorProfile.services),
+                    amount: faker.finance.amount(),
+                    paymentStatus: getRandomElement([
+                        "pending",
+                        "paid",
+                        "failed",
+                    ]),
                 },
                 ...vendorProfileToCreate.map((vendorUser) => ({
                     vendorProfile: vendorUser._id,
-                    subEvents: assignRandomSubEvents(subEventToCreate).map(
-                        (sId) => ({
-                            subEvent: sId,
-                            status: ["accepted", "rejected", "pending"][
-                                Math.floor(Math.random() * 3)
-                            ],
-                            servicesOffering:
-                                vendorUser.services[
-                                    Math.floor(
-                                        Math.random() *
-                                            vendorUser.services.length,
-                                    )
-                                ]._id,
-                            amount: Math.floor(Math.random() * 1000),
-                            paymentStatus: ["pending", "paid", "failed"][
-                                Math.floor(Math.random() * 3)
-                            ],
-                        }),
-                    ),
+                    subEvent: getRandomElement(subEventToCreate)._id,
+                    status: getRandomElement([
+                        "accepted",
+                        "rejected",
+                        "pending",
+                    ]),
+                    servicesOffering: getRandomElement(vendorUser.services),
+                    amount: faker.finance.amount(),
+                    paymentStatus: getRandomElement([
+                        "pending",
+                        "paid",
+                        "failed",
+                    ]),
                 })),
             ],
         })
@@ -347,12 +320,10 @@ async function main() {
                         subEventToCreate[i]._id.toString(),
                     )
                 }),
-                event.vendorList.filter((vendor) => {
-                    const vendorSubEvents = vendor.subEvents.map((se) =>
-                        se.toString(),
-                    )
-                    return vendorSubEvents.includes(
-                        subEventToCreate[i]._id.toString(),
+                event.serviceList.filter((service) => {
+                    return (
+                        service.subEvent.toString() ===
+                        subEventToCreate[i]._id.toString()
                     )
                 }),
             )
@@ -366,12 +337,10 @@ async function main() {
                             subEventToCreate[i]._id.toString(),
                         )
                     }),
-                    event.vendorList.filter((vendor) => {
-                        const vendorSubEvents = vendor.subEvents.map((se) =>
-                            se.toString(),
-                        )
-                        return vendorSubEvents.includes(
-                            subEventToCreate[i]._id.toString(),
+                    event.serviceList.filter((service) => {
+                        return (
+                            service.subEvent.toString() ===
+                            subEventToCreate[i]._id.toString()
                         )
                     }),
                 )

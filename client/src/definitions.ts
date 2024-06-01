@@ -66,17 +66,7 @@ export interface SubEventType {
   endDate: string
   venue: string
   channels: ChannelType[]
-  updatedAt: string
   createdAt: string
-}
-
-export interface SubEventsVendorType {
-  _id: string
-  subEvent: Omit<SubEventType, "channels">
-  status: string
-  servicesOffering: ServiceType
-  paymentStatus: string
-  amount: number
 }
 
 export interface UserListType {
@@ -89,11 +79,15 @@ export interface UserListType {
   status: string
 }
 
-export interface VendorListType {
+export interface ServiceListType {
   _id: string
-  vendorProfile: VendorProfileType
+  vendorProfile: Omit<VendorProfileType, "services">
   // permission: [string]
-  subEvents: SubEventsVendorType[]
+  subEvent: Omit<SubEventType, "channels">
+  status: string
+  servicesOffering: ServiceType
+  amount: number
+  paymentStatus: string
   createdAt: string
 }
 
@@ -102,10 +96,10 @@ export interface EventFull extends EventShortType {
   venue: string
   subEvents: SubEventType[]
   userList: UserListType[]
-  vendorList: VendorListType[]
+  serviceList: ServiceListType[]
 }
 
-export interface VendorSearchType extends OtherUserType {
+export interface VendorSearchType {
   //_id is vendorProfile id here
   _id: string
   name: string
@@ -122,7 +116,7 @@ export interface UserType {
   email: string
   profileImage?: string
   isVendor: boolean
-  vendorProfile?: VendorProfileType
+  vendorProfile: VendorProfileType | null
   phoneNo: string | undefined
   socketToken: string
   events: EventShortType[]
@@ -139,6 +133,17 @@ export interface SubEventShort {
   venue: string
 }
 
+export interface ServiceTypeNotifications {
+  _id: string
+  amount: number
+  paymentStatus: string
+  vendorProfile: string
+  subEvent: SubEventShort
+  status: string
+  servicesOffering: ServiceType
+  createdAt: string
+  updatedAt: string
+}
 export interface NotificationsType {
   _id: string
   name: string
@@ -153,35 +158,14 @@ export interface NotificationsType {
     createdAt: string
     updatedAt: string
   }
-  vendorList: {
-    _id: string
-    vendor: string
-    subEvents: {
-      _id: string
-      subEvent: SubEventShort
-      status: string
-      servicesOffering: ServiceType
-      amount: number
-      paymentStatus: string
-    }[]
-    createdAt: string
-    updatedAt: string
-  }[]
+  serviceList: ServiceTypeNotifications[]
 }
-
-export interface InvitesType {
-  id: string
-  eventId: string
-  eventStartDate: string
-  eventEndDate: string
-  subEventName: string
-  eventName: string
-  startDate: string
-  endDate: string
-  venue: string
-  host: string
-  status: string
-  userListId?: string
-  vendorListSubEventId?: string
-  servicesOffering?: string
+export interface VendorSaveType {
+  vendorUserId: string
+  vendorProfileId: string
+  vendorName: string
+  vendorProfileImage: string
+  vendorEmail: string
+  vendorPhoneNo: string
+  servicesOffering: ServiceType
 }

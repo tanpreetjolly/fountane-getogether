@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react"
 import { search } from "@/api"
-import { OtherUserType, ServiceType, VendorSearchType } from "@/definitions"
+import { VendorSaveType, VendorSearchType } from "@/definitions"
 import VendorCard from "@/components/VendorCard"
 import { useEventContext } from "@/context/EventContext"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const SearchVendors = () => {
   const [searchQuery, setSearchQuery] = useState("")
-  const [vendors, setVendors] = useState<
-    { vendor: OtherUserType; servicesOffering: ServiceType }[]
-  >([])
+  const [vendors, setVendors] = useState<VendorSaveType[]>([])
   const [timeoutId, setTimeoutId] = useState<ReturnType<
     typeof setTimeout
   > | null>(null)
+
+  const [loadingSearch, setLoadingSearch] = useState(true)
 
   const { event, loadingEvent } = useEventContext()
 
@@ -20,6 +21,7 @@ const SearchVendors = () => {
   }
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingSearch(true)
       search(searchQuery, "vendor", 1, 20)
         .then((response: { data: { vendors: VendorSearchType[] } }) => {
           // console.log(response.data)
@@ -28,7 +30,12 @@ const SearchVendors = () => {
             response.data.vendors
               .map((vendor) =>
                 vendor.servicesData.map((service) => ({
-                  vendor: vendor,
+                  vendorUserId: vendor.userId,
+                  vendorProfileId: vendor._id,
+                  vendorName: vendor.name,
+                  vendorProfileImage: vendor.profileImage,
+                  vendorEmail: vendor.email,
+                  vendorPhoneNo: vendor.phoneNo,
                   servicesOffering: service,
                 })),
               )
@@ -41,6 +48,7 @@ const SearchVendors = () => {
           )
         })
         .catch((error) => console.error(error.response))
+        .finally(() => setLoadingSearch(false))
     }
 
     if (timeoutId) clearTimeout(timeoutId)
@@ -70,19 +78,40 @@ const SearchVendors = () => {
               onChange={handleSearchChange}
             />
           </div>
-          {displayVendors.length === 0 ? (
-            <div className="text-center text-gray-500">No Vendors Found</div>
-          ) : (
-            displayVendors.map((vendor) => (
-              <VendorCard
-                key={vendor.servicesOffering._id}
-                vendor={{
-                  vendor: vendor.vendor,
-                  servicesOffering: vendor.servicesOffering,
-                }}
-              />
-            ))
-          )}
+          {
+            // Loading spinner
+            loadingSearch ? (
+              <div className="flex justify-center flex-col gap-4">
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+              </div>
+            ) : displayVendors.length === 0 ? (
+              <div className="text-center text-gray-500">No Vendors Found</div>
+            ) : (
+              displayVendors.map((vendor) => (
+                <VendorCard key={vendor.servicesOffering._id} vendor={vendor} />
+              ))
+            )
+          }
         </div>
       </div>
     </div>

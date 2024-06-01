@@ -178,6 +178,28 @@ export const acceptRejectInvite = (
   eventUpdate: {
     status: string
     userListId?: string
-    vendorListSubEventId?: string
+    serviceListId?: string
   },
 ) => API.post(`/event/${eventId}/guest/invite/accept-reject`, eventUpdate)
+
+export const makeAOffer = (
+  eventId: string,
+  offerData: {
+    vendorProfileId: string
+    subEventIds: string[]
+    serviceId: string
+  },
+) => API.post(`/event/${eventId}/vendor/offer`, offerData)
+
+export const addRemoveGuestsToSubEvent = (
+  eventId: string,
+  subEventId: string,
+  guestData: { guestIds: string[] },
+) =>
+  API.post(
+    `/event/${eventId}/subEvent/${subEventId}/guest/invite/add-remove`,
+    guestData,
+  )
+
+export const updateEventBudget = (eventId: string, budget: number) =>
+  API.patch(`/event/${eventId}/budget`, { budget })

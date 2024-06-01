@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose"
-import { IEvent, IUserList, IVendorList } from "../types/models"
+import { IEvent, IUserList, IServiceList } from "../types/models"
 import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
 import jwt from "jsonwebtoken"
 import { NotFoundError } from "../errors"
@@ -41,7 +41,7 @@ const UserList = new Schema<IUserList>(
 
 UserList.index({ user: 1 })
 
-const VendorList = new Schema<IVendorList>(
+const ServiceList = new Schema<IServiceList>(
     {
         vendorProfile: {
             type: Schema.Types.ObjectId,
@@ -54,40 +54,36 @@ const VendorList = new Schema<IVendorList>(
         //         enum: Array.from(Object.values(PERMISSIONS)),
         //     },
         // ],
-        subEvents: [
-            {
-                subEvent: {
-                    type: Schema.Types.ObjectId,
-                    ref: "SubEvent",
-                    required: true,
-                },
-                status: {
-                    type: String,
-                    enum: ["accepted", "rejected", "pending"],
-                    default: "pending",
-                },
-                servicesOffering: {
-                    type: Schema.Types.ObjectId,
-                    required: [true, "servicesOffering is required"],
-                    ref: "Services",
-                },
-                amount: {
-                    type: Number,
-                    required: [true, "Please Provide Amount."],
-                },
-                paymentStatus: {
-                    type: String,
-                    required: [true, "Please Provide Status."],
-                    enum: ["pending", "paid", "failed"],
-                    default: "pending",
-                },
-            },
-        ],
+        subEvent: {
+            type: Schema.Types.ObjectId,
+            ref: "SubEvent",
+            required: true,
+        },
+        status: {
+            type: String,
+            enum: ["accepted", "rejected", "pending"],
+            default: "pending",
+        },
+        servicesOffering: {
+            type: Schema.Types.ObjectId,
+            required: [true, "servicesOffering is required"],
+            ref: "Services",
+        },
+        amount: {
+            type: Number,
+            required: [true, "Please Provide Amount."],
+        },
+        paymentStatus: {
+            type: String,
+            required: [true, "Please Provide Status."],
+            enum: ["pending", "paid", "failed"],
+            default: "pending",
+        },
     },
     { timestamps: true },
 )
 
-VendorList.index({ vendorId: 1 })
+ServiceList.index({ vendorId: 1 })
 
 const EventSchema = new Schema<IEvent>(
     {
@@ -119,7 +115,7 @@ const EventSchema = new Schema<IEvent>(
         },
         //this is embedded document
         userList: [UserList],
-        vendorList: [VendorList],
+        serviceList: [ServiceList],
         //this is ref document
         subEvents: {
             type: [Schema.Types.ObjectId],

@@ -35,18 +35,20 @@ const Invites = () => {
   const { user } = useAppSelector((state) => state.user)
   const notifications = user?.notifications || []
 
-  const guestInvites = notifications.filter(
+  const guestNotifications = notifications.filter(
     (notification) => notification.userList !== undefined,
   )
 
-  const vendorInvites = notifications.flatMap((notification) =>
-    notification.vendorList.flatMap((vendorItem) =>
-      vendorItem.subEvents.map((subEvent) => ({
-        subEvent: subEvent,
-        event: notification,
-      })),
-    ),
-  )
+  const serviceNotifications = notifications
+    .map((notification) => {
+      return {
+        serviceList: notification.serviceList,
+        eventId: notification._id,
+        eventName: notification.name,
+        host: notification.host,
+      }
+    })
+    .flat()
 
   const handleAcceptGuest = (
     eventId: string,
@@ -63,13 +65,13 @@ const Invites = () => {
 
   const handleAcceptVendor = (
     eventId: string,
-    vendorListSubEventId: string,
+    serviceListId: string,
     status: string,
   ) => {
     dispatch(
       acceptRejectNotification(eventId, {
         status: status,
-        vendorListSubEventId: vendorListSubEventId,
+        serviceListId: serviceListId,
       }),
     )
   }
@@ -80,10 +82,11 @@ const Invites = () => {
         Your Invites
       </div>
       <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {guestInvites.length === 0 && vendorInvites.length === 0 && (
-          <span>You don't have any invites yet</span>
-        )}
-        {guestInvites.map((invite) => (
+        {guestNotifications.length === 0 &&
+          serviceNotifications.length === 0 && (
+            <span>You don't have any invites yet</span>
+          )}
+        {guestNotifications.map((invite) => (
           <Card key={invite._id} className="rounded-lg">
             <CardHeader className="p-4 relative">
               <CardTitle className="text-lg">{invite.name}</CardTitle>
@@ -146,71 +149,74 @@ const Invites = () => {
             </CardFooter>
           </Card>
         ))}
-        {vendorInvites.map((invite) => (
-          <Card key={invite.subEvent._id} className="rounded-lg">
-            <CardHeader className="p-4 relative">
-              <CardTitle>
-                {invite.subEvent.subEvent.name + " - " + invite.event.name}
-              </CardTitle>
-              <CardDescription>
-                {invite.subEvent.servicesOffering.serviceName}
-              </CardDescription>
-              <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
-                <Link
-                  to={`/events/${invite.event._id}/festivity/${invite.subEvent.subEvent._id}`}
+        {serviceNotifications.map((notification) =>
+          notification.serviceList.map((service) => (
+            <Card key={service._id} className="rounded-lg">
+              <CardHeader className="p-4 relative">
+                <CardTitle>
+                  {service.subEvent.name + " - " + notification.eventName}
+                </CardTitle>
+                <CardDescription>
+                  Service Requested:
+                  {service.servicesOffering.serviceName}
+                </CardDescription>
+                <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
+                  <Link
+                    to={`/events/${notification.eventId}/vendors/${service.vendorProfile}/chat`}
+                  >
+                    Discuss
+                  </Link>
+                </div>
+              </CardHeader>
+              <CardContent className=" p-4 pt-0">
+                <div className="space-y-1 text-sm text-zinc-700">
+                  <div className="flex items-center">
+                    <CalendarIcon className="mr-2 text-indigo-500" size={16} />
+                    {formatDate(service.subEvent.startDate)} -{" "}
+                    {formatDate(service.subEvent.endDate)}
+                  </div>
+                  <div className="flex items-center">
+                    <MapPinIcon className="mr-2 text-indigo-500" size={16} />
+                    <span>{service.subEvent.venue}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <UserIcon className="mr-2 text-indigo-500" size={16} />
+                    <span>{notification.host.name}</span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-end p-4 pt-0">
+                <Button
+                  variant="outline"
+                  className="mr-2"
+                  onClick={() =>
+                    handleAcceptVendor(
+                      notification.eventId,
+                      service._id,
+                      "accepted",
+                    )
+                  }
                 >
-                  Discuss
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent className=" p-4 pt-0">
-              <div className="space-y-1 text-sm text-zinc-700">
-                <div className="flex items-center">
-                  <CalendarIcon className="mr-2 text-indigo-500" size={16} />
-                  {formatDate(invite.subEvent.subEvent.startDate)} -{" "}
-                  {formatDate(invite.subEvent.subEvent.endDate)}
-                </div>
-                <div className="flex items-center">
-                  <MapPinIcon className="mr-2 text-indigo-500" size={16} />
-                  <span>{invite.subEvent.subEvent.venue}</span>
-                </div>
-                <div className="flex items-center">
-                  <UserIcon className="mr-2 text-indigo-500" size={16} />
-                  <span>{invite.event.host.name}</span>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end p-4 pt-0">
-              <Button
-                variant="outline"
-                className="mr-2"
-                onClick={() =>
-                  handleAcceptVendor(
-                    invite.event._id,
-                    invite.subEvent._id,
-                    "accepted",
-                  )
-                }
-              >
-                <CircleCheck className="inline mr-1" size={16} />
-                Accept
-              </Button>
-              <Button
-                className="bg-indigo-500"
-                onClick={() =>
-                  handleAcceptVendor(
-                    invite.event._id,
-                    invite.subEvent._id,
-                    "rejected",
-                  )
-                }
-              >
-                <CircleX className="inline mr-1" size={16} />
-                Reject
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+                  <CircleCheck className="inline mr-1" size={16} />
+                  Accept
+                </Button>
+                <Button
+                  className="bg-indigo-500"
+                  onClick={() =>
+                    handleAcceptVendor(
+                      notification.eventId,
+                      service._id,
+                      "rejected",
+                    )
+                  }
+                >
+                  <CircleX className="inline mr-1" size={16} />
+                  Reject
+                </Button>
+              </CardFooter>
+            </Card>
+          )),
+        )}
       </div>
     </>
   )

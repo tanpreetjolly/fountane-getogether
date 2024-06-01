@@ -1,10 +1,16 @@
 import { Request, Response } from "express"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
-import { Channel, Event, SubEvent, User } from "../models"
+import {
+    Channel,
+    Event,
+    Services,
+    SubEvent,
+    User,
+    VendorProfile,
+} from "../models"
 import { StatusCodes } from "http-status-codes"
-import { Types } from "mongoose"
-import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
-import { populate } from "dotenv"
+import { Schema, Types } from "mongoose"
+import { CHANNEL_TYPES, ROLES } from "../values"
 import sendMail from "../utils/sendMail"
 
 export const getEvent = async (req: Request, res: Response) => {
@@ -23,7 +29,7 @@ export const getEvent = async (req: Request, res: Response) => {
             },
         },
         {
-            path: "vendorList",
+            path: "serviceList",
             populate: [
                 {
                     path: "vendorProfile",
@@ -33,10 +39,7 @@ export const getEvent = async (req: Request, res: Response) => {
                     },
                 },
                 {
-                    path: "subEvents",
-                    populate: {
-                        path: "subEvent servicesOffering",
-                    },
+                    path: "subEvent servicesOffering",
                 },
             ],
         },
@@ -59,7 +62,6 @@ export const getEvent = async (req: Request, res: Response) => {
         msg: "Event Fetched Successfully",
     })
 }
-
 export const createEvent = async (req: Request, res: Response) => {
     const { name, startDate, endDate, budget, eventType } = req.body
     const host = req.user
@@ -88,13 +90,12 @@ export const createEvent = async (req: Request, res: Response) => {
         msg: `Event ${name} Created`,
     })
 }
-
 export const createSubEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, venue } = req.body
 
     const event = await Event.findById(eventId).select(
-        "userList vendorList subEvents",
+        "userList serviceList subEvents",
     )
     if (!event) throw new NotFoundError("Event Not Found")
 
@@ -102,8 +103,8 @@ export const createSubEvent = async (req: Request, res: Response) => {
     event.userList.forEach((user) => {
         allUserListId.add(user.user)
     })
-    event.vendorList.forEach((vendor) => {
-        allUserListId.add(vendor.vendorProfile)
+    event.serviceList.forEach((service) => {
+        allUserListId.add(service.vendorProfile)
     })
 
     const newSubEventChannels = [
@@ -144,7 +145,6 @@ export const createSubEvent = async (req: Request, res: Response) => {
         msg: "Sub Event Created Successfully",
     })
 }
-
 export const updateEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, budget, eventType } = req.body
@@ -174,7 +174,6 @@ export const updateEvent = async (req: Request, res: Response) => {
         msg: "Event Updated Successfully",
     })
 }
-
 export const deleteEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
 
@@ -187,7 +186,6 @@ export const deleteEvent = async (req: Request, res: Response) => {
         msg: "Event Deleted Successfully",
     })
 }
-
 export const createSubEventChannel = async (req: Request, res: Response) => {
     const { eventId, subEventId } = req.params
     const { name, allowedUsers } = req.body
@@ -221,7 +219,6 @@ export const createSubEventChannel = async (req: Request, res: Response) => {
         msg: `Channel ${name} Created`,
     })
 }
-
 export const inviteGuest = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { guestId, subEventsIds } = req.body
@@ -249,9 +246,13 @@ export const inviteGuest = async (req: Request, res: Response) => {
 
     if (guestIndex !== -1) {
         // Guest exists, update their subEvents
-        event.userList[guestIndex].subEvents = subEventsIds
-        event.userList[guestIndex].status = "pending"
-    } else {
+        if (subEventsIds.length === 0) {
+            event.userList.splice(guestIndex, 1)
+        } else {
+            event.userList[guestIndex].subEvents = subEventsIds
+            event.userList[guestIndex].status = "pending"
+        }
+    } else if (subEventsIds.length > 0) {
         // Guest does not exist, add new guest
         event.userList.push({ user: guestId, role, subEvents: subEventsIds })
     }
@@ -262,25 +263,26 @@ export const inviteGuest = async (req: Request, res: Response) => {
     const hostName = event.host.name
 
     // Send mail (implementation omitted for brevity)
-    sendMail({
-        to: user.email,
-        subject: `You have been invited to the event ${event.name}`,
-        // @ts-ignore
-        text: `Dear ${user.name}, You have been invited to the event "${event.name}" by ${hostName}. We are excited to have you join us for this special occasion. Below are the details of the sub-events: ${subEvents
-            .map((subEvent) => {
-                return ` - ${subEvent.name} at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate} `
-            })
-            .join(
-                "",
-            )} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
-        html: `<p>Dear ${user.name},</p> <p>You have been invited to the event <strong>${event.name}</strong> by ${hostName}.</p> <p>We are excited to have you join us for this special occasion. Below are the details of the sub-events:</p> <ul> ${subEvents
-            .map((subEvent) => {
-                return `<li><strong>${subEvent.name}</strong> at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate}</li>`
-            })
-            .join(
-                "",
-            )} </ul> <p>We hope you can make it and look forward to seeing you there.</p> <p>Thank you,<br/>${hostName}</p>`,
-    })
+    if (subEventsIds.length > 0)
+        sendMail({
+            to: user.email,
+            subject: `You have been invited to the event ${event.name}`,
+            // @ts-ignore
+            text: `Dear ${user.name}, You have been invited to the event "${event.name}" by ${hostName}. We are excited to have you join us for this special occasion. Below are the details of the sub-events: ${subEvents
+                .map((subEvent) => {
+                    return ` - ${subEvent.name} at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate} `
+                })
+                .join(
+                    "",
+                )} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
+            html: `<p>Dear ${user.name},</p> <p>You have been invited to the event <strong>${event.name}</strong> by ${hostName}.</p> <p>We are excited to have you join us for this special occasion. Below are the details of the sub-events:</p> <ul> ${subEvents
+                .map((subEvent) => {
+                    return `<li><strong>${subEvent.name}</strong> at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate}</li>`
+                })
+                .join(
+                    "",
+                )} </ul> <p>We hope you can make it and look forward to seeing you there.</p> <p>Thank you,<br/>${hostName}</p>`,
+        })
 
     res.status(StatusCodes.CREATED).json({
         success: true,
@@ -290,8 +292,6 @@ export const inviteGuest = async (req: Request, res: Response) => {
                 : "Guest Invited Successfully",
     })
 }
-
-// //not on our platform
 export const inviteNewGuest = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, email, phoneNo, subEventsIds } = req.body
@@ -346,19 +346,22 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
         msg: "Guest Invited Successfully",
     })
 }
-
 export const acceptRejectInvite = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const { status, userListId, vendorListSubEventId } = req.body
+    const { status, userListId, serviceListId } = req.body
 
-    console.log(eventId, status, userListId, vendorListSubEventId)
+    console.log(eventId, status, userListId, serviceListId)
 
-    if (!userListId && !vendorListSubEventId)
+    if (!userListId && !serviceListId)
         throw new BadRequestError(
-            "At least one of userListId or vendorListSubEventId is required",
+            "At least one of userListId or serviceListId is required",
         )
 
     if (!status) throw new BadRequestError("Status is required")
+    if (status !== "accepted" && status !== "rejected")
+        throw new BadRequestError(
+            "Status value should be either 'accepted' or 'rejected'",
+        )
 
     const event = await Event.findById(eventId)
     if (!event) throw new NotFoundError("Event Not Found")
@@ -371,33 +374,130 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
             throw new NotFoundError("User Is Not Part Of This Event")
         event.userList[userIndex].status = status
         await event.save()
-    } else if (vendorListSubEventId) {
-        const subEventId = event.vendorList
-            .map((vendor) => {
-                return vendor.subEvents.map((subEvent) => subEvent._id)
-            })
-            .flat()
-            .find((subEventId) => {
-                return subEventId.toString() === vendorListSubEventId
-            })
-        if (subEventId === undefined)
-            throw new NotFoundError("Vendor Is Not Part Of This Event")
-        const vendorIndex = event.vendorList.findIndex((vendor) =>
-            vendor.subEvents.some((subEvent) => {
-                if (subEvent._id.toString() === vendorListSubEventId) {
-                    subEvent.status = status
-                    return true
-                }
-                return false
-            }),
+    } else if (serviceListId) {
+        const serviceListItem = event.serviceList.find(
+            (service) => service._id.toString() === serviceListId.toString(),
         )
-        if (vendorIndex === -1)
+        if (serviceListItem === undefined)
             throw new NotFoundError("Vendor Is Not Part Of This Event")
+        serviceListItem.status = status
         await event.save()
     }
 
     res.status(StatusCodes.OK).json({
         success: true,
         msg: "Status Updated Successfully",
+    })
+}
+export const offerAVendor = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { vendorProfileId, subEventIds, serviceId } = req.body
+
+    //check vendorProfileId is valid
+    const vendorProfile = await VendorProfile.findById(vendorProfileId)
+    if (!vendorProfile) throw new NotFoundError("Vendor Not Found")
+
+    if (!serviceId) throw new BadRequestError("Service Id is required")
+
+    if (
+        vendorProfile.services.findIndex(
+            (service) => service.toString() === serviceId.toString(),
+        ) === -1
+    )
+        throw new BadRequestError("Vendor does not offer this service")
+
+    //find service
+    const service = await Services.findById(serviceId)
+    if (!service) throw new NotFoundError("Service Not Found")
+
+    //if subEventIds is not array throw error
+    if (!Array.isArray(subEventIds))
+        throw new BadRequestError("SubEventIds should be an array")
+
+    const isValid = subEventIds.every((id: any) =>
+        Types.ObjectId.isValid(id as string),
+    )
+    if (!isValid) throw new BadRequestError("Invalid SubEvent Ids")
+
+    const event = await Event.findById(eventId)
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    subEventIds.forEach((subEventId) => {
+        const subEvent = event.subEvents.find(
+            (subEvent) => subEvent.toString() === subEventId.toString(),
+        )
+        if (!subEvent)
+            throw new NotFoundError(`SubEvent ${subEventId} Not Found`)
+    })
+
+    subEventIds.forEach((subEventId) => {
+        event.serviceList.push({
+            vendorProfile: vendorProfileId,
+            subEvent: subEventId,
+            servicesOffering: serviceId,
+            amount: service.price,
+        })
+    })
+
+    await event.save()
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Offer Price Updated Successfully",
+    })
+}
+export const addRemoveGuestsToSubEvent = async (
+    req: Request,
+    res: Response,
+) => {
+    const { eventId, subEventId } = req.params
+    const { guestIds } = req.body
+
+    console.log(eventId, subEventId, guestIds)
+
+    const event = await Event.findById(eventId)
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    //check all guestIds are valid
+    const isValid = guestIds.every((id: any) =>
+        Types.ObjectId.isValid(id as string),
+    )
+    if (!isValid) throw new BadRequestError("Invalid Guest Ids")
+
+    event.userList
+        .filter((user) => guestIds.includes(user.user.toString()))
+        .forEach((user) => {
+            const alreadyExist = user.subEvents.findIndex(
+                (subEvent) => subEvent.toString() === subEventId,
+            )
+            if (alreadyExist === -1) {
+                //@ts-ignore
+                user.subEvents.push(new Types.ObjectId(subEventId))
+            } else {
+                user.subEvents.splice(alreadyExist, 1)
+            }
+            user.status = "pending"
+        })
+
+    await event.save()
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Guests Updated Successfully",
+    })
+}
+
+export const updateBudget = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { budget } = req.body
+
+    const event = await Event.findByIdAndUpdate(eventId, {
+        budget,
+    })
+
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Budget Updated Successfully",
     })
 }

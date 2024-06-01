@@ -7,70 +7,62 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
-import { OtherUserType, ServiceType, SubEventsVendorType } from "@/definitions"
-import { Link } from "react-router-dom"
+import { VendorSaveType } from "@/definitions"
+import { Link, useParams } from "react-router-dom"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
+import toast from "react-hot-toast"
+import { makeAOffer } from "@/api"
 
 type Props = {
-  vendor: {
-    vendor: OtherUserType
-    servicesOffering: ServiceType
-    status?: string
-    subEvent?: Omit<SubEventsVendorType, "channels">
-  }
+  vendor: VendorSaveType
 }
 
 const VendorCard = ({ vendor }: Props) => {
-  const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
 
-  const { event, loadingEvent } = useEventContext()
+  const { event, loadingEvent, updateEvent } = useEventContext()
 
-  // useEffect(() => {
-  //   if (!event) return
+  const { subEventId } = useParams()
 
-  //   // if current vendor is already invited, set the selected festivity
-  //   const selectedSubEvents = event.vendorList
-  //     .find((v) => v.vendorProfile.user._id === vendor.vendor._id)
-  //     ?.subEvents.filter(
-  //       (subEvent) =>
-  //         subEvent.servicesOffering._id === vendor.servicesOffering._id,
-  //     )
-  //     .map((subEvent) => subEvent.subEvent._id)
+  useEffect(() => {
+    if (!event) return
+    if (!subEventId) return
 
-  //   console.log(selectedSubEvents)
-
-  //   setSelectedFestivities(selectedSubEvents || [])
-  // }, [event, vendor])
+    setSelectedFestivities([subEventId])
+  }, [event, subEventId])
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
 
   const festivityList = event.subEvents
-  const vendorList = event.vendorList
-
-  const vendorSelected = vendorList.find(
-    (vendor) => vendor.vendorProfile.user._id === selectedVendorId,
-  )
-
-  const getStatusColor = () => {
-    switch (vendor.status) {
-      case "accepted":
-        return "bg-green-400 text-white "
-      case "pending":
-        return "bg-blue-400 text-white "
-      case "rejected":
-        return "bg-red-600 text-gray-300"
-      default:
-        return ""
-    }
-  }
 
   const inviteVendor = () => {
     //invite vendor
-    setSelectedVendorId(null)
+    if (selectedFestivities.length === 0) {
+      toast.error("Please select at least one festivity")
+      return
+    }
+    toast.promise(
+      makeAOffer(event._id, {
+        vendorProfileId: vendor.vendorProfileId,
+        subEventIds: selectedFestivities,
+        serviceId: vendor.servicesOffering._id,
+      }),
+      {
+        loading: "Sending Request...",
+        success: (data) => {
+          console.log(data)
+          updateEvent()
+          return "Offer Sent"
+        },
+        error: (error) => {
+          console.log(error.response)
+          return "Something went wrong!"
+        },
+      },
+    )
     setIsDrawerOpen(false)
   }
 
@@ -82,59 +74,38 @@ const VendorCard = ({ vendor }: Props) => {
     )
   }
 
-  const handleStatusButtonClick = (
+  const handleInviteButtonClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault()
     e.stopPropagation()
-    setSelectedFestivities(
-      vendorSelected?.subEvents.map((subEvent) => subEvent.subEvent._id) || [],
-    )
-    setSelectedVendorId(vendor.vendor._id)
     setIsDrawerOpen(true)
-  }
-
-  const getStatus = (subEventID: string) => {
-    return vendorSelected?.subEvents.find(
-      (subEvent) => subEvent.subEvent._id === subEventID,
-    )?.status
   }
 
   return (
     <>
       <button className="border p-5 rounded-lg w-full">
         <Link
-          to={`${vendor.vendor._id}/chat`}
+          to={`/events/${event._id}/vendors/${vendor.vendorProfileId}/chat`}
           className="flex justify-between items-center"
         >
           <div className="text-left">
             <div className="text-lg mb-1 font-medium">
               {vendor.servicesOffering.serviceName} - $
-              {vendor.subEvent?.amount || vendor.servicesOffering.price}
+              {vendor.servicesOffering.price}
             </div>
-            <div className="text-base  text-gray-700 capitalize italic">
-              {vendor.vendor.name}
+            <div className="text-base text-gray-700 capitalize italic">
+              by {vendor.vendorName}
             </div>
-            {!vendor.status && (
-              <div className="text-sm text-gray-500 capitalize">
-                {vendor.servicesOffering.serviceDescription}
-              </div>
-            )}
-
-            {vendor.subEvent && (
-              <div className="text-sm text-gray-500">
-                Sub-Events :{" "}
-                <span className="capitalize">
-                  {vendor.subEvent.subEvent.name}
-                </span>
-              </div>
-            )}
+            <div className="text-sm text-gray-700 capitalize">
+              {vendor.servicesOffering.serviceDescription}
+            </div>
           </div>
           <button
-            className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor()}`}
-            onClick={handleStatusButtonClick}
+            className={`px-4 py-1.5 capitalize rounded-full`}
+            onClick={handleInviteButtonClick}
           >
-            {vendor.status || "Invite"}
+            Invite
           </button>
         </Link>
       </button>
@@ -150,12 +121,12 @@ const VendorCard = ({ vendor }: Props) => {
             Select the Festivities for RSVP
           </span>
           <span className="text-lg text-gray-800 font-medium">
-            {vendor.vendor.name}
+            {vendor.vendorName}
           </span>
           <br />
           <span className="ml-2 text-sm text-gray-500">
             {vendor.servicesOffering.serviceName} - $
-            {vendor.subEvent?.amount || vendor.servicesOffering.price}
+            {vendor.servicesOffering.price}
           </span>
           <br />
           <span className="text-sm text-gray-500">
@@ -180,18 +151,19 @@ const VendorCard = ({ vendor }: Props) => {
                   />
                 }
               >
-                <ListItemText
-                  primary={festivity.name}
-                  secondary={
-                    <span className="capitalize">
-                      {getStatus(festivity._id)}
-                    </span>
-                  }
-                />
+                <ListItemText primary={festivity.name} />
               </ListItem>
             ))}
           </List>
-          <Button text="Invite" onClick={inviteVendor} icon={<IoPersonAdd />} />
+          <div>
+            Total Price: $
+            {selectedFestivities.length * vendor.servicesOffering.price}
+          </div>
+          <Button
+            text="Make a Offer"
+            onClick={inviteVendor}
+            icon={<IoPersonAdd />}
+          />
         </Box>
       </SwipeableDrawer>
     </>

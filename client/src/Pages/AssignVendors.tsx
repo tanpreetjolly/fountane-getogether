@@ -1,115 +1,105 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
-import Checkbox from "@mui/material/Checkbox"
-import Typography from "@mui/material/Typography"
-import { VendorListType } from "@/definitions"
+import Button from "@/components/Button"
+import { FaPlusCircle } from "react-icons/fa"
+import Loader from "@/components/Loader"
 import { useEventContext } from "@/context/EventContext"
-import { Loader } from "lucide-react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
+import { Avatar, ListItemAvatar } from "@mui/material"
+import { Input } from "@/components/ui/input"
 
-interface AssignVendorsType {
-  vendorProfileId: string
-  serviceId: string
-}
-
-const AssignVendors = () => {
-  const [selectedVendors, setSelectedVendors] = useState<AssignVendorsType[]>(
-    [],
-  )
-
+const InviteGuests = () => {
   const { event, loadingEvent } = useEventContext()
   const { subEventId } = useParams()
+  const [searchTerm, setSearchTerm] = useState("")
 
-  useEffect(() => {
-    if (!event) return
-    if (!subEventId) return
-    // const userList = event.userList
-    //   .filter((user) => user.subEvents.includes(subEventId))
-    //   .map((guest) => guest.user)
+  const navigate = useNavigate()
 
-    const vendorSelected: AssignVendorsType[] = []
-    event.vendorList.forEach((vendor: VendorListType) => {
-      vendor.subEvents.forEach((subEvent) => {
-        if (subEvent._id === subEventId) {
-          vendorSelected.push({
-            vendorProfileId: vendor.vendorProfile._id,
-            serviceId: subEvent.servicesOffering._id,
-          })
-        }
-      })
-    })
-
-    setSelectedVendors(vendorSelected)
-  }, [event, loadingEvent, subEventId])
+  const subEvent = event?.subEvents.find(
+    (subEvent) => subEvent._id === subEventId,
+  )
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
   if (!subEventId) return <div>No SubEvent Found</div>
+  if (!subEvent) return <div>No SubEvent Found</div>
 
-  const handleVendorChange = (vendorProfileId: string, serviceId: string) => {
-    setSelectedVendors((prevSelectedVendors) =>
-      prevSelectedVendors.some(
-        (p) =>
-          p.vendorProfileId === vendorProfileId && p.serviceId === serviceId,
-      )
-        ? prevSelectedVendors.filter(
-            (p) =>
-              p.vendorProfileId !== vendorProfileId &&
-              p.serviceId !== serviceId,
-          )
-        : [...prevSelectedVendors, { vendorProfileId, serviceId }],
-    )
+  const filteredServiceList = event.serviceList.filter(
+    (service) =>
+      service.subEvent._id.toLowerCase() === subEventId.toLowerCase(),
+  )
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "accepted":
+        return "bg-green-400 text-white "
+      case "pending":
+        return "bg-blue-400 text-white "
+      case "rejected":
+        return "bg-red-600 text-gray-300"
+      default:
+        return ""
+    }
   }
 
-  const vendorList = event.vendorList
-
   return (
-    <div>
-      <Typography variant="h6" gutterBottom className="text-center">
-        Assign Vendors for the Festivity
-      </Typography>
-      <List>
-        {vendorList.map((vendor) => (
-          <ListItem key={vendor._id}>
-            <ListItemText
-              primary={vendor.vendorProfile.user.name}
-              // secondary={`Type: ${vendor.vendor.services}`}
-              secondary={
-                <List>
-                  {vendor.vendorProfile.services.map((service) => (
-                    <ListItem
-                      key={service._id}
-                      secondaryAction={
-                        <Checkbox
-                          color="secondary"
-                          edge="end"
-                          checked={selectedVendors.some(
-                            (p) =>
-                              p.vendorProfileId === vendor.vendorProfile._id &&
-                              p.serviceId === service._id,
-                          )}
-                          onChange={() =>
-                            handleVendorChange(
-                              vendor.vendorProfile._id,
-                              service._id,
-                            )
-                          }
-                        />
-                      }
-                    >
-                      <ListItemText primary={service.serviceName} />
-                    </ListItem>
-                  ))}
-                </List>
-              }
-            />
-          </ListItem>
-        ))}
-      </List>
+    <div className="px-4 my-2 mb-8 flex flex-col h-[85vh] justify-between">
+      <div>
+        <div className="text-2xl pl-1 font-semibold text-zinc-800 mb-4">
+          Vendors for {subEvent.name}
+        </div>
+        <Button
+          text="Assign New Vendors"
+          onClick={() => {
+            navigate("search")
+          }}
+          icon={<FaPlusCircle />}
+        />
+        <Input
+          type="search"
+          placeholder="Search vendors..."
+          className="my-4"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <List>
+          {filteredServiceList.map((service) => (
+            <ListItem key={service._id}>
+              <ListItemAvatar>
+                <Avatar
+                  src={service.vendorProfile.user.profileImage}
+                  className="mr-3"
+                >
+                  {service.servicesOffering.serviceName[0]}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={service.servicesOffering.serviceName}
+                secondary={
+                  <span>
+                    Offered: ${service.amount}
+                    <br />
+                    PaymentStatus:{" "}
+                    {service.paymentStatus[0].toUpperCase() +
+                      service.paymentStatus.slice(1)}
+                  </span>
+                }
+                secondaryTypographyProps={{ className: "pl-1" }}
+              />
+              <div
+                className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor(service.status)}`}
+              >
+                {service.status === "accepted"
+                  ? "Hired"
+                  : service.status || "Invite"}
+              </div>
+            </ListItem>
+          ))}
+        </List>
+      </div>
     </div>
   )
 }
 
-export default AssignVendors
+export default InviteGuests

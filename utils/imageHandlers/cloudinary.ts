@@ -7,7 +7,7 @@ cloudinary.config({
 })
 
 // upload image to cloudinary and return the url
-const uploadProfileImage = async (req: Request) => {
+export const uploadProfileImage = async (req: Request) => {
     const result = await cloudinary.uploader.upload(
         `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
         {
@@ -22,7 +22,7 @@ const uploadProfileImage = async (req: Request) => {
     )
     return result.secure_url
 }
-const deleteProfileImage = async (userId: string): Promise<boolean> => {
+export const deleteProfileImage = async (userId: string): Promise<boolean> => {
     const result = await cloudinary.uploader.destroy(
         `blogmind/${userId}/profile`,
         { invalidate: true },
@@ -33,44 +33,4 @@ const deleteProfileImage = async (userId: string): Promise<boolean> => {
         },
     )
     return result
-}
-
-const uploadAssetsImages = async (req: Request) => {
-    const files = req.files as Express.Multer.File[]
-    const urls: string[] = []
-
-    for (const file of files) {
-        const originalName = file.originalname.split(".")[0] + "_" + uuidv4()
-        const result = await cloudinary.uploader.upload(
-            `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
-            {
-                folder: `blogmind/${req.user.userId}`,
-                public_id: originalName,
-                overwrite: false,
-                format: "webp",
-            },
-        )
-
-        urls.push(result.secure_url)
-    }
-    return urls
-}
-const deleteAssetImages = async (public_id: string): Promise<boolean> => {
-    const res = await cloudinary.uploader.destroy(
-        public_id,
-        { invalidate: true },
-        (error, result) => {
-            if (error) return false
-            if (result.result === "ok") return true
-            return false
-        },
-    )
-    return res
-}
-
-export {
-    uploadProfileImage,
-    deleteProfileImage,
-    uploadAssetsImages,
-    deleteAssetImages,
 }

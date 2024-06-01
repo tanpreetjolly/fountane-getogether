@@ -12,60 +12,64 @@ import { SiTicktick } from "react-icons/si"
 import { CheckCheck, CircleDot, SquarePen } from "lucide-react"
 import { useEventContext } from "../context/EventContext"
 import Loader from "../components/Loader"
-interface Festivity {
-  id: string
-  name: string
-  payment: number
-  status: string
+import { ServiceListType } from "@/definitions"
+import toast from "react-hot-toast"
+import { updateEventBudget } from "@/api"
+
+const calculateBudgetUtilized = (serviceList: ServiceListType[]): number => {
+  return parseFloat(
+    serviceList.reduce((acc, service) => acc + service.amount, 0).toFixed(2),
+  )
 }
 
-const initialBudget = 10000
-const initialFestivities: Festivity[] = [
-  { id: "1", name: "Wedding", payment: 5000, status: "Paid" },
-  { id: "2", name: "Birthday", payment: 2000, status: "Pending" },
-  { id: "3", name: "Anniversary", payment: 1500, status: "Paid" },
-  { id: "4", name: "Corporate Event", payment: 1000, status: "Pending" },
-]
-
-const calculateAvailableBudget = (
-  totalBudget: number,
-  festivities: Festivity[],
-): number => {
-  const totalPayments = festivities.reduce(
-    (sum, festivity) => sum + festivity.payment,
-    0,
-  )
-  return totalBudget - totalPayments
+type GroupedServices = {
+  [vendorId: string]: {
+    vendorName: string
+    services: ServiceListType[]
+  }
 }
 
 interface Props {}
 
 const BudgetsAndPayment: React.FC<Props> = () => {
-  const [totalBudget, setTotalBudget] = useState<number>(initialBudget)
-  const [availableBudget, setAvailableBudget] = useState<number>(
-    calculateAvailableBudget(initialBudget, initialFestivities),
-  )
-  const [festivities, _setFestivities] =
-    useState<Festivity[]>(initialFestivities)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const [newTotalBudget, setNewTotalBudget] = useState<number>(totalBudget)
+  const [newTotalBudget, setNewTotalBudget] = useState<number>(0)
 
-  const { event, loadingEvent } = useEventContext()
+  const { event, loadingEvent, updateEvent } = useEventContext()
+
+  if (loadingEvent) return <Loader />
+  if (!event) return null
+
   const handleOpenModal = () => {
+    setNewTotalBudget(event.budget)
     setIsModalOpen(true)
   }
-
   const handleCloseModal = () => {
     setIsModalOpen(false)
   }
-
   const handleTotalBudgetChange = () => {
-    setTotalBudget(newTotalBudget)
-    setAvailableBudget(calculateAvailableBudget(newTotalBudget, festivities))
+    toast.promise(updateEventBudget(event._id, newTotalBudget), {
+      loading: "Updating Budget...",
+      success: "Budget Updated Successfully",
+      error: "Failed to update Budget",
+    })
+    updateEvent()
     handleCloseModal()
   }
-  if (loadingEvent) return <Loader />
-  if (event == null) return null
+
+  const groupedServices: GroupedServices =
+    event.serviceList.reduce<GroupedServices>((acc, service) => {
+      const vendorId = service.vendorProfile._id
+      if (!acc[vendorId]) {
+        acc[vendorId] = {
+          vendorName: service.vendorProfile.user.name,
+          services: [],
+        }
+      }
+      acc[vendorId].services.push(service)
+      return acc
+    }, {})
+
   return (
     <div className="px-4">
       <Box>
@@ -88,7 +92,9 @@ const BudgetsAndPayment: React.FC<Props> = () => {
           <div className=" border w-1/2 relative  p-4 rounded-lg bg-indigo-500 text-white">
             <div className="text-sm text-gray-200 pl-0.5">Available Budget</div>
             <div className="text-2xl font-medium mt-0.5  ">
-              ${availableBudget}
+              {(
+                event.budget - calculateBudgetUtilized(event.serviceList)
+              ).toFixed(2)}
             </div>
           </div>
         </div>
@@ -97,31 +103,45 @@ const BudgetsAndPayment: React.FC<Props> = () => {
           Manage Payments
         </h2>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          {festivities.map((festivity) => (
-            <div
-              key={festivity.id}
-              className="border p-5  rounded-xl shadow-sm"
-            >
-              <div className="flex justify-between items-start">
-                <Box>
-                  <div className="text-lg font-medium">{festivity.name}</div>
-                  <div className="text-gray-700 mt-1 ">
-                    Payment: ${festivity.payment}
-                  </div>
-                </Box>
-                <div
-                  className={`p-1 px-3 rounded-full text-white font-medium flex items-center text-sm font-inter ${festivity.status.toLowerCase() == "paid" ? "bg-green-500" : "bg-amber-500"}`}
-                >
-                  {festivity.status == "Pending" ? (
-                    <CircleDot className="inline mr-1" size={16} />
-                  ) : (
-                    <CheckCheck className="inline mr-1" size={16} />
-                  )}
-                  {festivity.status}
+          {Object.entries(groupedServices).map(
+            ([vendorId, { vendorName, services }]) => {
+              return (
+                <div key={vendorId} className="border p-4 rounded-md">
+                  <h3 className="text-base text-gray-900 px-1 font-medium mb-2 ">
+                    {vendorName}
+                  </h3>
+                  {services.map((services) => (
+                    <div
+                      key={services._id}
+                      className="border p-5 rounded-xl shadow-sm my-1"
+                    >
+                      <div className="flex justify-between items-start">
+                        <Box>
+                          <div className="text-lg font-medium">
+                            {services.servicesOffering.serviceName + " "}
+                          </div>
+                          <div>{services.subEvent.name}</div>
+                          <div className="text-gray-700 mt-1">
+                            Payment: ${services.amount}
+                          </div>
+                        </Box>
+                        <div
+                          className={`p-1 px-3 capitalize rounded-full text-white font-medium flex items-center text-sm font-inter ${services.paymentStatus === "paid" ? "bg-green-500" : services.paymentStatus === "failed" ? "bg-red-500" : "bg-amber-500"}`}
+                        >
+                          {services.paymentStatus == "pending" ? (
+                            <CircleDot className="inline mr-1" size={16} />
+                          ) : (
+                            <CheckCheck className="inline mr-1" size={16} />
+                          )}
+                          {services.paymentStatus}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </div>
-          ))}
+              )
+            },
+          )}
         </Box>
         <Dialog open={isModalOpen} onClose={handleCloseModal}>
           <DialogTitle>Edit Total Budget</DialogTitle>

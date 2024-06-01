@@ -37,20 +37,20 @@ export interface IVendorProfile extends Document {
     updatedAt: Date
 }
 
-export interface IVendorList extends Document {
+export interface IServiceList extends Document {
     _id: string
     vendorProfile: Schema.Types.ObjectId
     // permission: [string]
-    subEvents: [
-        {
-            _id: string
-            subEvent: Schema.Types.ObjectId
-            status: string
-            servicesOffering: Schema.Types.ObjectId
-            paymentStatus: string
-            amount: number
-        },
-    ]
+    // subEvents: [
+    //     {
+    //         _id: string
+    subEvent: Schema.Types.ObjectId
+    status: string
+    servicesOffering: Schema.Types.ObjectId
+    paymentStatus: string
+    amount: number
+    //     },
+    // ]
     createdAt: Date
     updatedAt: Date
 }
@@ -92,7 +92,7 @@ export interface IEvent extends Document {
     endDate: Date
     budget: number
     userList: Types.Array<IUserList>
-    vendorList: Types.Array<IVendorList>
+    serviceList: Types.Array<IServiceList>
     subEvents: Types.Array<Schema.Types.ObjectId>
     checkList: Types.Array<Schema.Types.ObjectId>
     createdAt: Date

@@ -158,6 +158,7 @@ const router = createBrowserRouter([
                   { index: true, element: <SubEventChannels /> },
                   { path: "guests", element: <InviteGuests /> },
                   { path: "vendors", element: <AssignVendors /> },
+                  { path: "vendors/search", element: <SearchVendors /> },
                   { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },

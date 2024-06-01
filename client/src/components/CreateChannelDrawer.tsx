@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import TextField from "@mui/material/TextField"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -15,7 +15,21 @@ import { Loader } from "lucide-react"
 import { createSubEventChannel } from "@/api"
 import toast from "react-hot-toast"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
-import { OtherUserType } from "@/definitions"
+import { OtherUserType, ServiceListType, UserListType } from "@/definitions"
+
+const getUsers = (userList: UserListType[], serviceList: ServiceListType[]) => {
+  const vendorMap = new Map<string, OtherUserType>()
+  serviceList
+    .map((vendor) => vendor.vendorProfile.user)
+    .forEach((user) => vendorMap.set(user._id, user))
+  const vendorUser = Array.from(vendorMap.values())
+  const guestUsers = userList.map((user) => user.user)
+
+  const combineList = new Map<string, OtherUserType>()
+  vendorUser.forEach((user) => combineList.set(user._id, user))
+  guestUsers.forEach((user) => combineList.set(user._id, user))
+  return [vendorUser, guestUsers, Array.from(combineList.values())]
+}
 
 type Props = {
   toggleDrawer: (arg: boolean) => (arg2: any) => void
@@ -23,7 +37,6 @@ type Props = {
 
 const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
   const [channelName, setChannelName] = useState("")
-  const [searchTerm, setSearchTerm] = useState("")
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [filterRole, setFilterRole] = useState<"all" | "vendor" | "guest">(
     "all",
@@ -31,23 +44,21 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
 
   const navigate = useNavigate()
   const { eventId, subEventId } = useParams()
-
   const { event, loadingEvent, updateEvent } = useEventContext()
+
+  const [vendorUser, guestUsers, combineList] = useMemo(
+    getUsers.bind(null, event?.userList || [], event?.serviceList || []),
+    [event],
+  )
 
   if (!eventId) return <Navigate to="/events" />
   if (!subEventId) return <Navigate to={`/events/${eventId}`} />
   if (loadingEvent) return <Loader />
   if (!event) return <div>Event Not Found</div>
 
-  const { userList, vendorList, host } = event
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value)
-  }
-
   const handleUserSelect = (userId: string) => {
     //if user is host then return
-    if (host._id === userId) {
+    if (event.host._id === userId) {
       return
     }
     if (selectedUsers.includes(userId)) {
@@ -82,17 +93,6 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
     )
   }
 
-  const [vendorUser, guestUsers, combineList] = useMemo(() => {
-    const vendorUser = vendorList.map((vendor) => vendor.vendorProfile.user)
-
-    const guestUsers = userList.map((user) => user.user)
-
-    const combineList = new Map<string, OtherUserType>()
-    vendorUser.forEach((user) => combineList.set(user._id, user))
-    guestUsers.forEach((user) => combineList.set(user._id, user))
-    return [vendorUser, guestUsers, Array.from(combineList.values())]
-  }, [vendorList, userList])
-
   let usersToShow: OtherUserType[] = []
   switch (filterRole) {
     case "vendor":
@@ -106,12 +106,7 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
       break
   }
   // const users = userList
-  const filteredUsers = usersToShow.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.phoneNo.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredUsers = usersToShow
 
   const getUserRole = (user: OtherUserType) => {
     if (guestUsers.includes(user)) {
@@ -136,27 +131,6 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
         variant="outlined"
         value={channelName}
         onChange={(e) => setChannelName(e.target.value)}
-        fullWidth
-        className="!mb-3 !mt-2"
-        sx={{
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: indigo[600],
-            },
-            "&:hover fieldset": {
-              borderColor: indigo[800],
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: indigo[900],
-            },
-          },
-        }}
-      />
-      <TextField
-        label="Search Vendors, Guests"
-        variant="outlined"
-        value={searchTerm}
-        onChange={handleSearch}
         fullWidth
         className="!mb-3 !mt-2"
         sx={{
