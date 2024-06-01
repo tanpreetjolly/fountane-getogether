@@ -1,145 +1,139 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import Button from "../components/Button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import ButtonCustom from "../components/Button"
 import { CiEdit } from "react-icons/ci"
-import { FaCheck, FaTimes } from "react-icons/fa"
+import {
+  CalendarIcon,
+  CircleCheck,
+  CircleX,
+  MapPinIcon,
+  UserIcon,
+} from "lucide-react"
+import { useAppDispatch, useAppSelector } from "@/hooks"
+import { format } from "date-fns"
+import { acceptRejectNotification } from "@/features/userSlice"
+import { Link, useNavigate } from "react-router-dom"
 
-interface Event {
-  id: string
-  name: string
-  dateRange: string
-  hostName: string
-  paymentStatus: "Pending" | "Paid"
-  inviteStatus: "Pending" | "Accepted" | "Declined"
+const formatDate = (date: string) => {
+  return format(new Date(date), "dd MMMM yyyy")
 }
 
-const initialEvents: Event[] = [
-  {
-    id: "1",
-    name: "Wedding of Emily Jones and Ron",
-    dateRange: "26th Jan 2024 - 28th Jan 2024",
-    hostName: "Emily",
-    paymentStatus: "Pending",
-    inviteStatus: "Pending",
-  },
-  {
-    id: "2",
-    name: "Birthday of John Doe",
-    dateRange: "26th Jan 2024 - 28th Jan 2024",
-    hostName: "John",
-    paymentStatus: "Paid",
-    inviteStatus: "Accepted",
-  },
-  {
-    id: "3",
-    name: "Anniversary of Michael Johnson",
-    dateRange: "26th Jan 2024 - 28th Jan 2024",
-    hostName: "Michael",
-    paymentStatus: "Paid",
-    inviteStatus: "Pending",
-  },
-]
-
-type Props = {}
-
-const VendorHome: React.FC<Props> = () => {
+const VendorHome: React.FC<{}> = () => {
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const [events, setEvents] = useState<Event[]>(initialEvents)
 
-  const handleAccept = (id: string) => {
-    setEvents(
-      events.map((event) =>
-        event.id === id ? { ...event, inviteStatus: "Accepted" } : event,
-      ),
-    )
-  }
+  const { user } = useAppSelector((state) => state.user)
+  const notifications = user?.notifications || []
 
-  const handleDecline = (id: string) => {
-    setEvents(
-      events.map((event) =>
-        event.id === id ? { ...event, inviteStatus: "Declined" } : event,
-      ),
-    )
-  }
+  const serviceNotifications = notifications
+    .map((notification) => {
+      return {
+        serviceList: notification.serviceList,
+        eventId: notification._id,
+        eventName: notification.name,
+        host: notification.host,
+      }
+    })
+    .flat()
 
-  const handleNavigateToEvent = (id: string) => {
-    navigate(`events/${id}`)
-  }
-
-  const getStatusClassName = (status: "Pending" | "Paid") => {
-    return status === "Pending" ? "text-yellow-500" : "text-green-500"
-  }
-
-  const getInviteStatusClassName = (
-    status: "Pending" | "Accepted" | "Declined",
+  const handleAcceptVendor = (
+    eventId: string,
+    serviceListId: string,
+    status: string,
   ) => {
-    if (status === "Accepted") return "text-green-500"
-    if (status === "Declined") return "text-red-500"
-    return "text-gray-500"
+    dispatch(
+      acceptRejectNotification(eventId, {
+        status: status,
+        serviceListId: serviceListId,
+      }),
+    )
   }
 
   return (
     <div className="px-4">
-      <Button
+      <ButtonCustom
         text="Change Service & Price"
         onClick={() => {
           navigate("edit-services")
         }}
         icon={<CiEdit className="text-2xl" />}
       />
-      {events.map((event) => (
-        <div key={event.id} className="my-4">
-          <div className="border rounded-md p-4 bg-white">
-            <h2 className="text-xl font-semibold mb-2">{event.name}</h2>
-            <p className="text-gray-500">
-              Event Date Range: <span>{event.dateRange}</span>
-            </p>
-            <p className="text-gray-500">
-              Host Name: <span>{event.hostName}</span>
-            </p>
-            <p className="text-gray-500 mb-2">
-              Payment Status:
-              <span
-                className={`ml-1 ${getStatusClassName(event.paymentStatus)}`}
-              >
-                {event.paymentStatus}
-              </span>
-            </p>
-            {event.inviteStatus === "Pending" ? (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleAccept(event.id)}
-                  className="bg-white border-green-500 border text-green-500 rounded-md px-3 py-1 flex items-center"
+      <div className="text-2xl px-5 my-2 font-semibold text-zinc-800">
+        Service Requests
+      </div>
+      <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {serviceNotifications.map((notification) =>
+          notification.serviceList.map((service) => (
+            <Card key={service._id} className="rounded-lg">
+              <CardHeader className="p-4 relative">
+                <CardTitle>
+                  {service.subEvent.name + " - " + notification.eventName}
+                </CardTitle>
+                <CardDescription>
+                  Service Requested:
+                  {service.servicesOffering.serviceName}
+                </CardDescription>
+                <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
+                  <Link to={`/my-chats/${service.vendorProfile}`}>Discuss</Link>
+                </div>
+              </CardHeader>
+              <CardContent className=" p-4 pt-0">
+                <div className="space-y-1 text-sm text-zinc-700">
+                  <div className="flex items-center">
+                    <CalendarIcon className="mr-2 text-indigo-500" size={16} />
+                    {formatDate(service.subEvent.startDate)} -{" "}
+                    {formatDate(service.subEvent.endDate)}
+                  </div>
+                  <div className="flex items-center">
+                    <MapPinIcon className="mr-2 text-indigo-500" size={16} />
+                    <span>{service.subEvent.venue}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <UserIcon className="mr-2 text-indigo-500" size={16} />
+                    <span>{notification.host.name}</span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-end p-4 pt-0">
+                <Button
+                  variant="outline"
+                  className="mr-2"
+                  onClick={() =>
+                    handleAcceptVendor(
+                      notification.eventId,
+                      service._id,
+                      "accepted",
+                    )
+                  }
                 >
-                  <FaCheck className="mr-2" />
+                  <CircleCheck className="inline mr-1" size={16} />
                   Accept
-                </button>
-                <button
-                  onClick={() => handleDecline(event.id)}
-                  className="bg-white border-red-500 border text-red-500 rounded-md px-3 py-1 flex items-center"
+                </Button>
+                <Button
+                  className="bg-indigo-500"
+                  onClick={() =>
+                    handleAcceptVendor(
+                      notification.eventId,
+                      service._id,
+                      "rejected",
+                    )
+                  }
                 >
-                  <FaTimes className="mr-2" />
-                  Decline
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-2 items-center">
-                <p className={getInviteStatusClassName(event.inviteStatus)}>
-                  {event.inviteStatus}
-                </p>
-                {event.inviteStatus === "Accepted" && (
-                  <button
-                    onClick={() => handleNavigateToEvent(event.id)}
-                    className="border border-blue-500 text-blue-500 rounded-md px-3 py-1"
-                  >
-                    Go to Event
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
+                  <CircleX className="inline mr-1" size={16} />
+                  Reject
+                </Button>
+              </CardFooter>
+            </Card>
+          )),
+        )}
+      </div>
     </div>
   )
 }

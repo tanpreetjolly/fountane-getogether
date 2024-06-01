@@ -86,7 +86,7 @@ const VendorCard = ({ vendor }: Props) => {
     <>
       <button className="border p-5 rounded-lg w-full">
         <Link
-          to={`/events/${event._id}/vendors/${vendor.vendorProfileId}/chat`}
+          to={`/my-chats/${vendor.vendorProfileId}`}
           className="flex justify-between items-center"
         >
           <div className="text-left">
@@ -155,9 +155,25 @@ const VendorCard = ({ vendor }: Props) => {
               </ListItem>
             ))}
           </List>
+          <div className="space-y-2">
+            {vendor.servicesOffering.items.map((item, index) => (
+              <div key={item._id} className="border rounded-md p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-lg font-semibold">
+                    {index + 1 + ". " + item.name}
+                  </h4>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
           <div>
             Total Price: $
-            {selectedFestivities.length * vendor.servicesOffering.price}
+            {(
+              selectedFestivities.length * vendor.servicesOffering.price
+            ).toFixed(2)}
           </div>
           <Button
             text="Make a Offer"

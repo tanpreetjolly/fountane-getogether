@@ -23,7 +23,7 @@ export interface ServiceType {
   serviceName: string
   serviceDescription: string
   price: number
-  items: { name: string; description: string }[]
+  items: { _id: string; name: string; description: string }[]
 }
 
 export interface VendorProfileType {

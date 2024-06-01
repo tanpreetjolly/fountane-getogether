@@ -4,12 +4,15 @@ import { format } from "date-fns"
 import {
   Bell,
   CalendarDays,
+  Loader,
   MapPin,
   MoveRight,
   SquarePen,
   Trash,
 } from "lucide-react"
 import ButtonSecondary from "../components/ButtonSecondary"
+import { useEventContext } from "@/context/EventContext"
+import { useAppSelector } from "@/hooks"
 type Props = {
   subEvent: SubEventType
   url?: To
@@ -20,6 +23,18 @@ const SubEventCard = (props: Props) => {
     return format(new Date(date), "dd MMMM yyyy")
   }
   const navigate = useNavigate()
+
+  const { event, loadingEvent } = useEventContext()
+  const { user } = useAppSelector((state) => state.user)
+  if (loadingEvent) return <Loader />
+  if (!event) return <div>Event not found</div>
+  if (!user) return <div>Not logged in</div>
+
+  const subEventGuest = event.userList.filter((guest) =>
+    guest.subEvents.includes(props.subEvent._id),
+  )
+  console.log(subEventGuest.length)
+
   return (
     <div
       className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col   text-left bg-white w-full border border-gray-300 rounded-lg shadow-sm 
@@ -43,42 +58,35 @@ const SubEventCard = (props: Props) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-1 p-2 absolute right-0 items-center top-0">
-          <div className="relative ">
-            <Bell size={18} className=" inline" strokeWidth={2} />
-            <span className="absolute bg-rose-500 text-white text-xs h-2 aspect-square flex items-center justify-center font-medium  rounded-full top-0.5 right-0 font-roboto "></span>
+        {event.host._id === user?.userId && (
+          <div className="flex gap-1 p-2 absolute right-0 items-center top-0">
+            <div className="relative ">
+              <Bell size={18} className=" inline" strokeWidth={2} />
+              <span className="absolute bg-rose-500 text-white text-xs h-2 aspect-square flex items-center justify-center font-medium  rounded-full top-0.5 right-0 font-roboto "></span>
+            </div>
+            <SquarePen size={18} className="text-gray-700" />
+            <Trash size={18} className="text-red-500" />
           </div>
-          <SquarePen size={18} className="text-gray-700" />
-          <Trash size={18} className="text-red-500" />
-        </div>
+        )}
       </div>
       <div className="flex flex-col lg:flex-row items-center absolute bottom-4 ml-1 opacity-90">
         <div className="flex -space-x-2">
-          <div className="w-7 aspect-square rounded-full overflow-hidden grayscale">
-            {" "}
-            <img
-              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt=""
-              className="w-full object-cover h-full"
-            />
-          </div>
-          <div className="w-7 aspect-square rounded-full overflow-hidden grayscale">
-            <img
-              src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt=""
-              className="w-full object-cover h-full"
-            />
-          </div>
-          <div className="w-7 aspect-square rounded-full overflow-hidden grayscale">
-            <img
-              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt=""
-              className="w-full object-cover h-full"
-            />
-          </div>
-          <div className="w-7 aspect-square rounded-full overflow-hidden text-white bg-zinc-700 border border-slate-700 z-50 text-xs flex justify-center items-center pr-1 font-medium ">
-            +{Math.floor(Math.random() * 10 + 2)}
-          </div>
+          {" "}
+          {subEventGuest.length === 0 && "No Guests Invited"}
+          {subEventGuest.slice(0, 3).map((guest) => (
+            <div className="w-7 aspect-square rounded-full overflow-hidden grayscale">
+              <img
+                src={guest.user.profileImage}
+                alt={guest.user.name}
+                className="w-full object-cover h-full"
+              />
+            </div>
+          ))}
+          {subEventGuest.length > 3 && (
+            <div className="w-7 aspect-square rounded-full overflow-hidden text-white bg-zinc-700 border border-slate-700 z-50 text-xs flex justify-center items-center pr-1 font-medium ">
+              +{subEventGuest.length - 3}
+            </div>
+          )}
         </div>
       </div>
       <div className="w-fit ml-auto ">

@@ -112,7 +112,7 @@ UserSchema.methods.comparePassword = async function (
 
 UserSchema.methods.makeVendor = async function (this) {
     if (this.vendorProfile) return false
-    const vendorProfile = await VendorProfile.create({ userId: this._id })
+    const vendorProfile = await VendorProfile.create({ user: this._id })
     this.vendorProfile = vendorProfile._id
     await this.save()
     return vendorProfile

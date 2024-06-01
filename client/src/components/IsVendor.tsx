@@ -19,6 +19,26 @@ const IsVendor = ({ handleChange, signUpValues }: Props) => {
 
   return (
     <ul className="grid w-full grid-cols-2 gap-4 text-white text-sm">
+      <li>
+        <input
+          type="radio"
+          id="not-vendor"
+          name="isVendor"
+          value="false"
+          className="hidden peer"
+          onChange={handleVendorChange}
+          checked={signUpValues.isVendor === false}
+        />
+        <label
+          htmlFor="not-vendor"
+          className={`inline-flex items-center justify-between w-full p-2 px-4 border text-gray-500 rounded-lg cursor-pointer peer-checked:border-highlight peer-checked:text-highlight ${signUpValues.isVendor === false ? "border-blue-500 bg-blue-50" : "border-gray-500 bg-white"}`}
+        >
+          <p>
+            I am a <span className="font-semibold">Host/Guest</span>{" "}
+            organizing/attending an event
+          </p>
+        </label>
+      </li>
       <li className="h-full">
         <input
           type="radio"
@@ -32,31 +52,11 @@ const IsVendor = ({ handleChange, signUpValues }: Props) => {
         />
         <label
           htmlFor="vendor"
-          className="inline-flex h-full items-center justify-between w-full p-2 px-4 bg-white border border-gray-500 text-gray-500 rounded-lg cursor-pointer peer-checked:border-highlight peer-checked:text-highlight"
+          className={`inline-flex h-full items-center justify-between w-full p-2 px-4 border text-gray-500 rounded-lg cursor-pointer peer-checked:border-highlight peer-checked:text-highlight ${signUpValues.isVendor === true ? "border-blue-500 bg-blue-50" : "border-gray-500 bg-white"}`}
         >
           <p>
             I am a <span className="font-semibold">Vendor</span> providing
             services
-          </p>
-        </label>
-      </li>
-      <li>
-        <input
-          type="radio"
-          id="not-vendor"
-          name="isVendor"
-          value="false"
-          className="hidden peer"
-          onChange={handleVendorChange}
-          checked={signUpValues.isVendor === false}
-        />
-        <label
-          htmlFor="not-vendor"
-          className="inline-flex items-center justify-between w-full p-2 px-4 bg-white border border-gray-500 text-gray-500 rounded-lg cursor-pointer peer-checked:border-highlight peer-checked:text-highlight"
-        >
-          <p>
-            I am a <span className="font-semibold">Host/Guest</span>{" "}
-            organizing/attending an event
           </p>
         </label>
       </li>

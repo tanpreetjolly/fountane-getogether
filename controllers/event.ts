@@ -56,7 +56,7 @@ export const getEvent = async (req: Request, res: Response) => {
     ])
 
     if (!event) throw new NotFoundError("Event Not Found")
-    res.status(200).json({
+    res.status(StatusCodes.OK).json({
         data: event,
         success: true,
         msg: "Event Fetched Successfully",

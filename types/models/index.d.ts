@@ -28,6 +28,11 @@ export interface IServices extends Document {
     serviceName: string
     serviceDescription: string
     price: number
+    items: Types.Array<{
+        _id: Schema.Types.ObjectId
+        name: string
+        description: string
+    }>
 }
 
 export interface IVendorProfile extends Document {

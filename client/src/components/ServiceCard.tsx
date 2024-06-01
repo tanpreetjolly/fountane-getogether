@@ -30,7 +30,7 @@ const VendorCard = ({ service }: Props) => {
     <>
       <button className="border p-5 rounded-lg w-full">
         <Link
-          to={`${service.vendorProfile._id}/chat`}
+          to={`/my-chats/${service.vendorProfile._id}`}
           className="flex justify-between items-center"
         >
           <div className="text-left">
