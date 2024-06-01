@@ -14,6 +14,16 @@ const ManageVendors = () => {
 
   const vendorList = event.serviceList
 
+  const hiredVendors = vendorList.filter(
+    (vendor) => vendor.status === "accepted",
+  )
+  const invitedVendors = vendorList.filter(
+    (vendor) => vendor.status === "pending",
+  )
+  const rejectedVendors = vendorList.filter(
+    (vendor) => vendor.status === "rejected",
+  )
+
   return (
     <div className="px-4 divide-y space-y-2">
       <Button
@@ -26,29 +36,35 @@ const ManageVendors = () => {
           Hired Vendors
         </div>
         <div className="flex flex-col gap-2 py-2">
-          {vendorList.map((vendor) => {
-            if (vendor.status !== "accepted") return null
-            return <ServiceCard key={vendor.subEvent._id} service={vendor} />
-          })}
+          {hiredVendors.length === 0 && (
+            <span className="mx-auto">No vendors hired yet</span>
+          )}
+          {hiredVendors.map((vendor) => (
+            <ServiceCard key={vendor.subEvent._id} service={vendor} />
+          ))}
         </div>
 
         <div className="font-medium text-gray-800 px-2 text-xl mt-4">
           Invited Vendors
         </div>
         <div className="flex flex-col gap-2 py-2">
-          {vendorList.map((vendor) => {
-            if (vendor.status !== "pending") return null
-            return <ServiceCard key={vendor.subEvent._id} service={vendor} />
-          })}
+          {invitedVendors.length === 0 && (
+            <span className="mx-auto">Nothing to show</span>
+          )}
+          {invitedVendors.map((vendor) => (
+            <ServiceCard key={vendor.subEvent._id} service={vendor} />
+          ))}
         </div>
         <div className="font-medium text-gray-800 px-2 text-xl mt-4">
           Rejected Vendors
         </div>
         <div className="flex flex-col gap-2 py-2">
-          {vendorList.map((vendor) => {
-            if (vendor.status !== "rejected") return null
-            return <ServiceCard key={vendor.subEvent._id} service={vendor} />
-          })}
+          {rejectedVendors.length === 0 && (
+            <span className="mx-auto">Nothing to show</span>
+          )}
+          {rejectedVendors.map((vendor) => (
+            <ServiceCard key={vendor.subEvent._id} service={vendor} />
+          ))}
         </div>
       </div>
     </div>

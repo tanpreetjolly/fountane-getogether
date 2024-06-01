@@ -8,7 +8,6 @@ import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
-import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
 
 interface ConfirmationBoxProps {
@@ -46,20 +45,10 @@ const ConfirmationBox: React.FC<
         },
       }}
     >
-      <DialogTitle
-        id="alert-dialog-title"
-        sx={{ fontSize: "1.5rem", fontWeight: "bold", color: "#333" }}
-      >
+      <DialogTitle id="alert-dialog-title">
         {title || "Confirmation"}
       </DialogTitle>
-      <DialogContent>
-        <DialogContentText
-          id="alert-dialog-description"
-          sx={{ fontSize: "1.2rem", color: "#555" }}
-        >
-          {confirmation}
-        </DialogContentText>
-      </DialogContent>
+      <DialogContent>{confirmation}</DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>{cancelButton || "Disagree"}</Button>
         <Button onClick={handleProceed} autoFocus>

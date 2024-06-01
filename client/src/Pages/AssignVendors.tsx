@@ -1,14 +1,14 @@
 import { useState } from "react"
 import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemText from "@mui/material/ListItemText"
+import Loader from "@/components/Loader"
 import Button from "@/components/Button"
 import { FaPlusCircle } from "react-icons/fa"
-import Loader from "@/components/Loader"
-import { useEventContext } from "@/context/EventContext"
-import { useNavigate, useParams } from "react-router-dom"
-import { Avatar, ListItemAvatar } from "@mui/material"
 import { Input } from "@/components/ui/input"
+import ListItem from "@mui/material/ListItem"
+import ListItemText from "@mui/material/ListItemText"
+import { Avatar, ListItemAvatar } from "@mui/material"
+import { useEventContext } from "@/context/EventContext"
+import { NavLink, useNavigate, useParams } from "react-router-dom"
 
 const InviteGuests = () => {
   const { event, loadingEvent } = useEventContext()
@@ -64,6 +64,18 @@ const InviteGuests = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <List>
+          {filteredServiceList.length === 0 && (
+            <div className="text-center italic text-xl px-4 text-gray-500 h-[40vh] flex flex-col gap-1 items-center justify-center">
+              No vendors to show
+              <br /> Assign your first vendor
+              <NavLink
+                to="search"
+                className="p-2.5 border rounded-md border-blue-500 bg-blue-500 text-white hover:text-blue-500 hover:bg-white hover:border-blue-500"
+              >
+                Search Vendors
+              </NavLink>
+            </div>
+          )}
           {filteredServiceList.map((service) => (
             <ListItem key={service._id}>
               <ListItemAvatar>
