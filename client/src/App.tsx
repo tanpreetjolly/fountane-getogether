@@ -159,6 +159,7 @@ const router = createBrowserRouter([
                   { path: "guests", element: <InviteGuests /> },
                   { path: "vendors", element: <AssignVendors /> },
                   { path: "vendors/search", element: <SearchVendors /> },
+                  { path: "vendors/:vendorId", element: <VendorChat /> },
                   { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },

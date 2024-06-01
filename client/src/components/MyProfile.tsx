@@ -20,6 +20,7 @@ const defUser: UserType = {
   socketToken: "",
   phoneNo: "",
   isVendor: false,
+  vendorProfile: null,
   events: [],
   notifications: [],
   createdAt: "",

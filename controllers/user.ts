@@ -27,7 +27,14 @@ const getMe = async (req: Request, res: Response) => {
     const socketToken = user.generateSocketToken()
 
     const events = await Event.find({
-        $or: [{ "userList.user": user._id }, { host: user._id }],
+        $or: [
+            { "userList.user": user._id, "userList.status": "accepted" },
+            { host: user._id },
+            {
+                "serviceList.vendorProfile": user.vendorProfile,
+                "serviceList.status": "accepted",
+            },
+        ],
     })
         .select("name startDate endDate host eventType budget")
         .populate({

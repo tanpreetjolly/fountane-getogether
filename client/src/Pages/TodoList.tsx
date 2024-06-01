@@ -95,39 +95,43 @@ const TodoList = () => {
         )}
       </div>
       <ul>
-        {todos.map((todo) => (
-          <li
-            key={todo.id}
-            className="flex items-center justify-between mb-2 bg-white rounded-md p-4 shadow-md"
-          >
-            <div className="flex items-center">
-              <Checkbox
-                checked={todo.completed}
-                onCheckedChange={() => toggleComplete(todo.id)}
-                className="mr-2"
-              />
-              <span
-                className={`text-sm ${
-                  todo.completed ? "text-gray-500 line-through" : ""
-                }`}
-              >
-                {todo.text}
-              </span>
-            </div>
-            <div>
-              <Button
-                variant="ghost"
-                onClick={() => editTodo(todo)}
-                className="mr-2"
-              >
-                <EditIcon className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" onClick={() => deleteTodo(todo.id)}>
-                <TrashIcon className="h-4 w-4 text-red-500" />
-              </Button>
-            </div>
-          </li>
-        ))}
+        {todos
+          .sort((a, b) =>
+            a.completed === b.completed ? 0 : a.completed ? 1 : -1,
+          )
+          .map((todo) => (
+            <li
+              key={todo.id}
+              className="flex items-center justify-between mb-2 bg-white rounded-md p-4 shadow-md"
+            >
+              <div className="flex items-center">
+                <Checkbox
+                  checked={todo.completed}
+                  onCheckedChange={() => toggleComplete(todo.id)}
+                  className="mr-2"
+                />
+                <span
+                  className={`text-sm ${
+                    todo.completed ? "text-gray-500 line-through" : ""
+                  }`}
+                >
+                  {todo.text}
+                </span>
+              </div>
+              <div>
+                <Button
+                  variant="ghost"
+                  onClick={() => editTodo(todo)}
+                  className="mr-2"
+                >
+                  <EditIcon className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" onClick={() => deleteTodo(todo.id)}>
+                  <TrashIcon className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            </li>
+          ))}
       </ul>
     </div>
   )

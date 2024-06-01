@@ -1,6 +1,5 @@
 import { Schema, model, Types } from "mongoose"
 import { IEvent, IUserList, IServiceList } from "../types/models"
-import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
 import jwt from "jsonwebtoken"
 import { NotFoundError } from "../errors"
 import { EventPayload } from "../types/express"
