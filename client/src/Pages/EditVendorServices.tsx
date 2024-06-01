@@ -17,61 +17,79 @@ import {
 } from "@/components/ui/drawer"
 import { Edit, X, Plus } from "lucide-react"
 import { ServiceType } from "@/definitions"
+import { useAppDispatch, useAppSelector } from "@/hooks"
+import Loader from "@/components/Loader"
+import { createService, updateService } from "@/api"
+import toast from "react-hot-toast"
+import { loadUser } from "@/features/userSlice"
 
-const initialServiceData: ServiceType[] = [
-  {
-    _id: "1",
-    serviceName: "Catering",
-    serviceDescription: "Delicious catering services for your event",
-    price: 500,
-    items: [{ name: "Meal 1", description: "Description for Meal 1" }],
-  },
-  {
-    _id: "2",
-    serviceName: "Decor",
-    serviceDescription: "Stunning decor to elevate your event",
-    price: 1000,
-    items: [{ name: "Item 1", description: "Description for Item 1" }],
-  },
-  {
-    _id: "3",
-    serviceName: "Photography",
-    serviceDescription: "Capture the moment with our professional photography",
-    price: 2000,
-    items: [{ name: "Package 1", description: "Description for Package 1" }],
-  },
-]
+const newService: ServiceType = {
+  _id: "new",
+  serviceName: "",
+  serviceDescription: "",
+  price: 0,
+  items: [],
+}
 
 const EditVendorServices = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-  const [selectedService, setSelectedService] = useState<ServiceType | null>(
-    null,
-  )
-  const [serviceData, setServiceData] =
-    useState<ServiceType[]>(initialServiceData)
+  const [selectedService, setSelectedService] =
+    useState<ServiceType>(newService)
+
+  const { user, loading } = useAppSelector((state) => state.user)
+  const dispatch = useAppDispatch()
+
+  if (loading) return <Loader />
+  if (!user) return <div>Not logged in</div>
+  if (!user.vendorProfile) return <div>Not a vendor</div>
+  const serviceData = user.vendorProfile.services
 
   const handleServiceEdit = (service: ServiceType | null) => {
     if (service) {
       setSelectedService(service)
     } else {
-      setSelectedService({
-        _id: `${serviceData.length + 1}`,
-        serviceName: "",
-        serviceDescription: "",
-        price: 0,
-        items: [],
-      })
+      setSelectedService(newService)
     }
     setIsDrawerOpen(true)
   }
 
   const closeDrawer = () => {
     setIsDrawerOpen(false)
-    setSelectedService(null)
+    setSelectedService(newService)
   }
 
-  const handleServiceUpdate = (updatedService: ServiceType) => {
-    if (updatedService._id) {
+  const handleServiceUpdate = (updatedService: ServiceType | null) => {
+    console.log(updatedService)
+    console.log(user.vendorProfile?._id)
+    if (!updatedService) return
+    if (user.vendorProfile?._id === undefined) return
+    if (updatedService._id === "new") {
+      //remove all _ids from items
+      const createServiceVale: Omit<ServiceType, "_id" | "items"> & {
+        items: Omit<ServiceType["items"][0], "_id">[]
+      } = {
+        serviceName: updatedService.serviceName,
+        serviceDescription: updatedService.serviceDescription,
+        price: updatedService.price,
+        items: updatedService.items.map((item) => ({
+          name: item.name,
+          description: item.description,
+        })),
+      }
+      toast.promise(createService(user.vendorProfile?._id, createServiceVale), {
+        loading: "Updating service...",
+        success: (data) => {
+          console.log(data)
+          closeDrawer()
+          dispatch(loadUser(false))
+          return "Service created successfully"
+        },
+        error: (error) => {
+          console.error(error)
+          return "Failed to create service"
+        },
+      })
+    } else {
       // Edit existing service
       const serviceIndex = serviceData.findIndex(
         (service) => service._id === updatedService._id,
@@ -80,16 +98,29 @@ const EditVendorServices = () => {
         const updatedServiceData = [...serviceData]
         updatedServiceData[serviceIndex] = updatedService
         // Update the serviceData state with the updated service
-        setServiceData(updatedServiceData)
+        // setServiceData(updatedServiceData)
+        toast.promise(
+          updateService(
+            user.vendorProfile?._id,
+            serviceData[serviceIndex]._id,
+            updatedService,
+          ),
+          {
+            loading: "Updating service...",
+            success: (data) => {
+              console.log(data)
+              closeDrawer()
+              dispatch(loadUser(false))
+              return "Service updated successfully"
+            },
+            error: (error) => {
+              console.error(error)
+              return "Failed to update service"
+            },
+          },
+        )
       }
-    } else {
-      // Create new service
-      const newServiceId = `${serviceData.length + 1}`
-      const newService = { ...updatedService, _id: newServiceId }
-      // Update the serviceData state with the new service
-      setServiceData([...serviceData, newService])
     }
-    closeDrawer()
   }
 
   return (
@@ -129,25 +160,10 @@ const EditVendorServices = () => {
               </AccordionTrigger>
               <AccordionContent className="px-4 py-2">
                 <div className="space-y-2">
-                  {service.items.map((item, index) => (
-                    <div key={index} className="border rounded-md p-4">
+                  {service.items.map((item) => (
+                    <div key={item._id} className="border rounded-md p-4">
                       <div className="flex justify-between items-center mb-2">
-                        <h4 className="text-lg font-semibold">
-                          Item {index + 1}
-                        </h4>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            const updatedItems = [...service.items]
-                            updatedItems.splice(index, 1)
-                            setSelectedService({
-                              ...service,
-                              items: updatedItems,
-                            })
-                          }}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <h4 className="text-lg font-semibold">{item.name}</h4>
                       </div>
                       <p className="text-sm text-muted-foreground">
                         {item.description}
@@ -172,7 +188,7 @@ const EditVendorServices = () => {
             </Button>
           </DrawerHeader>
           {selectedService && (
-            <div className="space-y-4 p-4 max-h-[80vh] overflow-autox ">
+            <div className="space-y-4 p-4 max-h-[80vh] overflow-auto ">
               <div>
                 <Label htmlFor="serviceType" className="mb-2">
                   Service Type
@@ -222,7 +238,7 @@ const EditVendorServices = () => {
               <Separator />
               <div className="space-y-2">
                 {selectedService.items.map((item, index) => (
-                  <div key={index} className="border rounded-md p-4">
+                  <div key={item._id} className="border rounded-md p-4">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="text-lg font-semibold">
                         Item {index + 1}
@@ -230,11 +246,14 @@ const EditVendorServices = () => {
                       <Button
                         variant="ghost"
                         onClick={() => {
-                          const updatedItems = [...selectedService.items]
-                          updatedItems.splice(index, 1)
-                          setSelectedService({
-                            ...selectedService,
-                            items: updatedItems,
+                          setSelectedService((p) => {
+                            const updatedItems = p.items.filter(
+                              (i) => i._id !== item._id,
+                            )
+                            return {
+                              ...p,
+                              items: updatedItems,
+                            }
                           })
                         }}
                       >
@@ -243,38 +262,55 @@ const EditVendorServices = () => {
                     </div>
                     <div className="space-y-2">
                       <div>
-                        <Label htmlFor={`itemName-${index}`} className="mb-2">
+                        <Label
+                          htmlFor={`itemName-${item._id}`}
+                          className="mb-2"
+                        >
                           Item Name
                         </Label>
                         <Input
-                          id={`itemName-${index}`}
+                          id={`itemName-${item._id}`}
                           value={item.name}
                           onChange={(e) => {
-                            const updatedItems = [...selectedService.items]
-                            updatedItems[index].name = e.target.value
-                            setSelectedService({
-                              ...selectedService,
-                              items: updatedItems,
+                            e.preventDefault()
+                            setSelectedService((p) => {
+                              const updatedItems = p.items.map((i) => {
+                                if (i._id === item._id) {
+                                  return { ...i, name: e.target.value }
+                                }
+                                return i
+                              })
+                              return {
+                                ...p,
+                                items: updatedItems,
+                              }
                             })
                           }}
                         />
                       </div>
                       <div>
                         <Label
-                          htmlFor={`itemDescription-${index}`}
+                          htmlFor={`itemDescription-${item._id}`}
                           className="mb-2"
                         >
                           Item Description
                         </Label>
                         <Input
-                          id={`itemDescription-${index}`}
+                          id={`itemDescription-${item._id}`}
                           value={item.description}
                           onChange={(e) => {
-                            const updatedItems = [...selectedService.items]
-                            updatedItems[index].description = e.target.value
-                            setSelectedService({
-                              ...selectedService,
-                              items: updatedItems,
+                            e.preventDefault()
+                            setSelectedService((p) => {
+                              const updatedItems = p.items.map((i) => {
+                                if (i._id === item._id) {
+                                  return { ...i, description: e.target.value }
+                                }
+                                return i
+                              })
+                              return {
+                                ...p,
+                                items: updatedItems,
+                              }
                             })
                           }}
                         />
@@ -287,10 +323,10 @@ const EditVendorServices = () => {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    const newItem = { name: "", description: "" }
+                    const newItem = { _id: "new", name: "", description: "" }
                     setSelectedService({
                       ...selectedService,
-                      items: [...(selectedService?.items || []), newItem],
+                      items: [...selectedService.items, newItem],
                     })
                   }}
                 >
@@ -304,11 +340,7 @@ const EditVendorServices = () => {
               <Button variant="outline" onClick={closeDrawer}>
                 Cancel
               </Button>
-              <Button
-                onClick={() =>
-                  handleServiceUpdate(selectedService as ServiceType)
-                }
-              >
+              <Button onClick={() => handleServiceUpdate(selectedService)}>
                 Save
               </Button>
             </div>

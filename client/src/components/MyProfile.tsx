@@ -11,6 +11,7 @@ import { MdDeleteOutline } from "react-icons/md"
 import confirm from "./ConfirmationComponent"
 import { LogOutIcon } from "lucide-react"
 import ButtonSecondary from "./ButtonSecondary"
+import { useNavigate } from "react-router-dom"
 
 const defUser: UserType = {
   userId: "",
@@ -34,6 +35,7 @@ const MyProfile = () => {
 
   const dispatch = useAppDispatch()
   const { user: originalUser, loading } = useAppSelector((state) => state.user)
+  const navigate = useNavigate()
 
   const handleEdit = () => {
     if (originalUser) {
@@ -262,6 +264,15 @@ const MyProfile = () => {
               icon={<LogOutIcon size={16} />}
             />
           </div>
+          {user.isVendor && (
+            <div className="mx-auto mt-8">
+              <ButtonSecondary
+                onClick={() => navigate("/vendor-home")}
+                text="My Vendor Profile"
+                fullWidth={true}
+              />
+            </div>
+          )}
         </section>
       </main>
     </div>

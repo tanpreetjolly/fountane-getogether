@@ -7,6 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import ButtonCustom from "../components/Button"
+import { CiEdit } from "react-icons/ci"
 import {
   CalendarIcon,
   CircleCheck,
@@ -17,7 +19,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks"
 import { format } from "date-fns"
 import { acceptRejectNotification } from "@/features/userSlice"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 const formatDate = (date: string) => {
   return format(new Date(date), "dd MMMM yyyy")
@@ -25,6 +27,7 @@ const formatDate = (date: string) => {
 
 const VendorHome: React.FC<{}> = () => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const { user } = useAppSelector((state) => state.user)
   const notifications = user?.notifications || []
@@ -54,7 +57,14 @@ const VendorHome: React.FC<{}> = () => {
   }
 
   return (
-    <>
+    <div className="px-4">
+      <ButtonCustom
+        text="Change Service & Price"
+        onClick={() => {
+          navigate("edit-services")
+        }}
+        icon={<CiEdit className="text-2xl" />}
+      />
       <div className="text-2xl px-5 my-2 font-semibold text-zinc-800">
         Service Requests
       </div>
@@ -71,11 +81,7 @@ const VendorHome: React.FC<{}> = () => {
                   {service.servicesOffering.serviceName}
                 </CardDescription>
                 <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
-                  <Link
-                    to={`/events/${notification.eventId}/vendors/${service.vendorProfile}/chat`}
-                  >
-                    Discuss
-                  </Link>
+                  <Link to={`/my-chats/${service.vendorProfile}`}>Discuss</Link>
                 </div>
               </CardHeader>
               <CardContent className=" p-4 pt-0">
@@ -128,7 +134,7 @@ const VendorHome: React.FC<{}> = () => {
           )),
         )}
       </div>
-    </>
+    </div>
   )
 }
 

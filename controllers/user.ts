@@ -1,4 +1,4 @@
-import { User, Event, SubEvent } from "../models"
+import { User, Event } from "../models"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
@@ -28,10 +28,11 @@ const getMe = async (req: Request, res: Response) => {
 
     const events = await Event.find({
         $or: [
-            { "userList.user": user._id, "userList.status": "accepted" },
             { host: user._id },
+            { "userList.user": user._id, "userList.status": "accepted" },
             {
-                "serviceList.vendorProfile": user.vendorProfile,
+                // @ts-ignore
+                "serviceList.vendorProfile": user.vendorProfile?._id,
                 "serviceList.status": "accepted",
             },
         ],

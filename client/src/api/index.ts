@@ -6,6 +6,7 @@ import {
   UserType,
   ForgotPasswordType,
   EventShortType,
+  ServiceType,
 } from "../definitions"
 
 /*
@@ -203,3 +204,16 @@ export const addRemoveGuestsToSubEvent = (
 
 export const updateEventBudget = (eventId: string, budget: number) =>
   API.patch(`/event/${eventId}/budget`, { budget })
+
+export const createService = (
+  vendorId: string,
+  serviceData: Omit<ServiceType, "_id" | "items"> & {
+    items: Omit<ServiceType["items"][0], "_id">[]
+  },
+) => API.post(`/vendor/${vendorId}/service`, serviceData)
+
+export const updateService = (
+  vendorId: string,
+  serviceId: string,
+  serviceData: ServiceType,
+) => API.put(`/vendor/${vendorId}/service/${serviceId}`, serviceData)

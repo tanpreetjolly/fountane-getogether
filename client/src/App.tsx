@@ -173,13 +173,13 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <VendorHome /> },
           { path: "edit-services", element: <EditVendorServices /> },
-          { path: "events/:id", element: <VendorSubEvents /> },
+          { path: "events/:eventId", element: <VendorSubEvents /> },
           {
-            path: "events/:id/festivity/:subEventId",
+            path: "events/:eventId/festivity/:subEventId",
             element: <VendorChannels />,
           },
           {
-            path: "events/:id/festivity/:subEventId/channel/:channelId",
+            path: "events/:eventId/festivity/:subEventId/channel/:channelId",
             element: <VendorChat />,
           },
         ],

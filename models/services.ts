@@ -11,6 +11,12 @@ const ServicesSchema = new Schema<IServices>({
         required: [true, "Service Description is required."],
     },
     price: { type: Number, required: [true, "Price is required."] },
+    items: [
+        {
+            name: String,
+            description: String,
+        },
+    ],
 })
 
 const Services = model<IServices>("Services", ServicesSchema)

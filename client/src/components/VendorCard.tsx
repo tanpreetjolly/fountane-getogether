@@ -86,7 +86,7 @@ const VendorCard = ({ vendor }: Props) => {
     <>
       <button className="border p-5 rounded-lg w-full">
         <Link
-          to={`/events/${event._id}/vendors/${vendor.vendorProfileId}/chat`}
+          to={`/my-chats/${vendor.vendorProfileId}`}
           className="flex justify-between items-center"
         >
           <div className="text-left">
@@ -157,7 +157,9 @@ const VendorCard = ({ vendor }: Props) => {
           </List>
           <div>
             Total Price: $
-            {selectedFestivities.length * vendor.servicesOffering.price}
+            {(
+              selectedFestivities.length * vendor.servicesOffering.price
+            ).toFixed(2)}
           </div>
           <Button
             text="Make a Offer"
