@@ -29,13 +29,15 @@ const EventPage = () => {
             <span className=" text-indigo-700">{event.host.name}</span>
           </div>
         </div>
-        <button
-          onClick={() => navigate("todo")}
-          className="flex items-center  bg-zinc-700 text-white h-fit my-auto px-4 py-1.5 rounded-2xl"
-        >
-          <ListTodo className="mr-1" size={20} />
-          Todo
-        </button>
+        {event.host._id == user?.userId && (
+          <button
+            onClick={() => navigate("todo")}
+            className="flex items-center  bg-zinc-700 text-white h-fit my-auto px-4 py-1.5 rounded-2xl"
+          >
+            <ListTodo className="mr-1" size={20} />
+            Todo
+          </button>
+        )}
       </div>
       {event.host._id == user?.userId && (
         <div className="flex justify-around gap-1.5 md:w-1/2">

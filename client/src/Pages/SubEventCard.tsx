@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import ButtonSecondary from "../components/ButtonSecondary"
 import { useEventContext } from "@/context/EventContext"
+import { useAppSelector } from "@/hooks"
 type Props = {
   subEvent: SubEventType
   url?: To
@@ -24,8 +25,10 @@ const SubEventCard = (props: Props) => {
   const navigate = useNavigate()
 
   const { event, loadingEvent } = useEventContext()
+  const { user } = useAppSelector((state) => state.user)
   if (loadingEvent) return <Loader />
   if (!event) return <div>Event not found</div>
+  if (!user) return <div>Not logged in</div>
 
   const subEventGuest = event.userList.filter((guest) =>
     guest.subEvents.includes(props.subEvent._id),
@@ -55,14 +58,16 @@ const SubEventCard = (props: Props) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-1 p-2 absolute right-0 items-center top-0">
-          <div className="relative ">
-            <Bell size={18} className=" inline" strokeWidth={2} />
-            <span className="absolute bg-rose-500 text-white text-xs h-2 aspect-square flex items-center justify-center font-medium  rounded-full top-0.5 right-0 font-roboto "></span>
+        {event.host._id === user?.userId && (
+          <div className="flex gap-1 p-2 absolute right-0 items-center top-0">
+            <div className="relative ">
+              <Bell size={18} className=" inline" strokeWidth={2} />
+              <span className="absolute bg-rose-500 text-white text-xs h-2 aspect-square flex items-center justify-center font-medium  rounded-full top-0.5 right-0 font-roboto "></span>
+            </div>
+            <SquarePen size={18} className="text-gray-700" />
+            <Trash size={18} className="text-red-500" />
           </div>
-          <SquarePen size={18} className="text-gray-700" />
-          <Trash size={18} className="text-red-500" />
-        </div>
+        )}
       </div>
       <div className="flex flex-col lg:flex-row items-center absolute bottom-4 ml-1 opacity-90">
         <div className="flex -space-x-2">
