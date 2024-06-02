@@ -43,7 +43,7 @@ const Features: React.FC = () => {
             <div className="h-[64px] w-[3px] bg-gray-800  absolute -end-[17px] top-[142px] rounded-e-lg"></div>
             <div className="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-white ">
               <img
-                src="https://i.imgur.com/TgwXHqd.png"
+                src="https://i.imgur.com/fZjDm04.jpeg"
                 className="w-[272px] h-[572px]"
                 alt=""
               />

@@ -37,18 +37,18 @@ const SubEventCard = (props: Props) => {
 
   return (
     <div
-      className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col   text-left bg-white w-full border border-gray-200 rounded-lg shadow-sm 
+      className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col  max-w-xl     text-left bg-white w-full border border-gray-200 rounded-lg shadow-sm 
     "
     >
       <div className="flex justify-between text-left items-start">
         <div className="space-y-4">
           <div className="pl-1 ">
-            <div className="text-xs text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
+            <div className="text-xs lg:text-base text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
               <CalendarDays className="inline mb-0.5" size={16} />
               {formatDate(props.subEvent.startDate)} -{" "}
               {formatDate(props.subEvent.endDate)}
             </div>
-            <div className="text-xl    font-semibold text-slate-800 ">
+            <div className="text-xl  lg:text-2xl  font-semibold text-slate-800 ">
               {props.subEvent.name}
             </div>
 

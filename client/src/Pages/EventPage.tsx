@@ -23,8 +23,8 @@ const EventPage = () => {
     <div className="px-4 flex flex-col gap-2  pt-2 lg:w-4/5  lg:mx-auto   pb-20">
       <div className="pl-1 flex justify-between">
         <div>
-          <div className="text-2xl font-semibold text-dark">{event.name}</div>
-          <div className="text-base text-gray-700 mb-1 ">
+          <div className="text-2xl lg:text-3xl font-semibold text-dark">{event.name}</div>
+          <div className="text-base text-gray-700 mb-1 lg:text-lg">
             Hosted by{" "}
             <span className=" text-indigo-700">{event.host.name}</span>
           </div>
@@ -40,7 +40,7 @@ const EventPage = () => {
         )}
       </div>
       {event.host._id == user?.userId && (
-        <div className="flex justify-around gap-1.5 md:w-1/2">
+        <div className="flex justify-around gap-1.5 md:w-1/3">
           <button
             onClick={() => {
               navigate("guests")
@@ -68,7 +68,7 @@ const EventPage = () => {
         </div>
       )}
       <div>
-        <div className="flex flex-col md:grid-cols-2 lg:grid-cols-3 gap-2 my-3  overflow-y-auto">
+        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2 my-3  overflow-y-auto">
           {event.subEvents.length == 0 && (
             <div className="text-center text-lg text-gray-700">
               No festivity added yet
@@ -112,7 +112,7 @@ const EventPage = () => {
         </div>
       </div>
       {event.host._id == user?.userId && (
-        <div className="grid grid-cols-2 gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+        <div className="flex justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
           <Button
             text="Add Festivity"
             icon={<BsFillCalendarEventFill />}

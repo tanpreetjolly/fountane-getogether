@@ -40,7 +40,7 @@ const Channel = ({ channel }: { channel: ChannelType }) => {
       onClick={() => {
         navigate(`channel/${channel._id}`)
       }}
-      className={`text-slate-900  w-full text-left px-5 mb-2 py-3 border border-slate-300 shadow-sm rounded-xl flex items-center gap-2`}
+      className={`text-slate-900 md:text-lg  w-full text-left px-5 mb-2 py-3 border border-slate-300 shadow-sm rounded-xl flex items-center gap-2`}
     >
       # {channel.name}
       {getChannelIcon(channel.name)}
@@ -78,25 +78,25 @@ const SubEventChannels = () => {
   if (!subEvent) return <div>Sub Event Not Found</div>
 
   return (
-    <div className="px-4 flex flex-col justify-between  h-[85vh] ">
+    <div className="px-4 flex flex-col justify-between  h-[85vh] lg:w-4/5 mx-auto py-2">
       <div>
         <div className="flex flex-col items-start justify-between ">
           <div className="px-1">
-            <div className="mb-1  text-2xl font-bold text-gray-800">
+            <div className="mb-1  text-2xl lg:text-3xl font-bold text-gray-800">
               {subEvent.name}
             </div>
-            <div className="text-sm text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
+            <div className="text-sm text-indigo-600 md:text-base font-medium rounded-full flex items-center gap-1 mb-1 ">
               <CalendarDays className="inline mb-0.5" size={18} />
               {formatDate(subEvent.startDate)} - {formatDate(subEvent.endDate)}
             </div>
           </div>
 
-          <div className="text-base text-slate-800  rounded-full  flex items-center gap-1 pl-1">
+          <div className="text-base text-slate-800   md:text-lg  rounded-full  flex items-center gap-1 pl-1">
             <MapPin className="inline gap-1" size={16} />
             {subEvent.venue}
           </div>
         </div>
-        <div className="flex justify-around gap-3 mb-1 mt-2 font-inter">
+        <div className="flex justify-around gap-3 mb-1 mt-2 font-inter md:w-1/3">
           <button
             onClick={() => navigate(`guests`)}
             className="flex items-center justify-around  bg-indigo-500 text-white rounded-lg w-1/2 px-4 py-3 gap-2"
@@ -127,7 +127,7 @@ const SubEventChannels = () => {
           ))}
         </div>
       </div>
-      <div className="mb-10">
+      <div className="flex justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
         <Button
           text="Create Channel"
           onClick={() => setDrawerOpen(true)}

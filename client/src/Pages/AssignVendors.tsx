@@ -44,7 +44,7 @@ const InviteGuests = () => {
   }
 
   return (
-    <div className="px-4 my-2 mb-8 flex flex-col h-[85vh] justify-between">
+    <div className="px-4 my-2 mb-8 flex flex-col h-[85vh] justify-between lg:w-4/5 mx-auto">
       <div>
         <div className="text-2xl pl-1 font-semibold text-zinc-800 mb-4">
           Vendors for {subEvent.name}

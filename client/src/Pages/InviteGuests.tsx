@@ -77,7 +77,7 @@ const InviteGuests = () => {
   if (!subEventId) return <div>No SubEvent Found</div>
 
   return (
-    <div className="px-4 my-2 mb-12 flex flex-col h-[85vh] justify-between">
+    <div className="px-4 my-2 mb-12 flex flex-col justify-between lg:w-4/5 mx-auto">
       <div>
         <div className="text-2xl pl-1 font-semibold text-zinc-800">
           Invite Guests for the Festivity
@@ -126,11 +126,13 @@ const InviteGuests = () => {
           ))}
         </List>
       </div>
-      <Button
-        text="Save Selected Guests"
-        onClick={handleSaveGuests}
-        icon={<FaPlusCircle />}
-      />
+      <div className="flex justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+        <Button
+          text="Save Selected Guests"
+          onClick={handleSaveGuests}
+          icon={<FaPlusCircle />}
+        />
+      </div>
     </div>
   )
 }

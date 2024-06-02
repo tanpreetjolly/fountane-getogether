@@ -25,7 +25,7 @@ const ManageVendors = () => {
   )
 
   return (
-    <div className="px-4 divide-y space-y-2">
+    <div className="px-4 divide-y space-y-2 py-2 lg:w-4/5 mx-auto">
       <Button
         text="Book a Vendor"
         onClick={() => navigate("search")}

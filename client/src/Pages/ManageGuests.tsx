@@ -99,8 +99,8 @@ const ManageGuests = () => {
     searchResult !== null ? searchResult : guestList.map((user) => user.user)
 
   return (
-    <div className="px-4 flex flex-col mt-1 pt-2 gap-2">
-      <div className="text-xl pl-1 font-semibold text-gray-700">
+    <div className="px-4 flex flex-col mt-1 pt-2 gap-2 md:gap-4 lg:w-4/5 mx-auto">
+      <div className="text-xl pl-1 font-semibold text-gray-700 md:text-3xl">
         Manage Guests for <span className="text-indigo-600">{event.name}</span>
       </div>
       <Button
@@ -109,6 +109,7 @@ const ManageGuests = () => {
         icon={<FaPlusCircle />}
       />
       <SearchField setSearchResult={setSearchResult} />
+      <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
       {filteredGuests.map((guest) => (
         <div
           key={guest._id}
@@ -146,6 +147,7 @@ const ManageGuests = () => {
           </CardContent>
         </div>
       ))}
+      </div>
       {selectedGuest && (
         <SwipeableDrawer
           anchor="bottom"
@@ -167,7 +169,7 @@ const ManageGuests = () => {
         onClose={closeDrawer}
         onOpen={() => setIsInviteDrawerOpen(true)}
       >
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2 }} className="lg:!w-3/5 mx-auto">
           <Typography variant="h6" gutterBottom>
             Invite a New Guest
           </Typography>

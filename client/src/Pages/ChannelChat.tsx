@@ -33,7 +33,7 @@ const ChannelChat = () => {
   }
 
   return (
-    <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative">
+    <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
       <div className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-20 ">
         {messages.map((msg, index) => (
           <MessageComponent
@@ -46,7 +46,7 @@ const ChannelChat = () => {
           />
         ))}
       </div>
-      <div className="flex items-center gap-2 absolute bottom-4 w-11/12">
+      <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
         <button className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full">
           <Link size={20} />
         </button>
