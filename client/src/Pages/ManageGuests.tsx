@@ -10,7 +10,7 @@ import CardContent from "@mui/material/CardContent"
 import Button from "../components/Button"
 import { FaPlusCircle } from "react-icons/fa"
 import ButtonSecondary from "@/components/ButtonSecondary"
-import {  RsvpRounded } from "@mui/icons-material"
+import { RsvpRounded } from "@mui/icons-material"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "@/components/Loader"
 import { inviteGuest, inviteNewGuest, search } from "@/api"
@@ -94,7 +94,6 @@ const ManageGuests = () => {
 
   const subEvents = event.subEvents
 
-
   const filteredGuests =
     searchResult !== null ? searchResult : guestList.map((user) => user.user)
 
@@ -110,43 +109,43 @@ const ManageGuests = () => {
       />
       <SearchField setSearchResult={setSearchResult} />
       <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
-      {filteredGuests.map((guest) => (
-        <div
-          key={guest._id}
-          style={{ cursor: "pointer", marginBottom: "8px" }}
-          className="border rounded-xl"
-        >
-          <CardContent className="!pb-1">
-            <div className="flex items-center">
-              <Avatar src={guest.profileImage} className="mr-3">
-                {guest.name[0]}
-              </Avatar>
-              <div className="mr-auto">
-                <Typography variant="h6" component="div">
-                  {guest.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {guest.email}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {guest.phoneNo}
-                </Typography>
+        {filteredGuests.map((guest) => (
+          <div
+            key={guest._id}
+            style={{ cursor: "pointer", marginBottom: "8px" }}
+            className="border rounded-xl"
+          >
+            <CardContent className="!pb-1">
+              <div className="flex items-center">
+                <Avatar src={guest.profileImage} className="mr-3">
+                  {guest.name[0]}
+                </Avatar>
+                <div className="mr-auto">
+                  <Typography variant="h6" component="div">
+                    {guest.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {guest.email}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {guest.phoneNo}
+                  </Typography>
+                </div>
               </div>
-            </div>
-            <div className="ml-auto w-fit">
-              <ButtonSecondary
-                text={capitalizeFirstLetter(
-                  guestList.find((user) => user.user._id === guest._id)
-                    ?.status || "Invite",
-                )}
-                // className="capitalize"
-                onClick={() => setSelectedGuest(guest)}
-                icon={<RsvpRounded />}
-              />
-            </div>
-          </CardContent>
-        </div>
-      ))}
+              <div className="ml-auto w-fit">
+                <ButtonSecondary
+                  text={capitalizeFirstLetter(
+                    guestList.find((user) => user.user._id === guest._id)
+                      ?.status || "Invite",
+                  )}
+                  // className="capitalize"
+                  onClick={() => setSelectedGuest(guest)}
+                  icon={<RsvpRounded />}
+                />
+              </div>
+            </CardContent>
+          </div>
+        ))}
       </div>
       {selectedGuest && (
         <SwipeableDrawer

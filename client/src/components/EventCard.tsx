@@ -101,7 +101,8 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
         <div className="flex justify-between">
           <div className="pt-2">
             <span className="text-xs ml-0.5 bg-indigo-400 w-fit text-white font-medium px-3 rounded-full py-1">
-              <CalendarDays className="inline mb-0.5" size={16} />&nbsp;
+              <CalendarDays className="inline mb-0.5" size={16} />
+              &nbsp;
               {formatDate(event.startDate)} - {formatDate(event.endDate)}
             </span>
             <div className="pt-2 text-gray-700 pl-2 mt-1">

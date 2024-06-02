@@ -1,4 +1,10 @@
-const MessageComponent = ({ message, name, date, isUserMessage, imgSrc }: any) => {
+const MessageComponent = ({
+  message,
+  name,
+  date,
+  isUserMessage,
+  imgSrc,
+}: any) => {
   return (
     <div
       className={`flex items-start gap-1 ${isUserMessage ? "flex-row-reverse" : ""}`}

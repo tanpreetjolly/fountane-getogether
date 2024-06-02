@@ -18,7 +18,6 @@ const TodoList = () => {
     { id: 2, text: "Book a venue", completed: false },
     { id: 3, text: "Hire a cater", completed: false },
     { id: 4, text: "Hire a photographer", completed: false },
-  
   ]
   const [todos, setTodos] = useState<Todo[]>(initialState)
   const [newTodo, setNewTodo] = useState("")
@@ -63,9 +62,7 @@ const TodoList = () => {
 
   return (
     <div className="px-4 py-2">
-      <h1 className="text-2xl pl-21 font-semibold my-2">
-        {event?.name} Todos
-      </h1>
+      <h1 className="text-2xl pl-21 font-semibold my-2">{event?.name} Todos</h1>
       <div className="flex items-center mb-4">
         <Input
           placeholder="Add a new todo"
