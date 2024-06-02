@@ -122,6 +122,7 @@ export interface UserType {
   socketToken: string
   events: EventShortType[]
   notifications: NotificationsType[]
+  serviceEvents: EventShortType[]
   createdAt: string
   updatedAt: string
 }

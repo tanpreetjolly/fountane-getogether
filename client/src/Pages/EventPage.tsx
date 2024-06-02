@@ -23,7 +23,9 @@ const EventPage = () => {
     <div className="px-4 flex flex-col gap-2  pt-2 lg:w-4/5  lg:mx-auto   pb-20">
       <div className="pl-1 flex justify-between">
         <div>
-          <div className="text-2xl lg:text-3xl font-semibold text-dark">{event.name}</div>
+          <div className="text-2xl lg:text-3xl font-semibold text-dark">
+            {event.name}
+          </div>
           <div className="text-base text-gray-700 mb-1 lg:text-lg">
             Hosted by{" "}
             <span className=" text-indigo-700">{event.host.name}</span>

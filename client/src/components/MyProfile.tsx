@@ -24,6 +24,7 @@ const defUser: UserType = {
   vendorProfile: null,
   events: [],
   notifications: [],
+  serviceEvents: [],
   createdAt: "",
   updatedAt: "",
 }

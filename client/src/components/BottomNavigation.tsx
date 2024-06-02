@@ -7,7 +7,6 @@ const BottomNav = () => {
   const [value, setValue] = React.useState<any>(0)
   const navigate = useNavigate()
 
-
   return (
     <div className="fixed bottom-0 left-0 right-0 py-3 bg-white border-t border-gray-200 z-20">
       <Tabs value={value} onValueChange={setValue}>
