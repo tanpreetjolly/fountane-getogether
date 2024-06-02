@@ -30,6 +30,16 @@ const getMe = async (req: Request, res: Response) => {
         $or: [
             { host: user._id },
             { "userList.user": user._id, "userList.status": "accepted" },
+        ],
+    })
+        .select("name startDate endDate host eventType budget")
+        .populate({
+            path: "host",
+            select: "name email phoneNo profileImage",
+        })
+
+    const serviceEvents = await Event.find({
+        $or: [
             {
                 // @ts-ignore
                 "serviceList.vendorProfile": user.vendorProfile?._id,
@@ -108,7 +118,8 @@ const getMe = async (req: Request, res: Response) => {
         isVendor: user.vendorProfile ? true : false,
         vendorProfile: user.vendorProfile,
         events: events,
-        notifications,
+        notifications: notifications,
+        serviceEvents: serviceEvents,
         socketToken,
     }
 
