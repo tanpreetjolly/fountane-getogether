@@ -57,7 +57,7 @@ const VendorHome: React.FC<{}> = () => {
   }
 
   return (
-    <div className="px-4">
+    <div className="px-4 pt-2">
       <ButtonCustom
         text="Change Service & Price"
         onClick={() => {
@@ -65,10 +65,10 @@ const VendorHome: React.FC<{}> = () => {
         }}
         icon={<CiEdit className="text-2xl" />}
       />
-      <div className="text-2xl px-5 my-2 font-semibold text-zinc-800">
+      <div className="text-xl pl-1 mt-4 mb-2 font-semibold text-zinc-800">
         Service Requests
       </div>
-      <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {serviceNotifications.map((notification) =>
           notification.serviceList.map((service) => (
             <Card key={service._id} className="rounded-lg">

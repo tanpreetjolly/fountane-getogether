@@ -109,12 +109,11 @@ const InviteGuests = () => {
                 secondaryTypographyProps={{ className: "pl-1" }}
               />
               {isAlreadyInvited(guest.user._id) && (
-                <span className="text-green-500 capitalize">
+                <span className="text-indigo-600 capitalize ml-3 text-sm">
                   {guest.status}
                 </span>
               )}
               <Checkbox
-                color="secondary"
                 edge="end"
                 checked={
                   toggledGuests.includes(guest.user._id)

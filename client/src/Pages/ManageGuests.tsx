@@ -10,7 +10,7 @@ import CardContent from "@mui/material/CardContent"
 import Button from "../components/Button"
 import { FaPlusCircle } from "react-icons/fa"
 import ButtonSecondary from "@/components/ButtonSecondary"
-import { RsvpOutlined } from "@mui/icons-material"
+import {  RsvpRounded } from "@mui/icons-material"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "@/components/Loader"
 import { inviteGuest, inviteNewGuest, search } from "@/api"
@@ -94,16 +94,13 @@ const ManageGuests = () => {
 
   const subEvents = event.subEvents
 
-  // const isInvited = (guestId: string) => {
-  //   return guestList.some((guest) => guest.user._id === guestId)
-  // }
 
   const filteredGuests =
     searchResult !== null ? searchResult : guestList.map((user) => user.user)
 
   return (
     <div className="px-4 flex flex-col mt-1 pt-2 gap-2">
-      <div className="text-xl mb-2 font-medium text-gray-700">
+      <div className="text-xl pl-1 font-semibold text-gray-700">
         Manage Guests for <span className="text-indigo-600">{event.name}</span>
       </div>
       <Button
@@ -143,7 +140,7 @@ const ManageGuests = () => {
                 )}
                 // className="capitalize"
                 onClick={() => setSelectedGuest(guest)}
-                icon={<RsvpOutlined />}
+                icon={<RsvpRounded />}
               />
             </div>
           </CardContent>

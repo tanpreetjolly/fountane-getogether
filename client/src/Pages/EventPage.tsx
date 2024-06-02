@@ -20,7 +20,7 @@ const EventPage = () => {
   if (!event) return <div>Event not found</div>
 
   return (
-    <div className="px-4 flex flex-col gap-2 h-[85.5dvh] pt-2 lg:w-4/5 lg:mx-auto overflow-hidden relative">
+    <div className="px-4 flex flex-col gap-2  pt-2 lg:w-4/5  lg:mx-auto   pb-20">
       <div className="pl-1 flex justify-between">
         <div>
           <div className="text-2xl font-semibold text-dark">{event.name}</div>
@@ -32,7 +32,7 @@ const EventPage = () => {
         {event.host._id == user?.userId && (
           <button
             onClick={() => navigate("todo")}
-            className="flex items-center  bg-zinc-700 text-white h-fit my-auto px-4 py-1.5 rounded-2xl"
+            className="flex items-center  text-slate-80 border border-slate-800 h-fit my-auto px-4 py-1.5 rounded-2xl"
           >
             <ListTodo className="mr-1" size={20} />
             Todo
@@ -45,7 +45,7 @@ const EventPage = () => {
             onClick={() => {
               navigate("guests")
             }}
-            className="flex font-inter items-center  justify-around bg-indigo-500  text-white  rounded-2xl w-1/2 px-4 py-6 gap-3"
+            className="flex font-inter items-center  justify-around bg-indigo-500  text-white  rounded-lg w-1/2 px-4 py-4 gap-3"
           >
             <div className="">
               <div className="text-gray-100 text-left text-sm">Manage</div>
@@ -57,7 +57,7 @@ const EventPage = () => {
             onClick={() => {
               navigate("vendors")
             }}
-            className="flex font-inter items-center  justify-around bg-slate-800  text-white  rounded-2xl w-1/2 px-4 py-6 gap-3"
+            className="flex font-inter items-center  justify-around bg-slate-800  text-white  rounded-lg w-1/2 px-4 py-4 gap-3"
           >
             <div className="">
               <div className="text-gray-200 text-left text-sm">Manage</div>
@@ -68,7 +68,7 @@ const EventPage = () => {
         </div>
       )}
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 my-3  overflow-y-auto">
+        <div className="flex flex-col md:grid-cols-2 lg:grid-cols-3 gap-2 my-3  overflow-y-auto">
           {event.subEvents.length == 0 && (
             <div className="text-center text-lg text-gray-700">
               No festivity added yet
@@ -112,7 +112,7 @@ const EventPage = () => {
         </div>
       </div>
       {event.host._id == user?.userId && (
-        <div className="grid grid-cols-2 gap-2 items-center absolute w-4/5 left-1/2 translate-x-[-50%] bottom-0">
+        <div className="grid grid-cols-2 gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
           <Button
             text="Add Festivity"
             icon={<BsFillCalendarEventFill />}

@@ -65,7 +65,7 @@ const SearchVendors = () => {
     <div>
       <div className="px-4 divide-y space-y-2">
         <div className="pt-2">
-          <div className="font-medium text-gray-800 px-2 text-xl">
+          <div className="font-semibold text-gray-800 px-2 text-xl">
             Search Vendors
           </div>
           <div className="flex flex-col gap-2 py-2">
@@ -81,7 +81,7 @@ const SearchVendors = () => {
           {
             // Loading spinner
             loadingSearch ? (
-              <div className="flex justify-center flex-col gap-4">
+              <div className="flex justify-center flex-col md:flex-row space-y-2">
                 <div className="flex items-center space-x-4">
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="space-y-2">

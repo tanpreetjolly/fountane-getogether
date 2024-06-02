@@ -37,7 +37,7 @@ const SubEventCard = (props: Props) => {
 
   return (
     <div
-      className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col   text-left bg-white w-full border border-gray-300 rounded-lg shadow-sm 
+      className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col   text-left bg-white w-full border border-gray-200 rounded-lg shadow-sm 
     "
     >
       <div className="flex justify-between text-left items-start">

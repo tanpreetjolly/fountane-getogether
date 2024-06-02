@@ -4,7 +4,13 @@ import { FC, useState } from "react"
 import { EventShortType } from "../definitions"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Box from "@mui/material/Box"
-import { ArrowRightToLine, SquarePen, Trash, X } from "lucide-react"
+import {
+  ArrowRightToLine,
+  CalendarDays,
+  SquarePen,
+  Trash,
+  X,
+} from "lucide-react"
 import ButtonSecondary from "./ButtonSecondary"
 import { Input } from "./ui/input"
 import Select from "@mui/material/Select"
@@ -91,15 +97,16 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
 
   return (
     <>
-      <div className="py-2 pl-3 pr-2 flex flex-col text-left bg-white w-full border border-gray-300 rounded-lg shadow-sm">
+      <div className="py-2 pl-3 pr-2 flex flex-col text-left max-w-xl bg-white w-full border border-gray-300 rounded-lg shadow-sm">
         <div className="flex justify-between">
           <div className="pt-2">
             <span className="text-xs ml-0.5 bg-indigo-400 w-fit text-white font-medium px-3 rounded-full py-1">
+              <CalendarDays className="inline mb-0.5" size={16} />&nbsp;
               {formatDate(event.startDate)} - {formatDate(event.endDate)}
             </span>
-            <div className="pt-2 text-gray-700 pl-2 mt-2">
+            <div className="pt-2 text-gray-700 pl-2 mt-1">
               <div className="text-sm">Event Name</div>
-              <div className="text-xl font-semibold text-slate-700">
+              <div className="text-xl font-medium text-slate-700">
                 {event.name}
               </div>
             </div>

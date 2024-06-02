@@ -7,7 +7,7 @@ const randomChatData = [
   { id: 2, message: "Hello!", name: "Bob", date: "10:32" },
   { id: 3, message: "How are you?", name: "Alice", date: "10:34" },
   { id: 4, message: "I'm good, thanks!", name: "You", date: "10:35" },
-  { id: 6, message: "I'm doing well too.", name: "Alice", date: "10:37" },
+  { id: 6, message: "I'm doing well too.", name: "Alice", date: "10:37", imgSrc : "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
 ]
 
 const userId = 4
@@ -42,6 +42,7 @@ const ChannelChat = () => {
             name={msg.name}
             date={msg.date}
             isUserMessage={msg.id === userId}
+            imgSrc={msg.imgSrc}
           />
         ))}
       </div>

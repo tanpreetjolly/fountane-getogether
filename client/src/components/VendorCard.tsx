@@ -84,10 +84,10 @@ const VendorCard = ({ vendor }: Props) => {
 
   return (
     <>
-      <button className="border p-5 rounded-lg w-full">
+      <button className="border p-5 rounded-lg w-full mb-3 max-w-xl md:mr-2">
         <Link
           to={`/my-chats/${vendor.vendorProfileId}`}
-          className="flex justify-between items-center"
+          className="flex gap-2 justify-between items-center"
         >
           <div className="text-left">
             <div className="text-lg mb-1 font-medium">
@@ -102,7 +102,7 @@ const VendorCard = ({ vendor }: Props) => {
             </div>
           </div>
           <button
-            className={`px-4 py-1.5 capitalize rounded-full`}
+            className={`px-3 py-1 capitalize rounded-full bg-indigo-500 text-white`}
             onClick={handleInviteButtonClick}
           >
             Invite
@@ -117,14 +117,14 @@ const VendorCard = ({ vendor }: Props) => {
       >
         <Box sx={{ p: 2 }}>
           {/* List to select festivities to invite to vendor */}
-          <span className="pl-4 text-xl text-gray-800 font-medium">
+          <span className=" text-xl text-gray-800 font-medium ">
             Select the Festivities for RSVP
           </span>
           <span className="text-lg text-gray-800 font-medium">
             {vendor.vendorName}
           </span>
           <br />
-          <span className="ml-2 text-sm text-gray-500">
+          <span className="text-sm text-gray-500 ">
             {vendor.servicesOffering.serviceName} - $
             {vendor.servicesOffering.price}
           </span>
@@ -145,7 +145,6 @@ const VendorCard = ({ vendor }: Props) => {
                 secondaryAction={
                   <Checkbox
                     edge="end"
-                    color="secondary"
                     checked={selectedFestivities.includes(festivity._id)}
                     onChange={() => handleFestivityChange(festivity._id)}
                   />
@@ -169,7 +168,7 @@ const VendorCard = ({ vendor }: Props) => {
               </div>
             ))}
           </div>
-          <div>
+          <div className="py-3 px-2 text-xl font-medium text-indigo-700">
             Total Price: $
             {(
               selectedFestivities.length * vendor.servicesOffering.price
