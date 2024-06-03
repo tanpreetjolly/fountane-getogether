@@ -323,7 +323,12 @@ const EditVendorServices = () => {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    const newItem = { _id: "new", name: "", description: "" }
+                    const newItem = {
+                      _id: `new-${selectedService.items.length}`,
+                      isNew: true,
+                      name: "",
+                      description: "",
+                    }
                     setSelectedService({
                       ...selectedService,
                       items: [...selectedService.items, newItem],
