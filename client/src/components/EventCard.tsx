@@ -99,12 +99,12 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
     <>
       <div className="py-2 pl-3 pr-2 flex flex-col text-left max-w-xl bg-white w-full border border-gray-300 rounded-lg shadow-sm">
         <div className="flex justify-between">
-          <div className="pt-2">
-            <span className="text-xs ml-0.5 bg-indigo-400 w-fit text-white font-medium px-3 rounded-full py-1">
+          <div className="pt-2 w-full">
+            <div className="text-xs md:text-sm py-1 bg-blueShade font-poppins  gap-0.5 justify-center flex items-center  text-slate-900 font-medium md:font-normal px-3 rounded-lg">
               <CalendarDays className="inline mb-0.5" size={16} />
               &nbsp;
               {formatDate(event.startDate)} - {formatDate(event.endDate)}
-            </span>
+            </div>
             <div className="pt-2 text-gray-700 pl-2 mt-1">
               <div className="text-sm">Event Name</div>
               <div className="text-xl font-medium text-slate-700">
@@ -112,6 +112,16 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
               </div>
             </div>
           </div>
+          
+        </div>
+        <div
+          className={`text-sm mb-2 ml-2 px-2 py-0.5 border rounded-full mt-2 w-fit  ${user.userId === event.host._id ? "text-rose-700 border-rose-700 " : " border-zinc-700 text-zinc-700"}`}
+        >
+          {user.userId === event.host._id
+            ? "Hosted"
+            : `Invited by ${event.host.name}`}
+        </div>
+        <div className="pl-1.5 mt-2  mr-3 flex justify-between">
           {user.userId === event.host._id && (
             <div className="flex gap-1 p-2">
               <SquarePen
@@ -126,20 +136,13 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
               />
             </div>
           )}
-        </div>
-        <div
-          className={`text-sm mb-2 ml-2 px-2 py-0.5 border rounded-full mt-2 w-fit  ${user.userId === event.host._id ? "text-orange-700 border-orange-700 " : " border-zinc-700 text-zinc-700"}`}
-        >
-          {user.userId === event.host._id
-            ? "Hosted"
-            : `Invited by ${event.host.name}`}
-        </div>
-        <div className="pl-1.5 mt-2 ml-auto mr-3">
+          <div className="ml-auto">
           <ButtonSecondary
             text="View Event"
             onClick={() => navigate(`/events/${event._id}`)}
-            icon={<ArrowRightToLine absoluteStrokeWidth size={18} />}
+            icon={<ArrowRightToLine  size={18} />}
           />
+          </div>
         </div>
       </div>
       <SwipeableDrawer

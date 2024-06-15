@@ -62,7 +62,7 @@ const Layout = () => {
   ]
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname)
   return (
-    <div>
+    <div className="font-poppins">
       {!shouldHideNavbar && <Navbar />}
       <ScrollRestoration />
       <div
@@ -70,7 +70,7 @@ const Layout = () => {
       >
         <Outlet />
       </div>
-      {!shouldHideNavbar && <BottomNav />}
+      <div className="md:hidden">{!shouldHideNavbar && <BottomNav />}</div>
     </div>
   )
 }
