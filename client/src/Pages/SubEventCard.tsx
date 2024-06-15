@@ -37,35 +37,35 @@ const SubEventCard = (props: Props) => {
 
   return (
     <div
-      className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col  max-w-xl     text-left bg-white w-full border border-gray-200 rounded-lg shadow-sm 
+      className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col  max-w-xl aspect-[2.2]    text-left bg-white w-full border border-gray-200 rounded-lg shadow-sm 
     "
     >
       <div className="flex justify-between text-left items-start">
-        <div className="space-y-4">
-          <div className="pl-1 ">
-            <div className="text-xs lg:text-base text-indigo-600 font-medium rounded-full flex items-center gap-1 mb-1 ">
-              <CalendarDays className="inline mb-0.5" size={16} />
+        <div className="space-y-3">
+          <div className=" flex flex-col">
+            <div className="text-[11px]  text-slate-900  bg-sky-200 bg-opacity-80 px-3 py-1 rounded-full flex items-center gap-1 mb-1 ">
+              <CalendarDays className="inline mb-0.5" size={12} />
               {formatDate(props.subEvent.startDate)} -{" "}
               {formatDate(props.subEvent.endDate)}
             </div>
-            <div className="text-xl  lg:text-2xl  font-semibold text-slate-800 ">
+            <div className="text-lg pl-1.5 mt-1.5 font-medium text-slate-800 ">
               {props.subEvent.name}
             </div>
 
-            <div className="text-sm text-slate-800  rounded-full  mt-1 flex items-center gap-1">
-              <MapPin className="inline gap-1 mb-0.5" size={14} />
+            <div className="text-sm pl-1.5 text-slate-600  rounded-full flex  items-center gap-1">
               {props.subEvent.venue}
+              <MapPin className="inline gap-1 mb-0.5" size={14} />
             </div>
           </div>
         </div>
         {event.host._id === user?.userId && (
-          <div className="flex gap-1 p-2 absolute right-0 items-center top-0">
-            <div className="relative ">
+          <div className="flex gap-1 p-2 absolute right-1 items-center top-1">
+            {/* <div className="relative ">
               <Bell size={18} className=" inline" strokeWidth={2} />
               <span className="absolute bg-rose-500 text-white text-xs h-2 aspect-square flex items-center justify-center font-medium  rounded-full top-0.5 right-0 font-roboto "></span>
-            </div>
+            </div> */}
             <SquarePen size={18} className="text-gray-700" />
-            <Trash size={18} className="text-red-500" />
+            <Trash size={18} className="text-rose-500" />
           </div>
         )}
       </div>
@@ -74,7 +74,7 @@ const SubEventCard = (props: Props) => {
           {" "}
           {subEventGuest.length === 0 && "No Guests Invited"}
           {subEventGuest.slice(0, 3).map((guest) => (
-            <div className="w-7 aspect-square rounded-full overflow-hidden grayscale">
+            <div className="w-7 aspect-square rounded-full overflow-hidden opacity-80">
               <img
                 src={guest.user.profileImage}
                 alt={guest.user.name}
@@ -89,7 +89,7 @@ const SubEventCard = (props: Props) => {
           )}
         </div>
       </div>
-      <div className="w-fit ml-auto ">
+      <div className="w-fit ml-auto mt-auto">
         <ButtonSecondary
           text="View Festivity"
           onClick={() => {
