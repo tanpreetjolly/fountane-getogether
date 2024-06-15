@@ -1,4 +1,11 @@
-import { ArrowLeft, MailPlus, MoveRightIcon } from "lucide-react"
+import {
+  ArrowLeft,
+  Bell,
+  CalendarCheck,
+  MessageSquareMore,
+  MoveRightIcon,
+  User,
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import {
   DropdownMenu,
@@ -45,26 +52,60 @@ const Navbar = () => {
   if (!user) return <div>No User Found</div>
 
   return (
-    <nav className="bg-white border-b  pb-2 justify-between fixed w-screen z-20 top-0 start-0 border-gray-200">
+    <nav className="bg-white border-b  pb-2  justify-between fixed w-screen z-20 top-0 start-0 border-gray-200">
       <DropdownMenu>
-        <div className="flex justify-between items-center mx-auto px-1 pr-4 pt-3">
+        <div className="flex justify-between items-center  mx-auto px-1 pr-4 pt-3 md:w-5/6">
           <button
-            className="p-2 rounded-full w-fit hover:bg-gray-200 focus:outline-none"
+            className="p-2 rounded-full md:hidden  w-fit hover:bg-gray-200 focus:outline-none"
             onClick={() => {
               navigate(-1)
             }}
           >
             <ArrowLeft size={24} />
           </button>
-          <DropdownMenuTrigger className="w-fit">
-            <button className="p-2 rounded-full hover:bg-gray-200 focus:outline-none relative ">
-              <MailPlus size={22} />
-              {(guestNotifications.length > 0 ||
-                serviceNotifications.length > 0) && (
-                <span className="bg-indigo-500 h-2.5 w-2.5 absolute top-2 right-2 rounded-full"></span>
-              )}
+          <figure className="hidden md:block">
+            <img
+              src="https://i.imgur.com/YA68OfS.png"
+              alt="logo"
+              className="h-10"
+            />
+          </figure>
+          <div className="flex items-center">
+            <button
+              onClick={() => {
+                navigate("/events")
+              }}
+              className="p-2 mb-0.5   rounded-full hover:bg-gray-200 focus:outline-none relative "
+            >
+              <CalendarCheck size={22} />
             </button>
-          </DropdownMenuTrigger>
+            <button
+              onClick={() => {
+                navigate("/my-chats")
+              }}
+              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none relative "
+            >
+              <MessageSquareMore size={22} />
+            </button>
+            <button
+              onClick={() => {
+                navigate("/profile")
+              }}
+              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none relative "
+            >
+              <User size={22} />
+            </button>
+
+            <DropdownMenuTrigger className="w-fit">
+              <button className="p-2 rounded-full hover:bg-gray-200 focus:outline-none relative ">
+                <Bell size={22} />
+                {(guestNotifications.length > 0 ||
+                  serviceNotifications.length > 0) && (
+                  <span className="bg-indigo-500 h-2.5 w-2.5 absolute top-2 right-2 rounded-full"></span>
+                )}
+              </button>
+            </DropdownMenuTrigger>
+          </div>
         </div>
         <DropdownMenuContent>
           <DropdownMenuLabel>Notifications</DropdownMenuLabel>
