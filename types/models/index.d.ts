@@ -104,7 +104,7 @@ export interface IEvent extends Document {
     createdAt: Date
     updatedAt: Date
     eventType: string
-    generateToken: (userId: Types.ObjectId) => string
+    generateToken: (userId: string) => string
 }
 
 export interface IChatMessage extends Document {

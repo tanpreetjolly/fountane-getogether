@@ -1,70 +1,122 @@
 import { Input } from "@mui/material"
 import { useEffect, useState } from "react"
 import MessageComponent from "../components/MessageComponent"
-import { Link, SendHorizontal } from "lucide-react"
+import { Link, SendHorizontal, Info } from "lucide-react"
 import Loader from "../components/Loader"
-import { getChatMessages } from "../api"
+import { getChannelMessages } from "../api"
 import { useParams } from "react-router-dom"
 import { useAppSelector } from "@/hooks"
 import { ChatMessage, ChannelDetails } from "@/definitions"
+import { useSocketContext } from "@/context/SocketContext"
 
 const ChannelChat = () => {
   const [loading, setLoading] = useState(true)
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [chatDeatils, setChatDetails] = useState<ChannelDetails>({})
+  const [channelDetails, setChannelDetails] = useState<ChannelDetails | null>(
+    null,
+  )
   const [newMessage, setNewMessage] = useState("")
 
-  const { chatId } = useParams()
+  const { channelId } = useParams()
   const { user } = useAppSelector((state) => state.user)
   const userId = user?.userId
 
+  const { socket } = useSocketContext()
+
   const handleSendMessage = () => {
-    // if (newMessage.trim() !== "") {
-    //   const newMessageData = {
-    //     id: userId,
-    //     message: newMessage,
-    //     name: "You",
-    //     date: new Date().toLocaleTimeString([], {
-    //       hour: "2-digit",
-    //       minute: "2-digit",
-    //     }),
-    //   }
-    //   setMessages([...messages, newMessageData])
-    //   setNewMessage("")
-    // }
+    if (newMessage.trim() !== "") {
+      socket?.emit(
+        "send:channel:message",
+        {
+          message: newMessage,
+          channelId: channelId,
+        },
+        (res: ChatMessage) => {
+          // console.log(res)
+          setMessages((prev) => [...prev, res])
+          setNewMessage("")
+        },
+      )
+    }
   }
 
   useEffect(() => {
-    if (!chatId) return
-    // const chatContainer = document.querySelector(".chat-container")
-    // chatContainer?.scrollTo(0, chatContainer.scrollHeight)
+    if (!channelId || !socket) return () => {}
+
+    const handleCurrentChannelMessage = (msg: ChatMessage) => {
+      if (msg.chatId === channelId) setMessages((prev) => [...prev, msg])
+    }
+
     setLoading(true)
-    getChatMessages(chatId)
-      .then((res) => {
-        console.log(res.data.messages)
-        setMessages(res.data.messages)
+    getChannelMessages(channelId)
+      .then(
+        (res: {
+          data: {
+            messages: ChatMessage[]
+            channelDetails: ChannelDetails
+          }
+        }) => {
+          console.log(res.data)
+          setMessages(res.data.messages)
+          setChannelDetails(res.data.channelDetails)
+
+          socket.on("channel message", handleCurrentChannelMessage)
+        },
+      )
+      .finally(() => {
+        setLoading(false)
       })
-      .finally(() => setLoading(false))
-  }, [chatId])
+    return () => {
+      socket.off("channel message", handleCurrentChannelMessage)
+    }
+  }, [channelId, socket])
+
+  useEffect(() => {
+    const chatBox = document.getElementById("chatBox")
+    chatBox?.scrollTo(0, chatBox.scrollHeight)
+  }, [messages])
 
   if (loading) return <Loader />
+  if (user === null) return <div>User not found</div>
+  if (channelDetails === null) return <div>Channel not found</div>
 
   return (
     <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
-      <div className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-20 ">
-        {messages.map((msg, index) => (
+      <div
+        id="chatBox"
+        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-2"
+      >
+        {messages.map((msg) => (
           <MessageComponent
-            key={index}
+            key={msg._id}
             message={msg.message}
-            // name={msg.name}
-            name="hj"
+            profileImage={
+              channelDetails.allowedUsers.find(
+                (user) => user._id === msg.senderId,
+              )?.profileImage || ""
+            }
+            name={msg.senderId === userId ? user.name : channelDetails.name}
             date={msg.createdAt}
             isUserMessage={msg.senderId === userId}
-            // imgSrc={msg.imgSrc}
+            imgSrc={msg.image}
           />
         ))}
       </div>
       <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+        <button
+          className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full"
+          onClick={() => {
+            //show a window message with chat details
+            alert(
+              "Name: " +
+                channelDetails.name +
+                "\nAllowed Users: " +
+                channelDetails.allowedUsers.map((user) => user.name).join(", "),
+            )
+          }}
+        >
+          <Info size={20} />
+        </button>
         <button className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full">
           <Link size={20} />
         </button>

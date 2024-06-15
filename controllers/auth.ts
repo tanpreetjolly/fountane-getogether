@@ -274,7 +274,7 @@ const signOut = async (req: Request, res: Response) => {
     }
 
     io?.sockets.sockets.forEach((socket) => {
-        if (socket.user.userId === req.user?.userId) {
+        if (socket.user.userId.toString() === req.user?.userId.toString()) {
             socket.disconnect()
         }
     })

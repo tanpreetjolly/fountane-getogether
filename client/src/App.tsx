@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "./hooks"
 import { loadUser } from "./features/userSlice"
 
 //Context
+import { SocketContextProvider } from "./context/SocketContext"
 import { EventContextProvider } from "./context/EventContext"
 
 //Components
@@ -34,7 +35,6 @@ import EventPage from "./Pages/EventPage"
 import SubEventChannels from "./Pages/SubEventPage"
 import ChannelChat from "./Pages/ChannelChat"
 import ManageVendors from "./Pages/ManageVendors"
-import VendorChat from "./Pages/VendorChat"
 import SearchVendors from "./Pages/SearchVendors"
 import AssignVendors from "./Pages/AssignVendors"
 import InviteGuests from "./Pages/InviteGuests"
@@ -49,7 +49,7 @@ import BottomNav from "./components/BottomNavigation"
 import Invites from "./Pages/Invites"
 import TodoList from "./Pages/TodoList"
 import MyChats from "./components/MyChats"
-import ChatPage from "./Pages/ChatPage"
+import VendorChat from "./Pages/VendorChat"
 
 const Layout = () => {
   const location = useLocation()
@@ -80,9 +80,11 @@ const ProtectedRoute = () => {
   if (loading) return <Loader />
   if (!isAuthenticated) return <Navigate to="/sign-in" />
   return (
-    <EventContextProvider>
-      <Outlet />
-    </EventContextProvider>
+    <SocketContextProvider>
+      <EventContextProvider>
+        <Outlet />
+      </EventContextProvider>
+    </SocketContextProvider>
   )
 }
 
@@ -129,7 +131,7 @@ const router = createBrowserRouter([
           },
           {
             path: "my-chats/:chatId",
-            element: <ChatPage />,
+            element: <VendorChat />,
           },
           { path: "events", element: <AllEvent /> },
           { path: "events/create", element: <CreateEvent /> },
@@ -143,13 +145,6 @@ const router = createBrowserRouter([
                 children: [
                   { index: true, element: <ManageVendors /> },
                   { path: "search", element: <SearchVendors /> },
-                  {
-                    path: ":vendorId",
-                    children: [
-                      // {index:true,element:<VendorProfile />},
-                      { path: "chat", element: <VendorChat /> },
-                    ],
-                  },
                 ],
               },
               { path: "guests", element: <ManageGuests /> },
@@ -162,7 +157,6 @@ const router = createBrowserRouter([
                   { path: "guests", element: <InviteGuests /> },
                   { path: "vendors", element: <AssignVendors /> },
                   { path: "vendors/search", element: <SearchVendors /> },
-                  { path: "vendors/:vendorId", element: <VendorChat /> },
                   { path: "channel/:channelId", element: <ChannelChat /> },
                 ],
               },
@@ -180,10 +174,6 @@ const router = createBrowserRouter([
           {
             path: "events/:eventId/festivity/:subEventId",
             element: <VendorChannels />,
-          },
-          {
-            path: "events/:eventId/festivity/:subEventId/channel/:channelId",
-            element: <VendorChat />,
           },
         ],
       },

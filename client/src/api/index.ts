@@ -134,6 +134,9 @@ export const getEvent = (eventId: string) => API.get(`/event/${eventId}`)
 export const getChatMessages = (chatId: string) =>
   API.get(`/user/chats/${chatId}/messages`)
 
+export const getChannelMessages = (channelId: string) =>
+  API.get(`/user/channels/${channelId}/messages`)
+
 export const createEvent = (eventData: {
   name: string
   startDate: string

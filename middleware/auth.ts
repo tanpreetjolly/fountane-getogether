@@ -3,7 +3,7 @@ import { UnauthenticatedError } from "../errors"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import { BadRequestError } from "../errors"
-import { TempUserPayload, UserPayload } from "../types/express"
+import { UserPayload } from "../types/express"
 
 const getId = (id: string) => {
     try {
@@ -21,14 +21,10 @@ const authenticate = async (
     const token = req.cookies?.token
     if (!token) throw new UnauthenticatedError("Token not found")
 
-    const tempUserPayload = jwt.verify(
+    const userPayload = jwt.verify(
         token,
         process.env.JWT_SECRET as jwt.Secret,
-    ) as TempUserPayload
-    const userPayload: UserPayload = {
-        userId: getId(tempUserPayload.userId),
-        isVendor: tempUserPayload.isVendor,
-    }
+    ) as UserPayload
     // Type assertion to convert req object to Request
     ;(req as Request).user = userPayload
     next()

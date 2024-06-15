@@ -63,7 +63,7 @@ const VendorCard = ({ service }: Props) => {
           <Trash size={18} className="text-red-500" />
         </div>
         <Link
-          to={`/my-chats/${service.vendorProfile._id}`}
+          to={`/my-chats/${service.vendorProfile.user._id}`}
           className="flex justify-between items-center"
         >
           <div className="text-left">
