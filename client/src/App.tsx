@@ -66,7 +66,7 @@ const Layout = () => {
       {!shouldHideNavbar && <Navbar />}
       <ScrollRestoration />
       <div
-        className={`min-h-screen ${!shouldHideNavbar && "pt-16 pb-32 bg-slate-50"}`}
+        className={`min-h-screen ${!shouldHideNavbar && "pt-16 pb-32 md:pb-0 bg-slate-50"}`}
       >
         <Outlet />
       </div>
