@@ -1,10 +1,18 @@
 const MessageComponent = ({
   message,
   name,
+  profileImage,
   date,
   isUserMessage,
   imgSrc,
-}: any) => {
+}: {
+  message: string
+  name: string
+  profileImage: string | undefined
+  date: string
+  isUserMessage: boolean
+  imgSrc?: string
+}) => {
   return (
     <div
       className={`flex items-start gap-1 ${isUserMessage ? "flex-row-reverse" : ""}`}
@@ -12,7 +20,7 @@ const MessageComponent = ({
       <div
         className={` h-8 w-8  rounded-xl  flex justify-center  items-center ${isUserMessage ? "bg-indigo-700 text-white" : "bg-slate-300"}`}
       >
-        {name.slice(0, 1)}
+        <img src={profileImage} alt={name} />
       </div>
       <div
         className={`flex flex-col w-full max-w-[220px] leading-1.5 py-2 px-4   ${isUserMessage ? "text-right  bg-indigo-600 rounded-ee-2xl rounded-s-2xl text-white" : "  bg-slate-200 text-zinc-700 rounded-e-2xl  rounded-es-2xl"}`}
@@ -21,7 +29,7 @@ const MessageComponent = ({
           className={`flex items-center gap-2  rtl:space-x-reverse ${isUserMessage ? " flex-row-reverse" : "flex-row"}`}
         >
           <span className="text-sm font-semibold">{name}</span>
-          <span className="text-sm font-normal ">{date}</span>
+          <span className="text-sm font-normal ">{date.slice(11, 16)}</span>
         </div>
         <p className="text-sm font-normal py-2.5  ">{message}</p>
         <div className="group relative my-2.5">
@@ -39,9 +47,9 @@ const MessageComponent = ({
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeWidth="2"
                   d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3"
                 />
               </svg>

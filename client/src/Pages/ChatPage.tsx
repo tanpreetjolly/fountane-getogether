@@ -6,61 +6,85 @@ import Loader from "../components/Loader"
 import { getChatMessages } from "../api"
 import { useParams } from "react-router-dom"
 import { useAppSelector } from "@/hooks"
-import { ChatMessage, ChannelDetails } from "@/definitions"
+import { ChatMessage, OtherUserType } from "@/definitions"
+import { useSocketContext } from "@/context/SocketContext"
 
-const ChannelChat = () => {
+const ChatPage = () => {
   const [loading, setLoading] = useState(true)
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [chatDeatils, setChatDetails] = useState<ChannelDetails>({})
+  const [chatDetails, setChatDetails] = useState<OtherUserType | null>(null)
   const [newMessage, setNewMessage] = useState("")
 
   const { chatId } = useParams()
   const { user } = useAppSelector((state) => state.user)
   const userId = user?.userId
 
+  const { socket } = useSocketContext()
+
   const handleSendMessage = () => {
-    // if (newMessage.trim() !== "") {
-    //   const newMessageData = {
-    //     id: userId,
-    //     message: newMessage,
-    //     name: "You",
-    //     date: new Date().toLocaleTimeString([], {
-    //       hour: "2-digit",
-    //       minute: "2-digit",
-    //     }),
-    //   }
-    //   setMessages([...messages, newMessageData])
-    //   setNewMessage("")
-    // }
+    if (newMessage.trim() !== "") {
+      socket?.emit(
+        "send:chat:message",
+        {
+          message: newMessage,
+          receiverId: chatId,
+        },
+        (res: ChatMessage) => {
+          // console.log(res)
+          setMessages((prev) => [...prev, res])
+          setNewMessage("")
+        },
+      )
+    }
   }
 
   useEffect(() => {
     if (!chatId) return
-    // const chatContainer = document.querySelector(".chat-container")
-    // chatContainer?.scrollTo(0, chatContainer.scrollHeight)
+
+    //scroll to bottom
+    const chatBox = document.getElementById("chatBox")
+    chatBox?.scrollTo(0, chatBox.scrollHeight)
+
     setLoading(true)
     getChatMessages(chatId)
-      .then((res) => {
-        console.log(res.data.messages)
-        setMessages(res.data.messages)
-      })
+      .then(
+        (res: {
+          data: {
+            messages: ChatMessage[]
+            otherUser: OtherUserType
+          }
+        }) => {
+          console.log(res.data)
+          setMessages(res.data.messages)
+          setChatDetails(res.data.otherUser)
+        },
+      )
       .finally(() => setLoading(false))
   }, [chatId])
 
   if (loading) return <Loader />
+  if (user === null) return <div>User not found</div>
+  if (chatDetails === null) return <div>Chat not found</div>
 
   return (
     <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
-      <div className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-20 ">
-        {messages.map((msg, index) => (
+      <div
+        id="chatBox"
+        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-20 "
+      >
+        {messages.map((msg) => (
           <MessageComponent
-            key={index}
+            key={msg._id}
             message={msg.message}
-            // name={msg.name}
-            name="hj"
+            profileImage={
+              msg.senderId === userId
+                ? user.profileImage
+                : chatDetails.profileImage
+            }
+            name={msg.senderId === userId ? user.name : chatDetails.name}
             date={msg.createdAt}
             isUserMessage={msg.senderId === userId}
-            // imgSrc={msg.imgSrc}
+            imgSrc={msg.image}
           />
         ))}
       </div>
@@ -86,4 +110,4 @@ const ChannelChat = () => {
   )
 }
 
-export default ChannelChat
+export default ChatPage

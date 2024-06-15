@@ -49,6 +49,7 @@ import BottomNav from "./components/BottomNavigation"
 import Invites from "./Pages/Invites"
 import TodoList from "./Pages/TodoList"
 import MyChats from "./components/MyChats"
+import ChatPage from "./Pages/ChatPage"
 
 const Layout = () => {
   const location = useLocation()
@@ -127,8 +128,8 @@ const router = createBrowserRouter([
             element: <MyChats />,
           },
           {
-            path: "my-chats/:id",
-            element: <ChannelChat />,
+            path: "my-chats/:chatId",
+            element: <ChatPage />,
           },
           { path: "events", element: <AllEvent /> },
           { path: "events/create", element: <CreateEvent /> },

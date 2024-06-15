@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose"
 import { IChannel } from "../types/models"
-import { PERMISSIONS, CHANNEL_TYPES, ROLES } from "../values"
+import { CHANNEL_TYPES } from "../values"
 
 const ChannelSchema = new Schema<IChannel>(
     {
@@ -14,11 +14,6 @@ const ChannelSchema = new Schema<IChannel>(
                 ref: "User",
             },
         ],
-        // allowedRoles: {
-        //     type: [String],
-        //     enum: Array.from(Object.values(ROLES)),
-        //     default: [ROLES.HOST],
-        // },
         type: {
             type: String,
             enum: Array.from(Object.values(CHANNEL_TYPES)),

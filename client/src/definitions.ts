@@ -119,6 +119,7 @@ export interface UserType {
   isVendor: boolean
   vendorProfile: VendorProfileType | null
   phoneNo: string | undefined
+  myChats: OtherUserType[]
   socketToken: string
   events: EventShortType[]
   notifications: NotificationsType[]
@@ -170,4 +171,23 @@ export interface VendorSaveType {
   vendorEmail: string
   vendorPhoneNo: string
   servicesOffering: ServiceType
+}
+
+export interface ChatMessage {
+  _id: string
+  senderId: string
+  message: string
+  image: string
+  createdAt: string
+  updatedAt: string
+  chatId: string
+}
+
+export interface ChannelDetails {
+  _id: string
+  name: string
+  allowedUsers: OtherUserType[]
+  type: string
+  createdAt: string
+  updatedAt: string
 }

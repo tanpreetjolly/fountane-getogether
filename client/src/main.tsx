@@ -18,18 +18,22 @@ const options = {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <PostHogProvider
-      apiKey={import.meta.env.VITE_REACT_APP_PUBLIC_POSTHOG_KEY}
-      options={options}
-    >
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <SocketContextProvider>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <SocketContextProvider>
+          {import.meta.env.DEV ? (
             <App />
-          </SocketContextProvider>
-        </Provider>
-        <Toaster />
-      </ThemeProvider>
-    </PostHogProvider>
+          ) : (
+            <PostHogProvider
+              apiKey={import.meta.env.VITE_REACT_APP_PUBLIC_POSTHOG_KEY}
+              options={options}
+            >
+              <App />
+            </PostHogProvider>
+          )}
+        </SocketContextProvider>
+      </Provider>
+      <Toaster />
+    </ThemeProvider>
   </React.StrictMode>,
 )

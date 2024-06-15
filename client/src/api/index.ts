@@ -131,6 +131,9 @@ export const search = (
 
 export const getEvent = (eventId: string) => API.get(`/event/${eventId}`)
 
+export const getChatMessages = (chatId: string) =>
+  API.get(`/user/chats/${chatId}/messages`)
+
 export const createEvent = (eventData: {
   name: string
   startDate: string

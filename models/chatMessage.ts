@@ -1,30 +1,29 @@
 import { Schema, model } from "mongoose"
 import { IChatMessage } from "../types/models"
-import { io } from "../socketio/index"
 
 const chatMessageSchema = new Schema<IChatMessage>(
     {
-        userId: {
+        senderId: {
             type: Schema.Types.ObjectId,
+            ref: "User",
             required: [true, "Please Provide User Id."],
         },
-        channelId: {
-            type: Schema.Types.ObjectId,
-            required: [true, "Please Provide Channel Id."],
+        chatId: {
+            type: String,
+            required: [true, "Please Provide Chat Id."],
         },
         message: {
             type: String,
             required: [true, "Please Provide Message."],
         },
+        image: {
+            type: String,
+        },
     },
     { timestamps: true },
 )
 
-chatMessageSchema.post("save", function (doc) {
-    io?.to(doc.channelId.toString()).emit("channel:newMessage", doc.toJSON())
-})
-
-chatMessageSchema.index({ channelId: 1, createdAt: 1 })
+chatMessageSchema.index({ chatId: 1, createdAt: 1 })
 
 const ChatMessage = model<IChatMessage>("ChatMessage", chatMessageSchema)
 export default ChatMessage
