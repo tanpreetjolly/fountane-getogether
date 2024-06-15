@@ -60,10 +60,6 @@ const SubEventCard = (props: Props) => {
         </div>
         {event.host._id === user?.userId && (
           <div className="flex gap-1 p-2 absolute right-1 items-center top-1">
-            {/* <div className="relative ">
-              <Bell size={18} className=" inline" strokeWidth={2} />
-              <span className="absolute bg-rose-500 text-white text-xs h-2 aspect-square flex items-center justify-center font-medium  rounded-full top-0.5 right-0 font-roboto "></span>
-            </div> */}
             <SquarePen size={18} className="text-gray-700" />
             <Trash size={18} className="text-rose-500" />
           </div>

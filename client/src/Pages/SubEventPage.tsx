@@ -69,7 +69,7 @@ const Channel = ({ channel }: { channel: ChannelType }) => {
 
   return (
     <button
-      className={`text-slate-800  border-slate-300 bg-gray-50 w-full text-left px-3 mb-2 pt-3 border shadow-sm rounded-2xl flex flex-col justify-between gap-1`}
+      className={`text-slate-800  border-slate-300 bg-gray-50 w-full text-left px-5 mb-2 pt-4 border shadow-sm rounded-2xl flex flex-col justify-between `}
     >
       <span className="text-base font-medium flex items-center gap-2">
         #{channel.name} {channelIcon}
