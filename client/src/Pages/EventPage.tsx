@@ -93,7 +93,7 @@ const EventPage = () => {
               onClick={() => {
                 navigate("payments")
               }}
-              className="hidden md:flex  items-center  justify-around bg-dark bg-opacity-90  text-gray-50  rounded-3xl w-1/2 px-4 py-4 gap-3"
+              className="hidden md:flex  items-center  justify-around bg-dark bg-opacity-85  text-gray-50  rounded-3xl w-1/2 px-4 py-4 gap-3"
             >
               <div className="">
                 <div className="text-gray-100  text-left text-sm">
