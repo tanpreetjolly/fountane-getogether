@@ -9,7 +9,7 @@ import {
     VendorProfile,
 } from "../models"
 import { StatusCodes } from "http-status-codes"
-import { Schema, Types } from "mongoose"
+import { Types } from "mongoose"
 import { CHANNEL_TYPES, ROLES } from "../values"
 import sendMail from "../utils/sendMail"
 
@@ -47,10 +47,6 @@ export const getEvent = async (req: Request, res: Response) => {
             path: "subEvents",
             populate: {
                 path: "channels",
-                populate: {
-                    path: "allowedUsers",
-                    select: "name email phoneNo profileImage",
-                },
             },
         },
     ])
@@ -68,14 +64,17 @@ export const createEvent = async (req: Request, res: Response) => {
 
     console.log(host)
 
-    const createEvent = await Event.create({
+    const createEvent = new Event({
         name,
         startDate,
         endDate,
         budget,
         host: host.userId,
         eventType,
+        userList: [host.userId],
     })
+
+    await createEvent.save()
 
     const event = await Event.findById(createEvent._id)
         .select("name startDate endDate host eventType budget")
@@ -97,7 +96,10 @@ export const createSubEvent = async (req: Request, res: Response) => {
     const event = await Event.findById(eventId).select(
         "userList serviceList subEvents",
     )
+
     if (!event) throw new NotFoundError("Event Not Found")
+
+    console.log(event.serviceList)
 
     const allUserListId = new Set()
     event.userList.forEach((user) => {
@@ -111,17 +113,17 @@ export const createSubEvent = async (req: Request, res: Response) => {
         {
             name: "Announcement",
             allowedUsers: Array.from(allUserListId),
-            type: CHANNEL_TYPES.MAIN,
+            type: CHANNEL_TYPES.ANNOUNCEMENT,
         },
         {
             name: "Vendors Only",
-            allowedUsers: event.userList.map((user) => user.user),
-            type: CHANNEL_TYPES.MAIN,
+            allowedUsers: event.serviceList.map((user) => user.vendorProfile),
+            type: CHANNEL_TYPES.VENDORS_ONLY,
         },
         {
             name: "Guests Only",
             allowedUsers: event.userList.map((user) => user.user),
-            type: CHANNEL_TYPES.MAIN,
+            type: CHANNEL_TYPES.GUESTS_ONLY,
         },
     ].map(async (channelData) => {
         const newChannel = await Channel.create(channelData)

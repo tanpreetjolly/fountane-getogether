@@ -105,7 +105,9 @@ const InviteGuests = () => {
               />
               <button
                 className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor(service.status)}`}
-                onClick={() => navigate(`${service.vendorProfile._id}`)}
+                onClick={() =>
+                  navigate(`/my-chats/${service.vendorProfile.user._id}`)
+                }
               >
                 {service.status === "accepted"
                   ? "Hired"

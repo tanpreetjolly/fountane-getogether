@@ -12,7 +12,7 @@ import {
 import connectDB from "./db/connect"
 import dotenv from "dotenv"
 import bcrypt from "bcryptjs"
-import { CHANNEL_TYPES, ROLES } from "./values"
+import { CHANNEL_TYPES } from "./values"
 import { IEvent } from "./types/models"
 import { faker } from "@faker-js/faker"
 import { generateChatId } from "./utils/utilFunctions"
@@ -35,17 +35,17 @@ const createChannelsForSubEvents = async (
         {
             name: "Announcement",
             allowedUsers: Array.from(allUserListId),
-            type: CHANNEL_TYPES.MAIN,
+            type: CHANNEL_TYPES.ANNOUNCEMENT,
         },
         {
             name: "Vendors Only",
-            allowedUsers: userList.map((user) => user.user),
-            type: CHANNEL_TYPES.MAIN,
+            allowedUsers: serviceList.map((service) => service.vendorProfile),
+            type: CHANNEL_TYPES.VENDORS_ONLY,
         },
         {
             name: "Guests Only",
             allowedUsers: userList.map((user) => user.user),
-            type: CHANNEL_TYPES.MAIN,
+            type: CHANNEL_TYPES.GUESTS_ONLY,
         },
     ]
     const newChannels = await Channel.insertMany(newSubEventChannels)
@@ -377,19 +377,33 @@ async function main() {
             budget: 100000,
             eventType: "wedding",
             userList: [
+                {
+                    user: user._id,
+                    subEvents: assignRandomSubEvents(subEventToCreate),
+                },
                 ...guestUsers.map((user) => ({
                     user: user._id,
                     subEvents: assignRandomSubEvents(subEventToCreate),
                 })),
             ],
-            serviceList: vendorProfileToCreate.map((vendorUser) => ({
-                vendorProfile: vendorUser._id,
-                subEvent: getRandomElement(subEventToCreate)._id,
-                status: getRandomElement(["accepted", "rejected", "pending"]),
-                servicesOffering: getRandomElement(vendorUser.services),
-                amount: faker.finance.amount(),
-                paymentStatus: getRandomElement(["pending", "paid", "failed"]),
-            })),
+            serviceList: [
+                ...vendorProfileToCreate.map((vendorUser) => ({
+                    vendorProfile: vendorUser._id,
+                    subEvent: getRandomElement(subEventToCreate)._id,
+                    status: getRandomElement([
+                        "accepted",
+                        "rejected",
+                        "pending",
+                    ]),
+                    servicesOffering: getRandomElement(vendorUser.services),
+                    amount: faker.finance.amount(),
+                    paymentStatus: getRandomElement([
+                        "pending",
+                        "paid",
+                        "failed",
+                    ]),
+                })),
+            ],
         })
 
         const inviteEvent = await Event.create({

@@ -1,21 +1,14 @@
 import { Response, Request } from "express"
 import mongoose from "mongoose"
 
-export interface TempUserPayload {
-    userId: string
-    isVendor: boolean
-}
-
 export interface UserPayload {
-    userId: mongoose.Types.ObjectId
-    isVendor: boolean
+    userId: string
+    vendorProfile: string | null
 }
 
-export interface EventPayload {
-    eventId: mongoose.Types.ObjectId
-    role: string
-    permission: [string]
-    isHost: boolean
+export interface SocketTokenPayload {
+    userId: string
+    vendorProfile: string | null
 }
 
 declare global {

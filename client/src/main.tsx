@@ -8,7 +8,6 @@ import theme from "./theme.tsx"
 
 import { Provider } from "react-redux"
 import store from "./store"
-import { SocketContextProvider } from "./context/SocketContext"
 import { PostHogProvider } from "posthog-js/react"
 
 const options = {
@@ -20,18 +19,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <SocketContextProvider>
-          {import.meta.env.DEV ? (
+        {import.meta.env.DEV ? (
+          <App />
+        ) : (
+          <PostHogProvider
+            apiKey={import.meta.env.VITE_REACT_APP_PUBLIC_POSTHOG_KEY}
+            options={options}
+          >
             <App />
-          ) : (
-            <PostHogProvider
-              apiKey={import.meta.env.VITE_REACT_APP_PUBLIC_POSTHOG_KEY}
-              options={options}
-            >
-              <App />
-            </PostHogProvider>
-          )}
-        </SocketContextProvider>
+          </PostHogProvider>
+        )}
       </Provider>
       <Toaster />
     </ThemeProvider>

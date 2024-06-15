@@ -3,18 +3,25 @@ import toast from "react-hot-toast"
 import { io, Socket } from "socket.io-client"
 import { ReactNode } from "react"
 import { useAppSelector } from "@/hooks"
+import { useParams } from "react-router-dom"
+import { ChatMessage } from "@/definitions"
 
 interface SocketContextType {
   socket: Socket | null
 }
 
-const SocketContext = createContext<SocketContextType>({ socket: null })
+const SocketContext = createContext<SocketContextType>({
+  socket: null,
+})
 
 const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null)
+
   const { loading, isAuthenticated, user } = useAppSelector(
     (state) => state.user,
   )
+
+  const { chatId, channelId } = useParams()
 
   useEffect(() => {
     if (loading || !isAuthenticated || !user?.socketToken)
@@ -58,6 +65,31 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
       socketConnection.disconnect()
     }
   }, [loading, isAuthenticated, user, user?.socketToken])
+
+  useEffect(() => {
+    if (!socket) return () => {}
+    const onNewChatMessage = (data: ChatMessage) => {
+      console.log(data)
+      if (data.senderId === chatId) return
+      toast.success(`New message from ${data.senderId}`, {
+        id: `new-message-${data.senderId}`,
+      })
+    }
+    const onNewChannelMessage = (data: ChatMessage) => {
+      console.log(data)
+      if (data.chatId === channelId) return
+      toast.success(`New message from ${data.senderId}`, {
+        id: `new-message-${data.senderId}`,
+      })
+    }
+
+    socket.on("chat message", onNewChatMessage)
+    socket.on("channel message", onNewChannelMessage)
+    return () => {
+      socket.off("chat message", onNewChatMessage)
+      socket.off("channel message", onNewChannelMessage)
+    }
+  }, [chatId, channelId, socket])
 
   return (
     <SocketContext.Provider value={{ socket }}>

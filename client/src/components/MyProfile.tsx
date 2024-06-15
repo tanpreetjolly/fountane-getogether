@@ -23,6 +23,7 @@ const defUser: UserType = {
   isVendor: false,
   vendorProfile: null,
   events: [],
+  myChats: [],
   notifications: [],
   serviceEvents: [],
   createdAt: "",

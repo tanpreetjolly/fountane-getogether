@@ -1,4 +1,4 @@
-import { User, Event, ChatMessage } from "../models"
+import { User, Event, ChatMessage, Channel } from "../models"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
@@ -138,11 +138,7 @@ const getMe = async (req: Request, res: Response) => {
     })
 }
 
-const updateUser = async (
-    userId: mongoose.Types.ObjectId,
-    key: string,
-    value: any,
-) => {
+const updateUser = async (userId: string, key: string, value: any) => {
     const user = await User.findById(userId)
     if (!user) throw new NotFoundError("User Not Found")
     user.set({ [key]: value })
@@ -256,6 +252,39 @@ const getChatMessages = async (req: Request, res: Response) => {
     })
 }
 
+const getChannelMessages = async (req: Request, res: Response) => {
+    const { channelId } = req.params
+    const channelDetails = await Channel.findById(channelId)
+        .select("name allowedUsers")
+        .populate({
+            path: "allowedUsers",
+            select: "name email phoneNo profileImage",
+        })
+    if (!channelDetails) throw new NotFoundError("Channel Not Found")
+
+    const isUserAllowedInChannel = channelDetails.allowedUsers.some(
+        (user) =>
+            // @ts-ignore
+            user._id.toString() === req.user.userId.toString() ||
+            // @ts-ignore
+            user._id.toString() === req.user.vendorProfile?.toString(),
+    )
+    if (!isUserAllowedInChannel)
+        throw new UnauthenticatedError(
+            "You are not allowed to send message to this channel",
+        )
+
+    const messages = await ChatMessage.find({ chatId: channelId }).sort({
+        createdAt: 1,
+    })
+
+    res.status(StatusCodes.OK).json({
+        data: { messages, channelDetails },
+        success: true,
+        msg: "Messages Fetched Successfully",
+    })
+}
+
 export {
     getMe,
     updateCompleteProfile,
@@ -263,4 +292,5 @@ export {
     deleteProfileImage,
     makeMeVendor,
     getChatMessages,
+    getChannelMessages,
 }

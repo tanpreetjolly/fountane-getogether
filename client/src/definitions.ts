@@ -57,7 +57,7 @@ export interface OtherUserType {
 export interface ChannelType {
   _id: string
   name: string
-  allowedUsers: OtherUserType[]
+  allowedUsers: string[]
 }
 
 export interface SubEventType {

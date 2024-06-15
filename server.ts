@@ -42,7 +42,7 @@ const allowedOrigins = [
 ]
 if (process.env.NODE_ENV === "development") {
     allowedOrigins.push("https://admin.socket.io" as string)
-    allowedOrigins.push("http://192.168.1.4:5173" as string)
+    allowedOrigins.push("http://192.168.1.12:5173" as string)
     allowedOrigins.push("http://192.168.29.71:5173" as string)
 }
 

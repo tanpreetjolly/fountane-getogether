@@ -1,8 +1,8 @@
 import { Schema, model, Types } from "mongoose"
 import { IEvent, IUserList, IServiceList } from "../types/models"
-import jwt from "jsonwebtoken"
-import { NotFoundError } from "../errors"
-import { EventPayload } from "../types/express"
+import Channel from "./channel"
+import SubEvent from "./subEvent"
+import { CHANNEL_TYPES } from "../values"
 
 const UserList = new Schema<IUserList>(
     {
@@ -11,18 +11,6 @@ const UserList = new Schema<IUserList>(
             ref: "User",
             required: [true, "Please Provide User."],
         },
-        // role: {
-        //     type: String,
-        //     // enum: Array.from(Object.values(ROLES)),
-        //     // required: [true, "Please Provide Role."],
-        //     default: ROLES.GUEST,
-        // },
-        // permission: [
-        //     {
-        //         type: String,
-        //         enum: Array.from(Object.values(PERMISSIONS)),
-        //     },
-        // ],
         subEvents: [
             {
                 type: Schema.Types.ObjectId,
@@ -47,12 +35,6 @@ const ServiceList = new Schema<IServiceList>(
             ref: "VendorProfile",
             required: [true, "Please Provide Vendor."],
         },
-        // permission: [
-        //     {
-        //         type: String,
-        //         enum: Array.from(Object.values(PERMISSIONS)),
-        //     },
-        // ],
         subEvent: {
             type: Schema.Types.ObjectId,
             ref: "SubEvent",
@@ -124,31 +106,66 @@ const EventSchema = new Schema<IEvent>(
     { timestamps: true },
 )
 
-// EventSchema.index({ "userList.user": 1 })
+EventSchema.pre("save", async function (next) {
+    console.log(this.isModified("userList"), this.isModified("serviceList"))
 
-EventSchema.methods.generateToken = function (userId: Types.ObjectId) {
-    const isHost = this.host.toString() === userId.toString()
-    const user = this.userList.find(
-        (user: IUserList) => user.user.toString() === userId.toString(),
-    )
-    if (!user && !isHost)
-        throw new NotFoundError("User is not part of this event.")
-    const permission = user?.permission
-    const role = user?.role
+    if (!this.isModified("userList") && !this.isModified("serviceList"))
+        return next()
 
-    return jwt.sign(
-        {
-            eventId: this._id,
-            role,
-            isHost,
-            permission,
-        } as EventPayload,
-        process.env.JWT_SECRET as jwt.Secret,
-        {
-            expiresIn: process.env.JWT_LIFETIME,
-        },
-    )
-}
+    const event = this
+    const subEvents = event.subEvents
+    for (let i = 0; i < subEvents.length; i++) {
+        const subEvent = subEvents[i]
+        const subEventDoc = await SubEvent.findById(subEvent)
+        if (!subEventDoc) {
+            event.subEvents.remove(subEvent)
+            continue
+        }
+        const subEventUserList = event.userList
+            .filter(
+                (user) => user.subEvents.includes(subEvent) && true,
+                // user.status === "accepted",
+            )
+            .map((user) => user.user)
+        const vendorList = Array.from(
+            new Set(
+                event.serviceList
+                    .filter(
+                        (service) => service.subEvent === subEvent && true,
+                        // service.status === "accepted",
+                    )
+                    .map((service) => service.vendorProfile),
+            ),
+        )
+        //find all channels of this subEvent
+        const channels = await Channel.find({
+            _id: { $in: subEventDoc.channels },
+            type: { $not: { $eq: CHANNEL_TYPES.OTHER } },
+        })
+        for (let j = 0; j < channels.length; j++) {
+            const channel = channels[j]
+            switch (channel.type) {
+                case CHANNEL_TYPES.ANNOUNCEMENT:
+                    //@ts-ignore
+                    channel.allowedUsers = subEventUserList.concat(vendorList)
+                    break
+                case CHANNEL_TYPES.VENDORS_ONLY:
+                    //@ts-ignore
+                    channel.allowedUsers = vendorList
+                    break
+                case CHANNEL_TYPES.GUESTS_ONLY:
+                    //@ts-ignore
+                    channel.allowedUsers = subEventUserList
+                    break
+            }
+            //@ts-ignore
+            channel.allowedUsers.addToSet(event.host._id)
+            await channel.save()
+        }
+    }
+
+    next()
+})
 
 const Event = model<IEvent>("Event", EventSchema)
 export default Event

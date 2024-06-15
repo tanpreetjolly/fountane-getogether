@@ -1,58 +1,109 @@
 import { Input } from "@mui/material"
+import { useEffect, useState } from "react"
 import MessageComponent from "../components/MessageComponent"
-import { useState } from "react"
-import { MdMarkEmailRead } from "react-icons/md"
-// type Props = {}
-
-const randomChatData = [
-  { id: 1, message: "Hey there!", name: "Alice", date: "10:30" },
-  { id: 2, message: "Hello!", name: "Bob", date: "10:32" },
-  { id: 3, message: "How are you?", name: "Alice", date: "10:34" },
-  { id: 4, message: "I'm good, thanks!", name: "You", date: "10:35" },
-  { id: 6, message: "I'm doing well too.", name: "Alice", date: "10:37" },
-]
+import { Link, SendHorizontal } from "lucide-react"
+import Loader from "../components/Loader"
+import { getChatMessages } from "../api"
+import { useParams } from "react-router-dom"
+import { useAppSelector } from "@/hooks"
+import { ChatMessage, OtherUserType } from "@/definitions"
+import { useSocketContext } from "@/context/SocketContext"
 
 const VendorChat = () => {
-  const userId = 4
-
-  const [messages, setMessages] = useState(randomChatData)
+  const [loading, setLoading] = useState(true)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [chatDetails, setChatDetails] = useState<OtherUserType | null>(null)
   const [newMessage, setNewMessage] = useState("")
+
+  const { chatId } = useParams()
+  const { user } = useAppSelector((state) => state.user)
+  const userId = user?.userId
+
+  const { socket } = useSocketContext()
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== "") {
-      const newMessageData = {
-        id: userId,
-        message: newMessage,
-        name: "You",
-        date: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      }
-      setMessages([...messages, newMessageData])
-      setNewMessage("")
+      socket?.emit(
+        "send:chat:message",
+        {
+          message: newMessage,
+          receiverId: chatId,
+        },
+        (res: ChatMessage) => {
+          // console.log(res)
+          setMessages((prev) => [...prev, res])
+          setNewMessage("")
+        },
+      )
     }
   }
+
+  useEffect(() => {
+    if (!chatId || !socket) return () => {}
+
+    const handleCurrentChatMessage = (msg: ChatMessage) => {
+      if (msg.senderId === chatId) setMessages((prev) => [...prev, msg])
+    }
+
+    setLoading(true)
+    getChatMessages(chatId)
+      .then(
+        (res: {
+          data: {
+            messages: ChatMessage[]
+            otherUser: OtherUserType
+          }
+        }) => {
+          console.log(res.data)
+          setMessages(res.data.messages)
+          setChatDetails(res.data.otherUser)
+
+          socket.on("chat message", handleCurrentChatMessage)
+        },
+      )
+      .finally(() => {
+        setLoading(false)
+      })
+    return () => {
+      socket.off("chat message", handleCurrentChatMessage)
+    }
+  }, [chatId, socket])
+
+  useEffect(() => {
+    const chatBox = document.getElementById("chatBox")
+    chatBox?.scrollTo(0, chatBox.scrollHeight)
+  }, [messages])
+
+  if (loading) return <Loader />
+  if (user === null) return <div>User not found</div>
+  if (chatDetails === null) return <div>Chat not found</div>
+
   return (
-    <div className="px-4 flex  flex-col justify-between min-h-[90vh]">
-      <div className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3">
-        <div className="text-lg bg-dark text-center py-1.5  justify-center  items-center gap-2 flex text-white  rounded-lg">
-          Invited{" "}
-          <span>
-            <MdMarkEmailRead />
-          </span>
-        </div>
-        {messages.map((msg, index) => (
+    <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
+      <div
+        id="chatBox"
+        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-2"
+      >
+        {messages.map((msg) => (
           <MessageComponent
-            key={index}
+            key={msg._id}
             message={msg.message}
-            name={msg.name}
-            date={msg.date}
-            isUserMessage={msg.id === userId}
+            profileImage={
+              msg.senderId === userId
+                ? user.profileImage
+                : chatDetails.profileImage
+            }
+            name={msg.senderId === userId ? user.name : chatDetails.name}
+            date={msg.createdAt}
+            isUserMessage={msg.senderId === userId}
+            imgSrc={msg.image}
           />
         ))}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+        <button className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full">
+          <Link size={20} />
+        </button>
         <Input
           fullWidth
           placeholder="Type a message..."
@@ -62,9 +113,9 @@ const VendorChat = () => {
         />
         <button
           onClick={handleSendMessage}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+          className="py-2.5 px-3 bg-zinc-600 text-white rounded-full"
         >
-          Send
+          <SendHorizontal size={18} />
         </button>
       </div>
     </div>

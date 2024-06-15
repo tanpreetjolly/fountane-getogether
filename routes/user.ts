@@ -7,6 +7,7 @@ import {
     deleteProfileImage,
     makeMeVendor,
     getChatMessages,
+    getChannelMessages,
 } from "../controllers/user"
 
 const router = Router()
@@ -19,5 +20,6 @@ router
     .post(upload.single("profileImage"), updateProfileImage)
     .delete(deleteProfileImage)
 router.get("/chats/:chatId/messages", getChatMessages)
+router.get("/channels/:channelId/messages", getChannelMessages)
 
 export default router

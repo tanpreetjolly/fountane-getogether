@@ -3,8 +3,7 @@ import { Server as SocketIOServer, ServerOptions } from "socket.io"
 import { instrument } from "@socket.io/admin-ui"
 import onConnection from "./socket-room"
 import jwt from "jsonwebtoken"
-import mongoose from "mongoose"
-import { TempUserPayload, UserPayload } from "../types/express"
+import { SocketTokenPayload } from "../types/express"
 
 export let io: SocketIOServer | null = null
 
@@ -18,15 +17,11 @@ export default (server: HttpServer, options: Partial<ServerOptions>) => {
         const { token } = socket.handshake.auth
         try {
             if (!token) return next(new Error("Token not found"))
-            const payload = jwt.verify(
+            const userPayload = jwt.verify(
                 token,
                 process.env.JWT_SOCKET_SECRET as jwt.Secret,
-            ) as TempUserPayload
+            ) as SocketTokenPayload
 
-            const userPayload: UserPayload = {
-                userId: new mongoose.Types.ObjectId(payload.userId),
-                isVendor: payload.isVendor,
-            }
             ;(socket as any).user = userPayload
         } catch (error) {
             return next(new Error("Invalid token"))
