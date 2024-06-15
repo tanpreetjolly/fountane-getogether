@@ -56,6 +56,12 @@ const UserSchema = new Schema<IUser>(
             ref: "VendorProfile",
             default: null,
         },
+        myChats: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
     },
     {
         timestamps: true,

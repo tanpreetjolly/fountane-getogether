@@ -15,6 +15,7 @@ import bcrypt from "bcryptjs"
 import { CHANNEL_TYPES, ROLES } from "./values"
 import { IEvent } from "./types/models"
 import { faker } from "@faker-js/faker"
+import { generateChatId } from "./utils/utilFunctions"
 
 dotenv.config()
 
@@ -242,8 +243,7 @@ async function main() {
             services: await createVendorServices(),
         })
 
-        // Create a new user
-        const user = await User.create({
+        const mainUser = {
             _id: "60f1b9e3b3f1f3b3b3f1f3b3",
             name: faker.person.fullName(),
             email: "hello@hello.com",
@@ -252,7 +252,8 @@ async function main() {
             password: "hello@hello.com",
             status: "active",
             vendorProfile: vendorProfile._id,
-        })
+            myChats: [] as mongoose.Types.ObjectId[],
+        }
 
         const hashedPassword = await bcrypt.hash("password", 10)
 
@@ -265,6 +266,7 @@ async function main() {
             password: hashedPassword,
             status: "active",
             vendorProfile: null as any,
+            myChats: [mainUser._id],
         }))
 
         manyUser.slice(0, 4).forEach((user) => {
@@ -285,12 +287,16 @@ async function main() {
         const vendorProfileToCreate = await Promise.all(
             vendorProfileToCreatePromise,
         )
-        await User.insertMany(manyUser)
 
         // Update the user with the vendor profile
-        await User.findByIdAndUpdate(user._id, {
-            vendorProfile: vendorProfile._id,
-        })
+        mainUser.vendorProfile = vendorProfile._id
+        mainUser.myChats = manyUser.map((user) => user._id)
+
+        // Create a new user
+        const user = await User.create(mainUser)
+
+        // Create many users
+        await User.insertMany(manyUser)
 
         await VendorProfile.insertMany(vendorProfileToCreate)
 
@@ -471,6 +477,26 @@ async function main() {
                 )
         }
 
+        const chatId = generateChatId(
+            user._id.toString(),
+            user.myChats[0].toString(),
+        )
+
+        //run this for 5 times
+        for (let i = 0; i < 5; i++) {
+            await ChatMessage.create({
+                senderId: user._id,
+                chatId: chatId,
+                message: faker.lorem.sentence(),
+            })
+
+            await ChatMessage.create({
+                senderId: user.myChats[0],
+                chatId: chatId,
+                message: faker.lorem.sentence(),
+            })
+        }
+
         // Create a channel for the event
         const channel = await Channel.create({
             name: "Photo Sharing",
@@ -479,8 +505,8 @@ async function main() {
 
         // Create a chat message in the channel
         await ChatMessage.create({
-            userId: user._id,
-            channelId: channel._id,
+            senderId: user._id,
+            chatId: channel._id,
             message: "Hello, world!",
         })
 

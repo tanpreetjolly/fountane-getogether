@@ -1,4 +1,4 @@
-import { User, Event } from "../models"
+import { User, Event, ChatMessage } from "../models"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
@@ -8,14 +8,21 @@ import {
     deleteProfileImage as cloudinaryDeleteProfileImage,
 } from "../utils/imageHandlers/cloudinary"
 import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
+import { generateChatId } from "../utils/utilFunctions"
 
 const getMe = async (req: Request, res: Response) => {
-    const user = await User.findById(req.user.userId).populate({
-        path: "vendorProfile",
-        populate: {
-            path: "services",
+    const user = await User.findById(req.user.userId).populate([
+        {
+            path: "vendorProfile",
+            populate: {
+                path: "services",
+            },
         },
-    })
+        {
+            path: "myChats",
+            select: "name email phoneNo profileImage",
+        },
+    ])
     if (!user) throw new NotFoundError("User Not Found")
     if (user.status === "blocked")
         throw new UnauthenticatedError("User is blocked.")
@@ -117,6 +124,7 @@ const getMe = async (req: Request, res: Response) => {
         profileImage: user.profileImage,
         isVendor: user.vendorProfile ? true : false,
         vendorProfile: user.vendorProfile,
+        myChats: user.myChats,
         events: events,
         notifications: notifications,
         serviceEvents: serviceEvents,
@@ -211,10 +219,48 @@ const makeMeVendor = async (req: Request, res: Response) => {
     })
 }
 
+const getChatMessages = async (req: Request, res: Response) => {
+    const { chatId: otherUserId } = req.params
+
+    // if req.user already have chatId then return messages of that chatId
+    // else insert chatId in req.user.myChats and return messages of that chatId
+
+    const mySelf = await User.findById(req.user.userId)
+    if (!mySelf) throw new NotFoundError("User Not Found")
+    if (!mySelf.myChats.some((chat) => chat.toString() === otherUserId)) {
+        await User.findByIdAndUpdate(req.user.userId, {
+            $push: { myChats: otherUserId },
+        })
+        await User.findByIdAndUpdate(
+            otherUserId,
+            {
+                $push: { myChats: req.user.userId },
+            },
+            {
+                new: true,
+            },
+        )
+    }
+
+    const chatId = generateChatId(req.user.userId.toString(), otherUserId)
+    const messages = await ChatMessage.find({ chatId }).sort({ createdAt: 1 })
+
+    const otherUser = await User.findById(otherUserId).select(
+        "name email phoneNo profileImage",
+    )
+
+    res.status(StatusCodes.OK).json({
+        data: { messages, otherUser },
+        success: true,
+        msg: "Messages Fetched Successfully",
+    })
+}
+
 export {
     getMe,
     updateCompleteProfile,
     updateProfileImage,
     deleteProfileImage,
     makeMeVendor,
+    getChatMessages,
 }

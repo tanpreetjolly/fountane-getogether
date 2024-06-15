@@ -15,6 +15,7 @@ export interface IUser extends Document {
     status: string
     otp: OTP | undefined
     vendorProfile: Schema.Types.ObjectId | null
+    myChats: Types.Array<Schema.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
     generateToken: () => string
@@ -108,9 +109,10 @@ export interface IEvent extends Document {
 
 export interface IChatMessage extends Document {
     _id: Schema.Types.ObjectId
-    userId: Schema.Types.ObjectId
-    channelId: Schema.Types.ObjectId
+    senderId: Schema.Types.ObjectId
+    chatId: Schema.Types.ObjectId
     message: string
+    image: string
     createdAt: Date
     updatedAt: Date
 }
