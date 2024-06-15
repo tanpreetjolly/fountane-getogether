@@ -60,7 +60,7 @@ const CreateEvent = () => {
   }
   // if(loading) return toast.loading("Creating Event")
   return (
-    <div className="px-4 mx-auto flex flex-col h-[85vh] mt-2 gap-4">
+    <div className="px-4 mx-auto flex flex-col min-h-[85vh] mt-2 gap-4 md:w-5/6 bg-white p-5 rounded-xl ">
       <div className="">
         <Button
           onClick={handleCreateEvent}

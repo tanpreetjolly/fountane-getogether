@@ -8,8 +8,7 @@ import { useEventContext } from "../context/EventContext"
 import { SubEventType } from "../definitions"
 import {
   CalendarDays,
-  CalendarPlus,
-  CircleDollarSign,
+    CircleDollarSign,
   ListTodo,
   PlusCircle,
   Users,
@@ -57,7 +56,7 @@ const EventPage = () => {
           {event.host._id == user?.userId && (
             <button
               onClick={() => navigate("/events/create")}
-              className="hidden bg-dark bg-opacity-85 rounded-2xl transition-background duration-100 font-medium md:flex items-center text-white px-5 py-3 gap-1"
+              className="hidden bg-dark bg-opacity-90 rounded-2xl transition-background duration-100 font-medium md:flex items-center text-white px-5 py-3 gap-1"
             >
               <PlusCircle size={18} />
               <span>Add a Festitivity</span>
@@ -65,7 +64,7 @@ const EventPage = () => {
           )}
         </div>
         {event.host._id == user?.userId && (
-          <div className="flex justify-around gap-2 lg:w-3/5">
+          <div className="flex justify-around gap-2 xl:w-3/5">
             <button
               onClick={() => {
                 navigate("guests")
@@ -94,7 +93,7 @@ const EventPage = () => {
               onClick={() => {
                 navigate("payments")
               }}
-              className="flex  items-center  justify-around bg-dark bg-opacity-85  text-gray-50  rounded-3xl w-1/2 px-4 py-4 gap-3"
+              className="hidden md:flex  items-center  justify-around bg-dark bg-opacity-90  text-gray-50  rounded-3xl w-1/2 px-4 py-4 gap-3"
             >
               <div className="">
                 <div className="text-gray-100  text-left text-sm">
@@ -108,7 +107,7 @@ const EventPage = () => {
               onClick={() => {
                 navigate("todo")
               }}
-              className="flex  items-center  justify-around border aspect-[2] border-slate-800  text-slate-800  rounded-3xl w-1/2 px-4 py-4 gap-3"
+              className="md:flex hidden items-center  justify-around border aspect-[2] border-slate-800  text-slate-800  rounded-3xl w-1/2 px-4 py-4 gap-3"
             >
               <div className="">
                 <div className="text-slate-700 text-left text-sm">Event</div>

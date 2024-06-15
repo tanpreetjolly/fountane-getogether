@@ -37,7 +37,7 @@ const ManageGuests = () => {
   const [selectedSubEvents, setSelectedSubEvents] = useState<string[]>([])
 
   const { event, loadingEvent, updateEvent } = useEventContext()
-
+  console.log(event)
   const closeDrawer = () => {
     setSelectedGuest(null)
     setIsInviteDrawerOpen(false)
@@ -96,56 +96,86 @@ const ManageGuests = () => {
 
   const filteredGuests =
     searchResult !== null ? searchResult : guestList.map((user) => user.user)
+  const totalGuests = guestList.length
+  const acceptedGuests = guestList.filter(
+    (guest) => guest.status === "accepted",
+  ).length
+  const pendingGuests = guestList.filter(
+    (guest) => guest.status === "pending",
+  ).length
 
   return (
-    <div className="px-4 flex flex-col mt-1 pt-2 gap-2 md:gap-4 lg:w-4/5 mx-auto">
-      <div className="text-xl pl-1 font-semibold text-gray-700 md:text-3xl">
-        Manage Guests for <span className="text-indigo-600">{event.name}</span>
-      </div>
-      <Button
-        text="Invite New Contact"
-        onClick={() => setIsInviteDrawerOpen(true)}
-        icon={<FaPlusCircle />}
-      />
-      <SearchField setSearchResult={setSearchResult} />
-      <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
-        {filteredGuests.map((guest) => (
-          <div
-            key={guest._id}
-            style={{ cursor: "pointer", marginBottom: "8px" }}
-            className="border rounded-xl"
-          >
-            <CardContent className="!pb-1">
-              <div className="flex items-center">
-                <Avatar src={guest.profileImage} className="mr-3">
-                  {guest.name[0]}
-                </Avatar>
-                <div className="mr-auto">
-                  <Typography variant="h6" component="div">
-                    {guest.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {guest.email}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {guest.phoneNo}
-                  </Typography>
-                </div>
-              </div>
-              <div className="ml-auto w-fit">
-                <ButtonSecondary
-                  text={capitalizeFirstLetter(
-                    guestList.find((user) => user.user._id === guest._id)
-                      ?.status || "Invite",
-                  )}
-                  // className="capitalize"
-                  onClick={() => setSelectedGuest(guest)}
-                  icon={<RsvpRounded />}
-                />
-              </div>
-            </CardContent>
+    <div className="px-4 flex flex-col mt-1  gap-2 md:gap-4 lg:w-5/6 mx-auto">
+      <div className="bg-white px-5 py-6 border shadow-sm rounded-2xl">
+        <div className="text-lg md:text-2xl pl-1  text-gray-700">
+          Manage Guests for <br className="hidden md:block" />{" "}
+          <span className="font-medium md:text-xl">{event.name}</span>
+        </div>
+        <div className="flex justify-between mt-4 items-centre">
+          <div className="flex flex-wrap gap-2 ">
+            <div className="bg-blueShade text-blue-800 px-3 py-1.5 rounded-lg">
+              Total Guests: {totalGuests}
+            </div>
+            <div className="bg-green-200 text-green-800 px-3 py-1.5 rounded-lg">
+              Accepted: {acceptedGuests}
+            </div>
+            <div className="bg-yellow-200 text-yellow-800 px-3 py-1.5 rounded-lg">
+              Pending: {pendingGuests}
+            </div>
           </div>
-        ))}
+          <Button
+            text="Invite New Contact"
+            onClick={() => setIsInviteDrawerOpen(true)}
+            icon={<FaPlusCircle />}
+          />
+        </div>
+      </div>
+      <div className="p-4 bg-white bg-opacity-80 rounded-2xl  shadow-sm">
+        <SearchField setSearchResult={setSearchResult} />
+        <h2 className="pl-1 mt-4 mb-1 text-gray-700">
+          {searchResult ? "Search Results" : "Guests You've Invited"}
+        </h2>
+        <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
+
+          {filteredGuests.map((guest) => (
+            <div
+              key={guest._id}
+              style={{ cursor: "pointer", marginBottom: "8px" }}
+              className="border rounded-xl"
+            >
+              <CardContent className="!pb-1">
+                <div className="flex items-center">
+                  <Avatar src={guest.profileImage} className="mr-3">
+                    {guest.name[0]}
+                  </Avatar>
+                  <div className="mr-auto">
+                    <Typography variant="h6" component="div">
+                      {guest.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {guest.email}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {guest.phoneNo}
+                    </Typography>
+                  </div>
+                </div>
+                <div className="ml-auto w-fit">
+                  <ButtonSecondary
+                  backgroundColor="bg-blueShade"
+                    text={capitalizeFirstLetter(
+                      guestList.find((user) => user.user._id === guest._id)
+                        ?.status || "Invite",
+                    )}
+                    // className="capitalize"
+                    onClick={() => setSelectedGuest(guest)}
+                    icon={<RsvpRounded />}
+                  />
+                </div>
+              </CardContent>
+            </div>
+          ))}
+        </div>
       </div>
       {selectedGuest && (
         <SwipeableDrawer
@@ -251,14 +281,14 @@ const SearchField = ({
   }, [searchQuery])
 
   return (
-    <>
+    <div className="w-1/3">
       <Input
-        placeholder="Search Contacts"
+        placeholder="Write more than 3 characters to search"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="!mb-2"
+        className="!mb-2 text-[13px] rounded-xl "
       />
-    </>
+    </div>
   )
 }
 
