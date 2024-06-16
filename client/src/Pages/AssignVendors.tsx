@@ -49,33 +49,41 @@ const InviteGuests = () => {
         <div className="text-2xl pl-1 font-semibold text-zinc-800 mb-4">
           Vendors for {subEvent.name}
         </div>
-        <Button
-          text="Assign New Vendors"
-          onClick={() => {
-            navigate("search")
-          }}
-          icon={<FaPlusCircle />}
-        />
-        <Input
-          type="search"
-          placeholder="Search vendors..."
-          className="my-4"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        {event.isHosted && (
+          <>
+            <Button
+              text="Assign New Vendors"
+              onClick={() => {
+                navigate("search")
+              }}
+              icon={<FaPlusCircle />}
+            />
+            <Input
+              type="search"
+              placeholder="Search vendors..."
+              className="my-4"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </>
+        )}
+
         <List>
-          {filteredServiceList.length === 0 && (
-            <div className="text-center italic text-xl px-4 text-gray-500 h-[40vh] flex flex-col gap-1 items-center justify-center">
-              No vendors to show
-              <br /> Assign your first vendor
-              <NavLink
-                to="search"
-                className="p-2.5 border rounded-md border-blue-500 bg-blue-500 text-white hover:text-blue-500 hover:bg-white hover:border-blue-500"
-              >
-                Search Vendors
-              </NavLink>
-            </div>
-          )}
+          {filteredServiceList.length === 0 &&
+            (event.isHosted ? (
+              <div className="text-center italic text-xl px-4 text-gray-500 h-[40vh] flex flex-col gap-1 items-center justify-center">
+                No vendors to show
+                <br /> Assign your first vendor
+                <NavLink
+                  to="search"
+                  className="p-2.5 border rounded-md border-blue-500 bg-blue-500 text-white hover:text-blue-500 hover:bg-white hover:border-blue-500"
+                >
+                  Search Vendors
+                </NavLink>
+              </div>
+            ) : (
+              <div>Nothing to show</div>
+            ))}
           {filteredServiceList.map((service) => (
             <ListItem key={service._id}>
               <ListItemAvatar>

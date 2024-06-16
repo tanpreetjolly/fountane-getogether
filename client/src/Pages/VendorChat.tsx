@@ -14,6 +14,8 @@ const VendorChat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [chatDetails, setChatDetails] = useState<OtherUserType | null>(null)
   const [newMessage, setNewMessage] = useState("")
+  const [imagesFiles, setImagesFiles] = useState<File[]>([])
+  const [sendingMessage, setSendingMessage] = useState(false)
 
   const { chatId } = useParams()
   const { user } = useAppSelector((state) => state.user)
@@ -23,18 +25,22 @@ const VendorChat = () => {
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== "") {
+      setSendingMessage(true)
       socket?.emit(
         "send:chat:message",
         {
           message: newMessage,
           receiverId: chatId,
+          images: imagesFiles,
         },
         (res: ChatMessage) => {
           // console.log(res)
           setMessages((prev) => [...prev, res])
-          setNewMessage("")
+          setSendingMessage(false)
         },
       )
+      setNewMessage("")
+      setImagesFiles([])
     }
   }
 
@@ -76,7 +82,7 @@ const VendorChat = () => {
 
   if (loading) return <Loader />
   if (user === null) return <div>User not found</div>
-  if (chatDetails === null) return <div>Chat not found</div>
+  if (chatDetails === null) return <div>User not found</div>
 
   return (
     <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
@@ -96,14 +102,48 @@ const VendorChat = () => {
             name={msg.senderId === userId ? user.name : chatDetails.name}
             date={msg.createdAt}
             isUserMessage={msg.senderId === userId}
-            imgSrc={msg.image}
+            images={msg.image}
           />
         ))}
+        {sendingMessage && (
+          <div className="flex justify-center items-center">
+            <Loader />
+          </div>
+        )}
       </div>
       <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
-        <button className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full">
+        <label
+          htmlFor="file-upload"
+          className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative"
+        >
+          {imagesFiles.length > 0 && (
+            <div className="flex gap-2 absolute bottom-12 right-0">
+              {imagesFiles.map((file) => (
+                <img
+                  key={file.name}
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  className="h-10 w-10 object-cover rounded-lg"
+                />
+              ))}
+            </div>
+          )}
           <Link size={20} />
-        </button>
+        </label>
+        <input
+          id="file-upload"
+          className="hidden"
+          type="file"
+          accept="image/jpeg, image/png, image/jpg, image/webp"
+          multiple
+          onChange={(e) => {
+            if (e.target.files) {
+              setImagesFiles(Array.from(e.target.files))
+            }
+          }}
+          name="profileImage"
+        />
+
         <Input
           fullWidth
           placeholder="Type a message..."

@@ -24,17 +24,14 @@ const EventContextProvider = ({ children }: { children: ReactNode }) => {
   //useParam
   const { eventId } = useParams()
 
-  // console.log(eventId)
-
-  // console.log(event)
-
   const updateEvent = () => {
     if (!eventId) return
     setLoadingEvent(true)
     getEvent(eventId)
       .then((data: { data: EventFull }) => {
-        console.log(data.data)
-        setEvent(data.data)
+        import.meta.env.DEV && console.log(data.data)
+        const eventReceived = data.data
+        setEvent(eventReceived)
       })
       .catch((err) => {
         console.log(err)

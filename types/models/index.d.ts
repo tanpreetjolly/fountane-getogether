@@ -83,10 +83,9 @@ export interface ITask extends Document {
 export interface IUserList {
     _id: Schema.Types.ObjectId
     user: Schema.Types.ObjectId
-    // role: string
-    permission: [string]
     subEvents: [Schema.Types.ObjectId]
     status: string
+    expectedGuests: number
     createdAt: Date
     updatedAt: Date
 }
@@ -112,7 +111,7 @@ export interface IChatMessage extends Document {
     senderId: Schema.Types.ObjectId
     chatId: Schema.Types.ObjectId
     message: string
-    image: string
+    image: Types.Array<string>
     createdAt: Date
     updatedAt: Date
 }

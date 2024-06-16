@@ -34,11 +34,8 @@ const AllEvent = () => {
           <div className="flex justify-between items-center ">
             <div>
               <div className="text-2xl md:text-2xl pl-1 font-medium text-zinc-700">
-                Good Morning,{" "}
-                <br className="md:hidden"/>
-                <span className="font-semibold text-gray-800">
-                  {user.name}{" "}
-                </span>
+                Good Morning, <br className="md:hidden" />
+                <span className="font-semibold text-gray-800">{user.name}</span>
               </div>
               <div className="text-slate-600 pl-1 pb-2 mt-1">
                 Here are your upcoming Events
@@ -101,7 +98,7 @@ const AllEvent = () => {
               </div>
             ))}
           {activeTab === "serviceEvents" &&
-            serviceEvents.map((event) => <EventCard event={event} />)}
+            serviceEvents.map((event) => <EventCard event={event} asVendor />)}
         </div>
       </div>
       <div className="gap-2 md:hidden items-center fixed w-full flex justify-center backdrop-blur-md py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">

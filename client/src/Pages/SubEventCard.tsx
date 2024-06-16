@@ -2,7 +2,6 @@ import { To, useNavigate } from "react-router-dom"
 import { SubEventType } from "../definitions"
 import { format } from "date-fns"
 import {
-  Bell,
   CalendarDays,
   Loader,
   MapPin,
@@ -68,7 +67,6 @@ const SubEventCard = (props: Props) => {
       <div className="flex flex-col lg:flex-row items-center absolute bottom-4 ml-1 opacity-90">
         <div className="flex -space-x-2">
           {" "}
-          {subEventGuest.length === 0 && "No Guests Invited"}
           {subEventGuest.slice(0, 3).map((guest) => (
             <div className="w-7 aspect-square rounded-full overflow-hidden opacity-80">
               <img

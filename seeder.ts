@@ -406,6 +406,29 @@ async function main() {
             ],
         })
 
+        Task.insertMany([
+            {
+                name: "Send invitations",
+                completed: false,
+                eventId: event._id,
+            },
+            {
+                name: "Book a venue",
+                completed: true,
+                eventId: event._id,
+            },
+            {
+                name: "Hire a cater",
+                completed: false,
+                eventId: event._id,
+            },
+            {
+                name: "Hire a photographer",
+                completed: false,
+                eventId: event._id,
+            },
+        ])
+
         const inviteEvent = await Event.create({
             name: "Sam weds Riya",
             host: guestUsers[0]._id,

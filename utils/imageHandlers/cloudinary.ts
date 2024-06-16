@@ -34,3 +34,21 @@ export const deleteProfileImage = async (userId: string): Promise<boolean> => {
     )
     return result
 }
+
+export const saveImages = async (images: Buffer[]) => {
+    const urls: string[] = []
+    for (const image of images) {
+        const result = await cloudinary.uploader.upload(
+            `data:image/jpeg;base64,${image.toString("base64")}`,
+            {
+                folder: `blogmind`,
+                public_id: uuidv4(),
+                overwrite: true,
+                format: "webp",
+                invalidate: true,
+            },
+        )
+        urls.push(result.secure_url)
+    }
+    return urls
+}

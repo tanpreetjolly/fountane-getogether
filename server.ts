@@ -43,7 +43,7 @@ const allowedOrigins = [
 if (process.env.NODE_ENV === "development") {
     allowedOrigins.push("http://localhost:8000" as string)
     allowedOrigins.push("https://admin.socket.io" as string)
-    allowedOrigins.push("http://192.168.1.12:5173" as string)
+    allowedOrigins.push("http://192.168.1.11:5173" as string)
     allowedOrigins.push("http://192.168.29.71:5173" as string)
 }
 
@@ -78,7 +78,10 @@ app.use(cors(corsOptions)) //enable CORS
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"))
 
 //Socket.io
-socketIo(server, { cors: { origin: allowedOrigins } })
+socketIo(server, {
+    cors: { origin: allowedOrigins },
+    maxHttpBufferSize: 4 * 1e6,
+})
 
 const logDir: string = path.join(__dirname, "./log")
 //create dir if not exist

@@ -2,7 +2,6 @@ import { useState } from "react"
 import Button from "../components/Button"
 import { useNavigate, useParams } from "react-router-dom"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
-import { AddCircleOutline } from "@mui/icons-material"
 import CreateChannelDrawer from "../components/CreateChannelDrawer"
 import { useEventContext } from "../context/EventContext"
 import Loader from "../components/Loader"
@@ -24,34 +23,34 @@ import { format } from "date-fns"
 import { useAppSelector } from "@/hooks"
 import ButtonSecondary from "@/components/ButtonSecondary"
 
-const getChannelIcon = (channelName: string) => {
-  switch (channelName) {
-    case "Announcement":
+const getChannelIcon = (channelType: string) => {
+  switch (channelType) {
+    case "announcement":
       return <Volume2 size={20} />
-    case "Vendors Only":
+    case "vendorsOnly":
       return <HandPlatter size={20} />
-    case "Guests Only":
+    case "guestsOnly":
       return <Users size={20} />
     default:
       return <Group size={20} />
   }
 }
 
-const getChannelDescription = (channelName: string) => {
-  switch (channelName) {
-    case "Announcement":
+const getChannelDescription = (channelType: string) => {
+  switch (channelType) {
+    case "announcement":
       return (
         <div className="text-sm text-gray-700">
           Public Announcements Channel
         </div>
       )
-    case "Vendors Only":
+    case "vendorsOnly":
       return (
         <div className="text-sm text-gray-700">
           Discussion channels for to vendors and the host
         </div>
       )
-    case "Guests Only":
+    case "guestsOnly":
       return <div className="text-sm text-gray-700">Discussions for guests</div>
     default:
       return (
@@ -64,8 +63,8 @@ const getChannelDescription = (channelName: string) => {
 
 const Channel = ({ channel }: { channel: ChannelType }) => {
   const navigate = useNavigate()
-  const channelIcon = getChannelIcon(channel.name)
-  const channelDescription = getChannelDescription(channel.name)
+  const channelIcon = getChannelIcon(channel.type)
+  const channelDescription = getChannelDescription(channel.type)
 
   return (
     <button
@@ -77,7 +76,7 @@ const Channel = ({ channel }: { channel: ChannelType }) => {
       <div className="flex items-center gap-1">{channelDescription}</div>
       <div className="ml-auto flex items-center mt-4">
         <ButtonSecondary
-        backgroundColor="bg-blueShade"
+          backgroundColor="bg-blueShade"
           onClick={() => {
             navigate(`channel/${channel._id}`)
           }}
@@ -120,14 +119,6 @@ const SubEventChannels = () => {
   if (!subEvent) return <div>Sub Event Not Found</div>
   if (!user) return <div>User Not Found</div>
 
-  const isHost = user.userId === event.host._id
-  const isGuest = event.userList.some((guest) => guest.user._id === user.userId)
-  const isVendor = event.serviceList.some(
-    (service) => service.vendorProfile.user._id === user.userId,
-  )
-
-  console.log({ isHost, isGuest, isVendor })
-
   return (
     <div className="px-4 flex flex-col justify-between  h-[85vh] lg:w-5/6 mx-auto py-2">
       <div>
@@ -152,7 +143,7 @@ const SubEventChannels = () => {
               <MapPin className="inline gap-1" size={14} />
             </div>
           </div>
-          {isHost && (
+          {event.isHosted && (
             <div className="flex justify-around gap-2 mb-1 mt-2  md:w-[25%]">
               <button
                 onClick={() => navigate(`guests`)}
@@ -179,8 +170,25 @@ const SubEventChannels = () => {
               </button>
             </div>
           )}
+          {!event.isHosted &&
+            event.isVendor?.some(
+              (service) => service.subEvent._id === subEvent._id,
+            ) && (
+              <div className="flex justify-around gap-2 mb-1 mt-2  md:w-[25%]">
+                <button
+                  onClick={() => navigate(`vendors`)}
+                  className="flex  items-center  justify-around bg-dark bg-opacity-90  text-gray-50  rounded-2xl w-1/2 px-4 py-4 gap-3"
+                >
+                  <div>
+                    <div className="text-zinc-100 text-left text-sm">View</div>
+                    <div className="font-medium text-xl"> Vendors</div>
+                  </div>
+                  <ListTodo size={30} />
+                </button>
+              </div>
+            )}
         </div>
-        {isHost && (
+        {event.isHosted && (
           <div className="flex md:hidden justify-around gap-3 mb-1 mt-2  md:w-[30%]">
             <button
               onClick={() => navigate(`guests`)}
@@ -209,35 +217,20 @@ const SubEventChannels = () => {
             <div className="text-lg  text-zinc-700  pl-1 font-medium">
               Text Channels
             </div>
-
-            <Button
-              text="Create Channel"
-              onClick={() => setDrawerOpen(true)}
-              icon={<PlusCircleIcon size={18} />}
-            />
+            {event.isHosted && (
+              <Button
+                text="Create Channel"
+                onClick={() => setDrawerOpen(true)}
+                icon={<PlusCircleIcon size={18} />}
+              />
+            )}
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4 ">
-            {subEvent.channels
-              .filter((channel) => {
-                if (isHost) return true
-                if (channel.name.toLowerCase() === "vendors only" && !isVendor)
-                  return false
-                if (channel.name.toLowerCase() === "guests only" && !isGuest)
-                  return false
-                return true
-              })
-              .map((channel) => (
-                <Channel key={channel._id} channel={channel} />
-              ))}
+            {subEvent.channels.map((channel) => (
+              <Channel key={channel._id} channel={channel} />
+            ))}
           </div>
         </div>
-      </div>
-      <div className="flex md:hidden justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
-        <Button
-          text="Create Channel"
-          onClick={() => setDrawerOpen(true)}
-          icon={<AddCircleOutline />}
-        />
       </div>
 
       <SwipeableDrawer

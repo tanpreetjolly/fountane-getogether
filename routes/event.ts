@@ -1,5 +1,4 @@
-import { Router } from "express"
-import TaskRouter from "./task"
+import { NextFunction, Request, Response, Router } from "express"
 import {
     createEvent,
     createSubEvent,
@@ -14,34 +13,52 @@ import {
     addRemoveGuestsToSubEvent,
     updateBudget,
 } from "../controllers/event"
-
-// import Protect from "../middleware/permissionRequired"
-// import { Permissions } from "../values"
+import {
+    getTasks,
+    getTask,
+    createTasks,
+    updateTasks,
+    deleteTasks,
+} from "../controllers/task"
+import { Event } from "../models"
 
 const router = Router()
 
 router.route("/").post(createEvent)
+router.route("/:eventId").get(getEvent)
 
-router.route("/:eventId").get(getEvent).delete(deleteEvent).patch(updateEvent)
-router.route("/:eventId/budget").patch(updateBudget)
+const logEventId = async (req: Request, res: Response, next: NextFunction) => {
+    const eventId = req.params.eventId
+    const event = await Event.findById(eventId).select("host")
+    if (!event || event.host.toString() !== req.user.userId)
+        return res.status(403).send("You are not the Host.")
+    next()
+}
 
-router.route("/:eventId/guest/invite").post(inviteGuest)
-router.route("/:eventId/guest/invite/accept-reject").post(acceptRejectInvite)
-router.route("/:eventId/guest/invite/new").post(inviteNewGuest)
+// Create a new router for routes that require :eventId
+const eventRouter = Router({ mergeParams: true })
 
-router.route("/:eventId/vendor/offer").post(offerAVendor)
+eventRouter.use(logEventId)
 
-router.use("/:eventId/task", TaskRouter)
+eventRouter.route("/").delete(deleteEvent).patch(updateEvent)
+eventRouter.route("/budget").patch(updateBudget)
 
-router.route("/:eventId/subEvent").post(createSubEvent)
+eventRouter.route("/guest/invite").post(inviteGuest)
+eventRouter.route("/guest/invite/accept-reject").post(acceptRejectInvite)
+eventRouter.route("/guest/invite/new").post(inviteNewGuest)
 
-router
-    .route("/:eventId/subEvent/:subEventId/guest/invite/add-remove")
+eventRouter.route("/vendor/offer").post(offerAVendor)
+
+eventRouter.route("/task").get(getTasks).post(createTasks)
+eventRouter.route("/task/:taskId").get(getTask)
+eventRouter.route("/task/:taskId").put(updateTasks).delete(deleteTasks)
+
+eventRouter.route("/subEvent").post(createSubEvent)
+eventRouter
+    .route("/subEvent/:subEventId/guest/invite/add-remove")
     .post(addRemoveGuestsToSubEvent)
-router
-    .route("/:eventId/subEvent/:subEventId/channel")
-    .post(createSubEventChannel)
+eventRouter.route("/subEvent/:subEventId/channel").post(createSubEventChannel)
 
-// router.use(Protect(Permissions.HOST))
+router.use("/:eventId", eventRouter)
 
 export default router

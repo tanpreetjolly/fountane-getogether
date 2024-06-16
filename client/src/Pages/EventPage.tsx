@@ -8,7 +8,7 @@ import { useEventContext } from "../context/EventContext"
 import { SubEventType } from "../definitions"
 import {
   CalendarDays,
-    CircleDollarSign,
+  CircleDollarSign,
   ListTodo,
   PlusCircle,
   Users,
@@ -44,7 +44,7 @@ const EventPage = () => {
               Hosted by <span className=" font-medium">{event.host.name}</span>
             </div>
           </div>
-          {event.host._id == user?.userId && (
+          {event.isHosted && (
             <button
               onClick={() => navigate("todo")}
               className="flex items-center md:hidden text-slate-800 border border-slate-800 h-fit my-auto px-4 py-1.5 rounded-2xl"
@@ -53,17 +53,17 @@ const EventPage = () => {
               Todo
             </button>
           )}
-          {event.host._id == user?.userId && (
+          {event.isHosted && (
             <button
-              onClick={() => navigate("/events/create")}
+              onClick={() => navigate("festivity")}
               className="hidden bg-dark bg-opacity-90 rounded-2xl transition-background duration-100 font-medium md:flex items-center text-white px-5 py-3 gap-1"
             >
               <PlusCircle size={18} />
-              <span>Add a Festitivity</span>
+              <span>Add a Festivity</span>
             </button>
           )}
         </div>
-        {event.host._id == user?.userId && (
+        {event.isHosted && (
           <div className="flex justify-around gap-2 xl:w-3/5">
             <button
               onClick={() => {
@@ -117,10 +117,25 @@ const EventPage = () => {
             </button>
           </div>
         )}
+        {!event.isHosted && event.isVendor && (
+          <button
+            onClick={() => {
+              navigate("vendors")
+            }}
+            className="flex items-center max-w-48 justify-around bg-blueShade    text-zinc-800  rounded-3xl w-1/2 px-4 py-4 gap-3"
+          >
+            <div className="">
+              <div className="text-slate-700  text-left text-sm">View All</div>
+              <div className="font-medium text-xl"> Vendors</div>
+            </div>
+            <LiaPeopleCarrySolid className="text-3xl" />
+          </button>
+        )}
       </div>
       <div className=" bg-white rounded-2xl min-h-[60vh]  p-4 border shadow-sm">
-        <div className=" text-gray-700  pl-1 text-sm pb-1 italix">
-          Here are the upcoming festivities for <span className="font-medium">{event.name}</span>
+        <div className=" text-gray-700  pl-1 text-sm pb-1 italic">
+          Here are the upcoming festivities for{" "}
+          <span className="font-medium">{event.name}</span>
         </div>
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2 my-1  overflow-y-auto">
           {event.subEvents.length == 0 && (
@@ -129,28 +144,6 @@ const EventPage = () => {
             </div>
           )}
           {event.subEvents
-            .filter(
-              (subEvent) =>
-                event.host._id == user.userId ||
-                event.userList
-                  .find(
-                    (userListItem) =>
-                      userListItem.user._id == user.userId &&
-                      userListItem.status === "accepted",
-                  )
-                  ?.subEvents.find(
-                    (subEventId) => subEventId == subEvent._id,
-                  ) ||
-                event.serviceList
-                  .filter((service) => {
-                    return service.vendorProfile._id === user.vendorProfile?._id
-                  })
-                  .some(
-                    (service) =>
-                      service.subEvent._id === subEvent._id &&
-                      service.status === "accepted",
-                  ),
-            )
             .sort(
               (a: SubEventType, b: SubEventType) =>
                 new Date(a.startDate).getTime() -
@@ -165,7 +158,7 @@ const EventPage = () => {
             ))}
         </div>
       </div>
-      {event.host._id == user?.userId && (
+      {event.isHosted && (
         <div className="flex md:hidden justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
           <Button
             text="Add Festivity"

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import TextField from "@mui/material/TextField"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -50,6 +50,11 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
     getUsers.bind(null, event?.userList || [], event?.serviceList || []),
     [event],
   )
+
+  useEffect(() => {
+    if (!event) return
+    setSelectedUsers([event.host._id])
+  }, [])
 
   if (!eventId) return <Navigate to="/events" />
   if (!subEventId) return <Navigate to={`/events/${eventId}`} />

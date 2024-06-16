@@ -11,7 +11,6 @@ const ChannelSchema = new Schema<IChannel>(
         allowedUsers: [
             {
                 type: Schema.Types.ObjectId,
-                ref: "User",
             },
         ],
         type: {

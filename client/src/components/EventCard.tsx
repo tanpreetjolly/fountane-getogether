@@ -25,9 +25,10 @@ import { DatePickerWithRange } from "./ui/DatePickerWithRange"
 
 interface EventCardProps {
   event: EventShortType
+  asVendor?: boolean
 }
 
-const EventCard: FC<EventCardProps> = ({ event }) => {
+const EventCard: FC<EventCardProps> = ({ event, asVendor = false }) => {
   const navigate = useNavigate()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [editedEvent, setEditedEvent] = useState<EventShortType>(event)
@@ -112,14 +113,15 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
               </div>
             </div>
           </div>
-          
         </div>
         <div
           className={`text-sm mb-2 ml-2 px-2 py-0.5 border rounded-full mt-2 w-fit  ${user.userId === event.host._id ? "text-rose-700 border-rose-700 " : " border-zinc-700 text-zinc-700"}`}
         >
-          {user.userId === event.host._id
-            ? "Hosted"
-            : `Invited by ${event.host.name}`}
+          {asVendor
+            ? "Providing Service"
+            : user.userId === event.host._id
+              ? "Hosted"
+              : `Invited by ${event.host.name}`}
         </div>
         <div className="pl-1.5 mt-2  mr-3 flex justify-between">
           {user.userId === event.host._id && (
@@ -137,11 +139,11 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             </div>
           )}
           <div className="ml-auto">
-          <ButtonSecondary
-            text="View Event"
-            onClick={() => navigate(`/events/${event._id}`)}
-            icon={<ArrowRightToLine  size={18} />}
-          />
+            <ButtonSecondary
+              text="View Event"
+              onClick={() => navigate(`/events/${event._id}`)}
+              icon={<ArrowRightToLine size={18} />}
+            />
           </div>
         </div>
       </div>

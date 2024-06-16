@@ -26,11 +26,13 @@ const ManageVendors = () => {
 
   return (
     <div className="px-4 divide-y space-y-2 py-2 lg:w-4/5 mx-auto">
-      <Button
-        text="Book a Vendor"
-        onClick={() => navigate("search")}
-        icon={<IoPeopleSharp />}
-      />
+      {event.isHosted && (
+        <Button
+          text="Book a Vendor"
+          onClick={() => navigate("search")}
+          icon={<IoPeopleSharp />}
+        />
+      )}
       <div className="pt-2">
         <div className="font-medium text-gray-800 px-2 text-xl">
           Hired Vendors
@@ -43,29 +45,32 @@ const ManageVendors = () => {
             <ServiceCard key={vendor.subEvent._id} service={vendor} />
           ))}
         </div>
-
-        <div className="font-medium text-gray-800 px-2 text-xl mt-4">
-          Invited Vendors
-        </div>
-        <div className="flex flex-col gap-2 py-2">
-          {invitedVendors.length === 0 && (
-            <span className="mx-auto">Nothing to show</span>
-          )}
-          {invitedVendors.map((vendor) => (
-            <ServiceCard key={vendor.subEvent._id} service={vendor} />
-          ))}
-        </div>
-        <div className="font-medium text-gray-800 px-2 text-xl mt-4">
-          Rejected Vendors
-        </div>
-        <div className="flex flex-col gap-2 py-2">
-          {rejectedVendors.length === 0 && (
-            <span className="mx-auto">Nothing to show</span>
-          )}
-          {rejectedVendors.map((vendor) => (
-            <ServiceCard key={vendor.subEvent._id} service={vendor} />
-          ))}
-        </div>
+        {event.isHosted && (
+          <>
+            <div className="font-medium text-gray-800 px-2 text-xl mt-4">
+              Invited Vendors
+            </div>
+            <div className="flex flex-col gap-2 py-2">
+              {invitedVendors.length === 0 && (
+                <span className="mx-auto">Nothing to show</span>
+              )}
+              {invitedVendors.map((vendor) => (
+                <ServiceCard key={vendor.subEvent._id} service={vendor} />
+              ))}
+            </div>
+            <div className="font-medium text-gray-800 px-2 text-xl mt-4">
+              Rejected Vendors
+            </div>
+            <div className="flex flex-col gap-2 py-2">
+              {rejectedVendors.length === 0 && (
+                <span className="mx-auto">Nothing to show</span>
+              )}
+              {rejectedVendors.map((vendor) => (
+                <ServiceCard key={vendor.subEvent._id} service={vendor} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

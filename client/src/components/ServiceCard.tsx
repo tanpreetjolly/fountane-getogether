@@ -56,12 +56,14 @@ const VendorCard = ({ service }: Props) => {
   return (
     <>
       <button className="border p-5 rounded-lg w-full relative">
-        <div className="flex gap-1 p-2 absolute right-1 top-1 ">
-          <button onClick={handleInviteButtonClick}>
-            <SquarePen size={18} className="text-gray-700" />
-          </button>
-          <Trash size={18} className="text-red-500" />
-        </div>
+        {event.isHosted && (
+          <div className="flex gap-1 p-2 absolute right-1 top-1 ">
+            <button onClick={handleInviteButtonClick}>
+              <SquarePen size={18} className="text-gray-700" />
+            </button>
+            <Trash size={18} className="text-red-500" />
+          </div>
+        )}
         <Link
           to={`/my-chats/${service.vendorProfile.user._id}`}
           className="flex justify-between items-center"
