@@ -13,6 +13,7 @@ import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 import toast from "react-hot-toast"
 import { makeAOffer } from "@/api"
+import ButtonSecondary from "./ButtonSecondary"
 
 type Props = {
   vendor: VendorSaveType
@@ -84,30 +85,31 @@ const VendorCard = ({ vendor }: Props) => {
 
   return (
     <>
-      <button className="border p-5 rounded-lg w-full mb-3 max-w-xl md:mr-2">
-        <Link
-          to={`/my-chats/${vendor.vendorProfileId}`}
-          className="flex gap-2 justify-between items-center"
-        >
+      <button className="border px-4 pt-4 rounded-xl w-full mb-3 max-w-xl md:mr-2">
+        <div className="flex flex-col gap-2 justify-center items-start">
           <div className="text-left">
-            <div className="text-lg mb-1 font-medium">
-              {vendor.servicesOffering.serviceName} - $
-              {vendor.servicesOffering.price}
+            <div className="text-lg  font-medium">
+              {vendor.servicesOffering.serviceName}
             </div>
-            <div className="text-base text-gray-700 capitalize italic">
+            <div className="text-base mb-1 text-gray-700 capitalize">
               by {vendor.vendorName}
             </div>
             <div className="text-sm text-gray-700 capitalize">
               {vendor.servicesOffering.serviceDescription}
             </div>
+            <div className="bg-purpleShade w-fit px-3 bg-opacity-85 rounded-full text-[13px] py-1 mt-3 -mx-1">
+              Estimated Price per ${vendor.servicesOffering.price}
+            </div>
           </div>
-          <button
-            className={`px-3 py-1 capitalize rounded-full bg-indigo-500 text-white`}
-            onClick={handleInviteButtonClick}
-          >
-            Invite
-          </button>
-        </Link>
+          <div className="ml-auto mt-4">
+            <ButtonSecondary
+              text="Make an Offer"
+              onClick={handleInviteButtonClick as any}
+              icon={<IoPersonAdd />}
+              fontSize="text-[13px]"
+            />
+          </div>
+        </div>
       </button>
       <SwipeableDrawer
         anchor="bottom"

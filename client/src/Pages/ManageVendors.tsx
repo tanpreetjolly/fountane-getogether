@@ -1,13 +1,15 @@
-import { IoPeopleSharp } from "react-icons/io5"
+import { useState } from "react"  
 import Button from "../components/Button"
 import ServiceCard from "../components/ServiceCard"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "@/components/Loader"
 import { useNavigate } from "react-router-dom"
+import { FaPlusCircle } from "react-icons/fa"
 
 const ManageVendors = () => {
   const { event, loadingEvent } = useEventContext()
   const navigate = useNavigate()
+  const [selectedTab, setSelectedTab] = useState("all")
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
@@ -24,53 +26,94 @@ const ManageVendors = () => {
     (vendor) => vendor.status === "rejected",
   )
 
-  return (
-    <div className="px-4 divide-y space-y-2 py-2 lg:w-4/5 mx-auto">
-      {event.isHosted && (
-        <Button
-          text="Book a Vendor"
-          onClick={() => navigate("search")}
-          icon={<IoPeopleSharp />}
-        />
+  const totalVendors = vendorList.length
+
+  const renderVendors = (vendors : any) => (
+    <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
+      {vendors.length === 0 ? (
+        <span className="mx-auto">Nothing to show</span>
+      ) : (
+        vendors.map((vendor : any) => (
+          <ServiceCard key={vendor.subEvent._id} service={vendor} />
+        ))
       )}
-      <div className="pt-2">
-        <div className="font-medium text-gray-800 px-2 text-xl">
-          Hired Vendors
+    </div>
+  )
+
+  return (
+    <div className="px-4 flex flex-col mt-1 gap-2 md:gap-4 lg:w-5/6 mx-auto">
+      <div className="bg-white px-5 py-6 border shadow-sm rounded-2xl">
+        <div className="text-lg md:text-2xl pl-1 text-gray-700">
+          Manage Vendors for <br className="hidden md:block" />{" "}
+          <span className="font-medium md:text-xl">{event.name}</span>
         </div>
-        <div className="flex flex-col gap-2 py-2">
-          {hiredVendors.length === 0 && (
-            <span className="mx-auto">No vendors hired yet</span>
-          )}
-          {hiredVendors.map((vendor) => (
-            <ServiceCard key={vendor.subEvent._id} service={vendor} />
-          ))}
+        <div className="flex justify-between mt-4 items-centre">
+          <div className="flex flex-wrap gap-1.5">
+            <div className="bg-purpleShade bg-opacity-90 text-dark px-3 py-1.5 rounded-xl">
+              Total Vendors: {totalVendors}
+            </div>
+            <div className="bg-green-200 text-dark px-3 py-1.5 rounded-xl">
+              Hired: {hiredVendors.length}
+            </div>
+            <div className="bg-yellow-200 text-dark px-3 py-1.5 rounded-xl">
+              Pending: {invitedVendors.length}
+            </div>
+            <div className="bg-red-200 text-dark px-3 py-1.5 rounded-xl">
+              Rejected: {rejectedVendors.length}
+            </div>
+          </div>
+          <Button
+            text="Book a Vendor"
+            onClick={() => navigate("search")}
+            icon={<FaPlusCircle />}
+          />
         </div>
-        {event.isHosted && (
-          <>
-            <div className="font-medium text-gray-800 px-2 text-xl mt-4">
-              Invited Vendors
-            </div>
-            <div className="flex flex-col gap-2 py-2">
-              {invitedVendors.length === 0 && (
-                <span className="mx-auto">Nothing to show</span>
-              )}
-              {invitedVendors.map((vendor) => (
-                <ServiceCard key={vendor.subEvent._id} service={vendor} />
-              ))}
-            </div>
-            <div className="font-medium text-gray-800 px-2 text-xl mt-4">
-              Rejected Vendors
-            </div>
-            <div className="flex flex-col gap-2 py-2">
-              {rejectedVendors.length === 0 && (
-                <span className="mx-auto">Nothing to show</span>
-              )}
-              {rejectedVendors.map((vendor) => (
-                <ServiceCard key={vendor.subEvent._id} service={vendor} />
-              ))}
-            </div>
-          </>
-        )}
+      </div>
+      <div className="p-5 bg-white bg-opacity-80 rounded-2xl shadow-sm">
+        <div className="flex items-center justify-between  pb-2 mb-4">
+          <div className="text-lg">Your Vendors</div>
+          <div className="flex justify-end text-sm space-x-1">
+            <button
+              className={`px-4 py-2 rounded-full ${
+                selectedTab === "all" ? "bg-dark text-white" : "bg-gray-200"
+              }`}
+              onClick={() => setSelectedTab("all")}
+            >
+              All Vendors
+            </button>
+            <button
+              className={`px-4 py-2 rounded-full ${
+                selectedTab === "hired" ? "bg-dark text-white" : "bg-gray-200"
+              }`}
+              onClick={() => setSelectedTab("hired")}
+            >
+              Hired
+            </button>
+            <button
+              className={`px-4 py-2 rounded-full ${
+                selectedTab === "pending" ? "bg-dark text-white" : "bg-gray-200"
+              }`}
+              onClick={() => setSelectedTab("pending")}
+            >
+              Pending
+            </button>
+            <button
+              className={`px-4 py-2 rounded-full ${
+                selectedTab === "rejected"
+                  ? "bg-dark text-white"
+                  : "bg-gray-200"
+              }`}
+              onClick={() => setSelectedTab("rejected")}
+            >
+              Rejected
+            </button>
+          </div>
+        </div>
+
+        {selectedTab === "all" && renderVendors(vendorList)}
+        {selectedTab === "hired" && renderVendors(hiredVendors)}
+        {selectedTab === "pending" && renderVendors(invitedVendors)}
+        {selectedTab === "rejected" && renderVendors(rejectedVendors)}
       </div>
     </div>
   )

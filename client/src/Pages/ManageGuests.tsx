@@ -113,7 +113,7 @@ const ManageGuests = () => {
         </div>
         <div className="flex justify-between mt-4 items-centre">
           <div className="flex flex-wrap gap-2 ">
-            <div className="bg-blueShade text-blue-800 px-3 py-1.5 rounded-lg">
+            <div className="bg-purpleShade text-pruple-800 px-3 py-1.5 rounded-lg">
               Total Guests: {totalGuests}
             </div>
             <div className="bg-green-200 text-green-800 px-3 py-1.5 rounded-lg">

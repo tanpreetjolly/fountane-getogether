@@ -1,5 +1,5 @@
 import { ServiceListType } from "@/definitions"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 import { useState } from "react"
@@ -10,9 +10,10 @@ import {
   ListItemText,
   SwipeableDrawer,
 } from "@mui/material"
-import { SaveAllIcon, SquarePen, Trash } from "lucide-react"
+import { ArrowRight, SaveAllIcon, SquarePen } from "lucide-react"
 import Button from "./Button"
 import { Cross1Icon } from "@radix-ui/react-icons"
+import ButtonSecondary from "./ButtonSecondary"
 
 type Props = {
   service: ServiceListType
@@ -22,18 +23,18 @@ const VendorCard = ({ service }: Props) => {
   const { event, loadingEvent } = useEventContext()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
-
+  const navigate = useNavigate()
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
   const festivityList = event.subEvents
   const getStatusColor = () => {
     switch (service.status) {
       case "accepted":
-        return "bg-teal-400 text-white "
+        return "bg-green-200 text-green-800  "
       case "pending":
-        return "bg-indigo-400 text-white "
+        return "bg-yellow-200 text-yellow-800 text-white "
       case "rejected":
-        return "bg-rose-500 text-white"
+        return "bg-red-200 text-red-800"
       default:
         return ""
     }
@@ -53,6 +54,7 @@ const VendorCard = ({ service }: Props) => {
     setSelectedFestivities([service.subEvent._id])
     setIsDrawerOpen(true)
   }
+
   return (
     <>
       <button className="border p-5 rounded-lg w-full relative">
@@ -61,36 +63,44 @@ const VendorCard = ({ service }: Props) => {
             <button onClick={handleInviteButtonClick}>
               <SquarePen size={18} className="text-gray-700" />
             </button>
-            <Trash size={18} className="text-red-500" />
+            {/* <Trash size={18} className="text-red-500" /> */}
           </div>
         )}
-        <Link
-          to={`/my-chats/${service.vendorProfile.user._id}`}
-          className="flex justify-between items-center"
+        <div
+          className="flex flex-col justify-center"
         >
           <div className="text-left">
-            <div className="text-lg mb-1 font-medium">
-              {service.servicesOffering.serviceName} - ${service.amount}
-            </div>
-            <div className="text-base text-gray-500">
-              Sub-Event:{" "}
+            <div className="text-sm text-slate-800 bg-sky-200 w-fit -ml-1 mb-1 px-3 rounded-lg">
               <span className="capitalize">{service.subEvent.name}</span>
             </div>
-            <div className="text-sm  text-gray-700 capitalize">
-              {service.vendorProfile.user.name}
+            <div className="text-lg  font-medium">
+              {service.servicesOffering.serviceName} - ${service.amount}
             </div>
-            <div className="text-sm text-gray-500 capitalize">
+            <div className="text-sm  text-gray-700 mb-2">
+              by {service.vendorProfile.user.name}
+            </div>
+            {/* <div className="text-sm text-gray-500 capitalize">
               {service.servicesOffering.serviceDescription}
+            </div> */}
+          </div>
+          <div className=" flex justify-between items-start mt-4">
+            <div
+              className={`px-2.5  -mx-1 py-0.5 capitalize rounded-full w-fit text-sm ${getStatusColor()}`}
+            >
+              {service.status === "accepted"
+                ? "Hired"
+                : service.status || "Invite"}
             </div>
+        <ButtonSecondary
+          text="Contact"
+          backgroundColor="bg-gray-300"
+          icon={<ArrowRight size={20} strokeWidth={1.5}/>}
+          onClick={() => {
+            navigate(`/my-chats/${service.vendorProfile.user._id}`)
+          }}
+        />
           </div>
-          <div
-            className={`px-3 py-1 capitalize rounded-full ${getStatusColor()}`}
-          >
-            {service.status === "accepted"
-              ? "Hired"
-              : service.status || "Invite"}
-          </div>
-        </Link>
+        </div>
       </button>
       <SwipeableDrawer
         anchor="bottom"
@@ -99,7 +109,6 @@ const VendorCard = ({ service }: Props) => {
         onOpen={() => setIsDrawerOpen(true)}
       >
         <div className=" p-4 space-y-1">
-          {/* close icon */}
           <div className="flex justify-end">
             <button onClick={() => setIsDrawerOpen(false)}>
               <Cross1Icon className="text-gray-700" />

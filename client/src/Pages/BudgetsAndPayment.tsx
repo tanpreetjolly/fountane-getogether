@@ -117,11 +117,13 @@ const BudgetsAndPayment: React.FC<Props> = () => {
   return (
     <div className="p-4 mx-auto lg:w-5/6">
       <div className="">
-        <div className=" bg-white border shadow-sm px-4 py-6 rounded-2xl">
+      <div className=" bg-white border shadow-sm px-4 py-6 rounded-2xl flex justify-between ">
+          <div>
           <h2 className="text-2xl pl-1 text-gray-900  font-medium">
             Compound Budget
           </h2>
-          <div className="pl-1 text-gray-700">for {event.name}</div>
+          <div className="pl-1 text-xl text-gray-700">for {event.name}</div>
+          </div>
           <div className="flex gap-2 mt-2 items-  lg:w-3/5">
             <div className="  w-[30%] relative  p-3.5  rounded-3xl flex flex-col gap-1 bg-opacity-80 bg-blueShade text-slate-800">
               <div className="text-center">
@@ -195,14 +197,16 @@ const BudgetsAndPayment: React.FC<Props> = () => {
         </div>
 
         <div className="p-4 bg-white mt-4 rounded-2xl border shadow-sm">
-          <h2 className="text-xl text-gray-900 px-1 font-medium mb-2 ">
-            Manage Payments
-          </h2>
-          <CustomTabs
-            labels={["Paid", "Failed", "Pending"]}
-            currentTab={currentTab}
-            onChange={handleTabChange}
-          />
+          <div className="flex justify-between items-center px-1">
+            <h2 className="text-xl text-gray-900 px-1 font-medium  ">
+              Manage Payments
+            </h2>
+            <CustomTabs
+              labels={["Paid", "Failed", "Pending"]}
+              currentTab={currentTab}
+              onChange={handleTabChange}
+            />
+          </div>
           <Box
             sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 2 }}
           >
