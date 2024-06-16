@@ -1,4 +1,4 @@
-import { User, Event, ChatMessage, Channel } from "../models"
+import { User, Event, ChatMessage, Channel, VendorProfile } from "../models"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
@@ -8,6 +8,7 @@ import {
 } from "../utils/imageHandlers/cloudinary"
 import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
 import { generateChatId } from "../utils/utilFunctions"
+import { create } from "domain"
 
 const getMe = async (req: Request, res: Response) => {
     const user = await User.findById(req.user.userId).populate([
@@ -45,13 +46,13 @@ const getMe = async (req: Request, res: Response) => {
         })
 
     const serviceEvents = await Event.find({
-        $or: [
-            {
-                // @ts-ignore
-                "serviceList.vendorProfile": user.vendorProfile?._id,
-                "serviceList.status": "accepted",
+        serviceList: {
+            $elemMatch: {
+                //@ts-ignore
+                vendorProfile: user.vendorProfile?._id,
+                status: "accepted",
             },
-        ],
+        },
     })
         .select("name startDate endDate host eventType budget")
         .populate({
@@ -255,20 +256,17 @@ const getChatMessages = async (req: Request, res: Response) => {
 
 const getChannelMessages = async (req: Request, res: Response) => {
     const { channelId } = req.params
-    const channelDetails = await Channel.findById(channelId)
-        .select("name allowedUsers")
-        .populate({
-            path: "allowedUsers",
-            select: "name email phoneNo profileImage",
-        })
-    if (!channelDetails) throw new NotFoundError("Channel Not Found")
+    const channel =
+        await Channel.findById(channelId).select("name allowedUsers")
 
-    const isUserAllowedInChannel = channelDetails.allowedUsers.some(
-        (user) =>
+    if (!channel) throw new NotFoundError("Channel Not Found")
+
+    const isUserAllowedInChannel = channel.allowedUsers.some(
+        (allowedUser) =>
             // @ts-ignore
-            user._id.toString() === req.user.userId.toString() ||
+            allowedUser.toString() === req.user.userId ||
             // @ts-ignore
-            user._id.toString() === req.user.vendorProfile?.toString(),
+            allowedUser.toString() === req.user.vendorProfile,
     )
     if (!isUserAllowedInChannel)
         throw new UnauthenticatedError(
@@ -279,8 +277,35 @@ const getChannelMessages = async (req: Request, res: Response) => {
         createdAt: 1,
     })
 
+    console.log(channel.allowedUsers)
+
+    const allowedUsers = await User.find({
+        //@ts-ignore
+        _id: { $in: channel.allowedUsers },
+    }).select("name email phoneNo profileImage")
+
+    const vendorProfile = await VendorProfile.find({
+        //@ts-ignore
+        _id: { $in: channel.allowedUsers },
+    })
+        .select("user")
+        .populate({
+            path: "user",
+            select: "name email phoneNo profileImage",
+        })
+
     res.status(StatusCodes.OK).json({
-        data: { messages, channelDetails },
+        data: {
+            messages,
+            channelDetails: {
+                _id: channel._id,
+                name: channel.name,
+                allowedUsers: [
+                    ...allowedUsers,
+                    ...vendorProfile.map((vp) => vp.user),
+                ],
+            },
+        },
         success: true,
         msg: "Messages Fetched Successfully",
     })

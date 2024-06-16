@@ -13,6 +13,44 @@ import { StatusCodes } from "http-status-codes"
 import { Types } from "mongoose"
 import { CHANNEL_TYPES, ROLES } from "../values"
 import sendMail from "../utils/sendMail"
+import { UserPayload } from "../types/express"
+
+function filterSubEvents(
+    subEvents: any[],
+    isGuest: any | undefined,
+    isVendor: any[],
+    user: UserPayload,
+) {
+    const subEventsAllowedSet = new Set<string>()
+
+    isGuest?.subEvents.forEach((subEventId: any) =>
+        subEventsAllowedSet.add(subEventId.toString()),
+    )
+    isVendor.forEach((service) => {
+        subEventsAllowedSet.add(service.subEvent._id.toString())
+    })
+
+    const subEventsAllowed = Array.from(subEventsAllowedSet)
+    const allowedSubEvents = subEvents.filter((subEvent) =>
+        subEventsAllowed.includes(subEvent._id.toString()),
+    )
+    return allowedSubEvents.map((subEvent) => {
+        return {
+            ...subEvent.toJSON(),
+            channels: subEvent.channels.filter(
+                (channel: any) =>
+                    channel.allowedUsers.some(
+                        (allowedUser: any) =>
+                            allowedUser.toString() === user.userId,
+                    ) ||
+                    channel.allowedUsers.some(
+                        (allowedUser: any) =>
+                            allowedUser.toString() === user.vendorProfile,
+                    ),
+            ),
+        }
+    })
+}
 
 export const getEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
@@ -54,10 +92,55 @@ export const getEvent = async (req: Request, res: Response) => {
 
     if (!event) throw new NotFoundError("Event Not Found")
 
-    const checkList = await Task.find({ eventId })
+    const user = req.user
+
+    //@ts-ignore
+    const isHosted = event.host._id.toString() === user.userId
+    const isGuest = event.userList.find(
+        (userListItem) =>
+            //@ts-ignore
+            userListItem.user._id.toString() === user?.userId &&
+            userListItem.status === "accepted",
+    )
+    const isVendor = event.serviceList.filter(
+        (service) =>
+            //@ts-ignore
+            service.vendorProfile._id.toString() === user?.vendorProfile &&
+            service.status === "accepted",
+    )
+
+    const data = {
+        _id: event._id,
+        name: event.name,
+        host: event.host,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        eventType: event.eventType,
+        budget: event.budget,
+        createdAt: event.createdAt,
+        updatedAt: event.updatedAt,
+        isHosted,
+        isGuest,
+        isVendor: isVendor.length > 0 ? isVendor : undefined,
+        checkList: isHosted ? await Task.find({ eventId }) : [],
+        //only subEvents are visible in which they are invited
+        subEvents: isHosted
+            ? event.subEvents
+            : filterSubEvents(event.subEvents, isGuest, isVendor, user),
+        //userList is only available to host
+        userList: isHosted ? event.userList : [],
+        //serviceList is available to host and vendor
+        serviceList: isHosted
+            ? event.serviceList
+            : isVendor.length > 0
+              ? event.serviceList.filter(
+                    (service) => service.status === "accepted",
+                )
+              : [],
+    }
 
     res.status(StatusCodes.OK).json({
-        data: { ...event.toJSON(), checkList },
+        data,
         success: true,
         msg: "Event Fetched Successfully",
     })

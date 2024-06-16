@@ -128,9 +128,37 @@ const ChannelChat = () => {
         >
           <Info size={20} />
         </button>
-        <button className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full">
+        <label
+          htmlFor="file-upload"
+          className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative"
+        >
+          {imagesFiles.length > 0 && (
+            <div className="flex gap-2 absolute bottom-12 right-0">
+              {imagesFiles.map((file) => (
+                <img
+                  key={file.name}
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  className="h-10 w-10 object-cover rounded-lg"
+                />
+              ))}
+            </div>
+          )}
           <Link size={20} />
-        </button>
+        </label>
+        <input
+          id="file-upload"
+          className="hidden"
+          type="file"
+          accept="image/jpeg, image/png, image/jpg, image/webp"
+          multiple
+          onChange={(e) => {
+            if (e.target.files) {
+              setImagesFiles(Array.from(e.target.files))
+            }
+          }}
+          name="profileImage"
+        />
         <Input
           fullWidth
           placeholder="Type a message..."

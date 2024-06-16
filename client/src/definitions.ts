@@ -37,9 +37,9 @@ export interface VendorProfileType {
 export interface EventShortType {
   _id: string
   name: string
+  host: OtherUserType
   startDate: string
   endDate: string
-  host: OtherUserType
   eventType: string
   budget: number
   createdAt: string
@@ -57,6 +57,7 @@ export interface OtherUserType {
 export interface ChannelType {
   _id: string
   name: string
+  type: string
   allowedUsers: string[]
 }
 
@@ -73,9 +74,8 @@ export interface SubEventType {
 export interface UserListType {
   _id: string
   user: OtherUserType
-  // role: string
-  // permission: [string]
   subEvents: [string]
+  expectedGuests: number
   createdAt: string
   status: string
 }
@@ -101,8 +101,9 @@ export interface TodoType {
   updatedAt: string
 }
 export interface EventFull extends EventShortType {
-  budget: number
-  venue: string
+  isHosted: boolean
+  isGuest: UserListType | undefined
+  isVendor: ServiceListType[] | undefined
   subEvents: SubEventType[]
   userList: UserListType[]
   serviceList: ServiceListType[]
@@ -201,7 +202,5 @@ export interface ChannelDetails {
   _id: string
   name: string
   allowedUsers: OtherUserType[]
-  type: string
   createdAt: string
-  updatedAt: string
 }

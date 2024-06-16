@@ -3,6 +3,7 @@ import { IEvent, IUserList, IServiceList } from "../types/models"
 import Channel from "./channel"
 import SubEvent from "./subEvent"
 import { CHANNEL_TYPES } from "../values"
+import { log } from "util"
 
 const UserList = new Schema<IUserList>(
     {
@@ -21,6 +22,10 @@ const UserList = new Schema<IUserList>(
             type: String,
             enum: ["accepted", "rejected", "pending"],
             default: "pending",
+        },
+        expectedGuests: {
+            type: Number,
+            default: 1,
         },
     },
     { timestamps: true },
@@ -123,16 +128,20 @@ EventSchema.pre("save", async function (next) {
         }
         const subEventUserList = event.userList
             .filter(
-                (user) => user.subEvents.includes(subEvent) && true,
-                // user.status === "accepted",
+                (user) =>
+                    user.subEvents.includes(subEvent) &&
+                    user.status === "accepted",
             )
             .map((user) => user.user)
+
         const vendorList = Array.from(
             new Set(
                 event.serviceList
                     .filter(
-                        (service) => service.subEvent === subEvent && true,
-                        // service.status === "accepted",
+                        (service) =>
+                            service.subEvent.toString() ===
+                                subEvent.toString() &&
+                            service.status === "accepted",
                     )
                     .map((service) => service.vendorProfile),
             ),

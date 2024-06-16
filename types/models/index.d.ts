@@ -83,10 +83,9 @@ export interface ITask extends Document {
 export interface IUserList {
     _id: Schema.Types.ObjectId
     user: Schema.Types.ObjectId
-    // role: string
-    permission: [string]
     subEvents: [Schema.Types.ObjectId]
     status: string
+    expectedGuests: number
     createdAt: Date
     updatedAt: Date
 }

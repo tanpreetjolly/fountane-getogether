@@ -73,6 +73,9 @@ const TodoList = () => {
       })
   }
 
+  if (!event.isHosted)
+    return <div>You are not authorized to view this page.</div>
+
   return (
     <div className="px-4 py-2">
       <h1 className="text-2xl pl-21 font-semibold my-2">{event?.name} Todos</h1>
