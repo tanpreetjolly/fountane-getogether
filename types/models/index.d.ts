@@ -112,7 +112,7 @@ export interface IChatMessage extends Document {
     senderId: Schema.Types.ObjectId
     chatId: Schema.Types.ObjectId
     message: string
-    image: string
+    image: Types.Array<string>
     createdAt: Date
     updatedAt: Date
 }

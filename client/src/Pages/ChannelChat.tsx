@@ -16,6 +16,8 @@ const ChannelChat = () => {
     null,
   )
   const [newMessage, setNewMessage] = useState("")
+  const [imagesFiles, setImagesFiles] = useState<File[]>([])
+  const [sendingMessage, setSendingMessage] = useState(false)
 
   const { channelId } = useParams()
   const { user } = useAppSelector((state) => state.user)
@@ -25,18 +27,22 @@ const ChannelChat = () => {
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== "") {
+      setSendingMessage(true)
       socket?.emit(
         "send:channel:message",
         {
           message: newMessage,
           channelId: channelId,
+          images: imagesFiles,
         },
         (res: ChatMessage) => {
           // console.log(res)
           setMessages((prev) => [...prev, res])
-          setNewMessage("")
+          setSendingMessage(false)
         },
       )
+      setNewMessage("")
+      setImagesFiles([])
     }
   }
 
@@ -98,9 +104,14 @@ const ChannelChat = () => {
             name={msg.senderId === userId ? user.name : channelDetails.name}
             date={msg.createdAt}
             isUserMessage={msg.senderId === userId}
-            imgSrc={msg.image}
+            images={msg.image}
           />
         ))}
+        {sendingMessage && (
+          <div className="flex justify-center items-center">
+            <Loader />
+          </div>
+        )}
       </div>
       <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
         <button

@@ -8,7 +8,7 @@ import { useEventContext } from "../context/EventContext"
 import { SubEventType } from "../definitions"
 import {
   CalendarDays,
-    CircleDollarSign,
+  CircleDollarSign,
   ListTodo,
   PlusCircle,
   Users,
@@ -120,7 +120,8 @@ const EventPage = () => {
       </div>
       <div className=" bg-white rounded-2xl min-h-[60vh]  p-4 border shadow-sm">
         <div className=" text-gray-700  pl-1 text-sm pb-1 italix">
-          Here are the upcoming festivities for <span className="font-medium">{event.name}</span>
+          Here are the upcoming festivities for{" "}
+          <span className="font-medium">{event.name}</span>
         </div>
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2 my-1  overflow-y-auto">
           {event.subEvents.length == 0 && (

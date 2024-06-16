@@ -14,6 +14,13 @@ import {
     addRemoveGuestsToSubEvent,
     updateBudget,
 } from "../controllers/event"
+import {
+    getTasks,
+    getTask,
+    createTasks,
+    updateTasks,
+    deleteTasks,
+} from "../controllers/task"
 
 // import Protect from "../middleware/permissionRequired"
 // import { Permissions } from "../values"
@@ -31,7 +38,9 @@ router.route("/:eventId/guest/invite/new").post(inviteNewGuest)
 
 router.route("/:eventId/vendor/offer").post(offerAVendor)
 
-router.use("/:eventId/task", TaskRouter)
+router.route("/:eventId/task").get(getTasks).post(createTasks)
+router.route("/:eventId/task/:taskId").get(getTask)
+router.route("/:eventId/task/:taskId").put(updateTasks).delete(deleteTasks)
 
 router.route("/:eventId/subEvent").post(createSubEvent)
 

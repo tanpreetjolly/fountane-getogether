@@ -1,17 +1,18 @@
+import { saveAs } from "file-saver"
 const MessageComponent = ({
   message,
   name,
   profileImage,
   date,
   isUserMessage,
-  imgSrc,
+  images,
 }: {
   message: string
   name: string
   profileImage: string | undefined
   date: string
   isUserMessage: boolean
-  imgSrc?: string
+  images: string[]
 }) => {
   return (
     <div
@@ -37,6 +38,12 @@ const MessageComponent = ({
             <button
               data-tooltip-target="download-image"
               className="inline-flex items-center justify-center rounded-full h-10 w-10 bg-white/30 hover:bg-white/50 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50"
+              onClick={(e) => {
+                e.stopPropagation()
+                images.forEach((img, index) => {
+                  saveAs(img, `image-${index}.png`)
+                })
+              }}
             >
               <svg
                 className="w-5 h-5 text-white"
@@ -63,7 +70,9 @@ const MessageComponent = ({
               <div className="tooltip-arrow" data-popper-arrow></div>
             </div>
           </div>
-          {imgSrc && <img src={imgSrc} className="rounded-lg" />}
+          {images.map((img, index) => (
+            <img key={index} src={img} className="rounded-lg" />
+          ))}
         </div>
       </div>
     </div>

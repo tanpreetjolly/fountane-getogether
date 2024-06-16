@@ -8,7 +8,6 @@ import {
   EventShortType,
   ServiceType,
 } from "../definitions"
-
 /*
  ********************** Configuring Axios **********************
  */
@@ -223,3 +222,17 @@ export const updateService = (
   serviceId: string,
   serviceData: ServiceType,
 ) => API.put(`/vendor/${vendorId}/service/${serviceId}`, serviceData)
+
+export const addTask = (
+  eventId: string,
+  taskData: { name: string; completed: boolean },
+) => API.post(`/event/${eventId}/task`, taskData)
+
+export const updateTask = (
+  eventId: string,
+  taskId: string,
+  taskData: { name: string; completed: boolean },
+) => API.put(`/event/${eventId}/task/${taskId}`, taskData)
+
+export const deleteTask = (eventId: string, taskId: string) =>
+  API.delete(`/event/${eventId}/task/${taskId}`)

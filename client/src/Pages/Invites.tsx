@@ -159,7 +159,9 @@ const Invites = () => {
                   {service.servicesOffering.serviceName}
                 </CardDescription>
                 <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
-                  <Link to={`/my-chats/${service.vendorProfile}`}>Discuss</Link>
+                  <Link to={`/my-chats/${service.vendorProfile.user}`}>
+                    Discuss
+                  </Link>
                 </div>
               </CardHeader>
               <CardContent className=" p-4 pt-0">

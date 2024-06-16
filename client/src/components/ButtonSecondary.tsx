@@ -1,12 +1,12 @@
 type Props = {
-  text: string;
-  onClick: () => void;
-  icon?: React.ReactNode;
-  prim?: boolean;
-  fontSize?: string;
-  fullWidth?: boolean;
-  backgroundColor?: string;
-};
+  text: string
+  onClick: () => void
+  icon?: React.ReactNode
+  prim?: boolean
+  fontSize?: string
+  fullWidth?: boolean
+  backgroundColor?: string
+}
 
 const ButtonSecondary = (props: Props) => {
   return (
@@ -23,7 +23,7 @@ const ButtonSecondary = (props: Props) => {
       </span>
       {props.icon}
     </button>
-  );
-};
+  )
+}
 
-export default ButtonSecondary;
+export default ButtonSecondary

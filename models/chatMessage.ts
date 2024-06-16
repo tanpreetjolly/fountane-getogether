@@ -16,9 +16,7 @@ const chatMessageSchema = new Schema<IChatMessage>(
             type: String,
             required: [true, "Please Provide Message."],
         },
-        image: {
-            type: String,
-        },
+        image: { type: [String], default: [] },
     },
     { timestamps: true },
 )

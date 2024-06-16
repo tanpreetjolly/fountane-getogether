@@ -2,7 +2,6 @@ import { User, Event, ChatMessage, Channel } from "../models"
 import { StatusCodes } from "http-status-codes"
 import { BadRequestError, UnauthenticatedError, NotFoundError } from "../errors"
 import { Request, Response } from "express"
-import mongoose from "mongoose"
 import {
     uploadProfileImage as cloudinaryUploadProfileImage,
     deleteProfileImage as cloudinaryDeleteProfileImage,
@@ -94,6 +93,7 @@ const getMe = async (req: Request, res: Response) => {
             select: "name startDate endDate venue",
         })
         .populate("serviceList.servicesOffering")
+        .populate("serviceList.vendorProfile")
 
     // console.log(eventsNotifications);
 
@@ -107,7 +107,8 @@ const getMe = async (req: Request, res: Response) => {
             ),
             serviceList: event.serviceList.filter(
                 (service) =>
-                    (service.vendorProfile.toString() ===
+                    //@ts-ignore
+                    (service.vendorProfile._id.toString() ===
                         //@ts-ignore
                         user?.vendorProfile?._id?.toString() ||
                         null) &&

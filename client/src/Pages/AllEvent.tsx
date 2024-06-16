@@ -34,8 +34,7 @@ const AllEvent = () => {
           <div className="flex justify-between items-center ">
             <div>
               <div className="text-2xl md:text-2xl pl-1 font-medium text-zinc-700">
-                Good Morning,{" "}
-                <br className="md:hidden"/>
+                Good Morning, <br className="md:hidden" />
                 <span className="font-semibold text-gray-800">
                   {user.name}{" "}
                 </span>

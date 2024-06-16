@@ -112,7 +112,6 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
               </div>
             </div>
           </div>
-          
         </div>
         <div
           className={`text-sm mb-2 ml-2 px-2 py-0.5 border rounded-full mt-2 w-fit  ${user.userId === event.host._id ? "text-rose-700 border-rose-700 " : " border-zinc-700 text-zinc-700"}`}
@@ -137,11 +136,11 @@ const EventCard: FC<EventCardProps> = ({ event }) => {
             </div>
           )}
           <div className="ml-auto">
-          <ButtonSecondary
-            text="View Event"
-            onClick={() => navigate(`/events/${event._id}`)}
-            icon={<ArrowRightToLine  size={18} />}
-          />
+            <ButtonSecondary
+              text="View Event"
+              onClick={() => navigate(`/events/${event._id}`)}
+              icon={<ArrowRightToLine size={18} />}
+            />
           </div>
         </div>
       </div>

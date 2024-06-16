@@ -4,60 +4,73 @@ import { CheckIcon, EditIcon, TrashIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useEventContext } from "@/context/EventContext"
-
-type Todo = {
-  id: number
-  text: string
-  completed: boolean
-}
+import { addTask, updateTask, deleteTask } from "@/api"
+import { TodoType } from "@/definitions"
 
 const TodoList = () => {
-  const initialState = [
-    // Create an intial state of todos related to festivities of a wedding
-    { id: 1, text: "Send invitations", completed: false },
-    { id: 2, text: "Book a venue", completed: false },
-    { id: 3, text: "Hire a cater", completed: false },
-    { id: 4, text: "Hire a photographer", completed: false },
-  ]
-  const [todos, setTodos] = useState<Todo[]>(initialState)
-  const [newTodo, setNewTodo] = useState("")
-  const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
-  const { event } = useEventContext()
+  const [newTodo, setNewTodo] = useState<string>("")
+  const [editingTodo, setEditingTodo] = useState<TodoType | null>(null)
+
+  const { event, updateEvent } = useEventContext()
+  const todo = event?.checkList || []
+
+  if (!event) return null
 
   const addTodo = () => {
     if (newTodo.trim()) {
-      setTodos([...todos, { id: Date.now(), text: newTodo, completed: false }])
-      setNewTodo("")
+      addTask(event._id, { name: newTodo, completed: false })
+        .then(() => {
+          updateEvent()
+          setNewTodo("")
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 
-  const toggleComplete = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-      ),
-    )
+  const toggleComplete = (todoItem: TodoType) => {
+    updateTask(event._id, todoItem._id, {
+      name: todoItem.name,
+      completed: !todoItem.completed,
+    })
+      .then(() => {
+        updateEvent()
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id))
+  const deleteTodo = (todoItem: TodoType) => {
+    deleteTask(event._id, todoItem._id)
+      .then(() => {
+        updateEvent()
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
-  const editTodo = (todo: Todo) => {
+  const editTodo = (todo: TodoType) => {
     setEditingTodo(todo)
-    setNewTodo(todo.text)
+    setNewTodo(todo.name)
   }
 
   const updateTodo = () => {
-    if (editingTodo) {
-      setTodos(
-        todos.map((todo) =>
-          todo.id === editingTodo.id ? { ...todo, text: newTodo } : todo,
-        ),
-      )
-      setEditingTodo(null)
-      setNewTodo("")
-    }
+    if (!editingTodo) return
+    updateTask(event._id, editingTodo._id, {
+      name: newTodo,
+      completed: false,
+    })
+      .then(() => {
+        updateEvent()
+        setEditingTodo(null)
+        setNewTodo("")
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   return (
@@ -83,19 +96,19 @@ const TodoList = () => {
         )}
       </div>
       <ul>
-        {todos
+        {todo
           .sort((a, b) =>
             a.completed === b.completed ? 0 : a.completed ? 1 : -1,
           )
           .map((todo) => (
             <li
-              key={todo.id}
+              key={todo._id}
               className="flex items-center justify-between mb-2 bg-white rounded-md p-4 shadow-sm"
             >
               <div className="flex items-center">
                 <Checkbox
                   checked={todo.completed}
-                  onCheckedChange={() => toggleComplete(todo.id)}
+                  onCheckedChange={() => toggleComplete(todo)}
                   className="mr-2"
                 />
                 <span
@@ -103,7 +116,7 @@ const TodoList = () => {
                     todo.completed ? "text-gray-500 line-through" : ""
                   }`}
                 >
-                  {todo.text}
+                  {todo.name}
                 </span>
               </div>
               <div>
@@ -114,7 +127,7 @@ const TodoList = () => {
                 >
                   <EditIcon className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" onClick={() => deleteTodo(todo.id)}>
+                <Button variant="ghost" onClick={() => deleteTodo(todo)}>
                   <TrashIcon className="h-4 w-4 text-red-500" />
                 </Button>
               </div>

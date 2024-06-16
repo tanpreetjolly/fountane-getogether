@@ -136,7 +136,6 @@ const ManageGuests = () => {
           {searchResult ? "Search Results" : "Guests You've Invited"}
         </h2>
         <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
-
           {filteredGuests.map((guest) => (
             <div
               key={guest._id}
@@ -162,7 +161,7 @@ const ManageGuests = () => {
                 </div>
                 <div className="ml-auto w-fit">
                   <ButtonSecondary
-                  backgroundColor="bg-blueShade"
+                    backgroundColor="bg-blueShade"
                     text={capitalizeFirstLetter(
                       guestList.find((user) => user.user._id === guest._id)
                         ?.status || "Invite",

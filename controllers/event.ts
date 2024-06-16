@@ -5,6 +5,7 @@ import {
     Event,
     Services,
     SubEvent,
+    Task,
     User,
     VendorProfile,
 } from "../models"
@@ -52,8 +53,11 @@ export const getEvent = async (req: Request, res: Response) => {
     ])
 
     if (!event) throw new NotFoundError("Event Not Found")
+
+    const checkList = await Task.find({ eventId })
+
     res.status(StatusCodes.OK).json({
-        data: event,
+        data: { ...event.toJSON(), checkList },
         success: true,
         msg: "Event Fetched Successfully",
     })
@@ -62,8 +66,6 @@ export const createEvent = async (req: Request, res: Response) => {
     const { name, startDate, endDate, budget, eventType } = req.body
     const host = req.user
 
-    console.log(host)
-
     const createEvent = new Event({
         name,
         startDate,
@@ -71,7 +73,6 @@ export const createEvent = async (req: Request, res: Response) => {
         budget,
         host: host.userId,
         eventType,
-        userList: [host.userId],
     })
 
     await createEvent.save()

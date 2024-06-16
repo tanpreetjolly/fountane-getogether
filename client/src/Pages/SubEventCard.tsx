@@ -2,7 +2,6 @@ import { To, useNavigate } from "react-router-dom"
 import { SubEventType } from "../definitions"
 import { format } from "date-fns"
 import {
-  Bell,
   CalendarDays,
   Loader,
   MapPin,

@@ -78,7 +78,10 @@ app.use(cors(corsOptions)) //enable CORS
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"))
 
 //Socket.io
-socketIo(server, { cors: { origin: allowedOrigins } })
+socketIo(server, {
+    cors: { origin: allowedOrigins },
+    maxHttpBufferSize: 4 * 1e6,
+})
 
 const logDir: string = path.join(__dirname, "./log")
 //create dir if not exist

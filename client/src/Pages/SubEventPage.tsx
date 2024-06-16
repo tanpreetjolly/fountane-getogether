@@ -77,7 +77,7 @@ const Channel = ({ channel }: { channel: ChannelType }) => {
       <div className="flex items-center gap-1">{channelDescription}</div>
       <div className="ml-auto flex items-center mt-4">
         <ButtonSecondary
-        backgroundColor="bg-blueShade"
+          backgroundColor="bg-blueShade"
           onClick={() => {
             navigate(`channel/${channel._id}`)
           }}

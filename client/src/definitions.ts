@@ -92,12 +92,21 @@ export interface ServiceListType {
   createdAt: string
 }
 
+export interface TodoType {
+  _id: string
+  eventId: string
+  name: string
+  completed: boolean
+  createdAt: string
+  updatedAt: string
+}
 export interface EventFull extends EventShortType {
   budget: number
   venue: string
   subEvents: SubEventType[]
   userList: UserListType[]
   serviceList: ServiceListType[]
+  checkList: TodoType[]
 }
 
 export interface VendorSearchType {
@@ -140,7 +149,12 @@ export interface ServiceTypeNotifications {
   _id: string
   amount: number
   paymentStatus: string
-  vendorProfile: string
+  vendorProfile: {
+    _id: string
+    user: string
+    services: String[]
+    createdAt: string
+  }
   subEvent: SubEventShort
   status: string
   servicesOffering: ServiceType
@@ -177,7 +191,7 @@ export interface ChatMessage {
   _id: string
   senderId: string
   message: string
-  image: string
+  image: string[]
   createdAt: string
   updatedAt: string
   chatId: string

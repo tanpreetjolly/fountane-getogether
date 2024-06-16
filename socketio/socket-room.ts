@@ -1,6 +1,7 @@
 import { Server as SocketIOServer, Socket } from "socket.io"
 import { Channel, ChatMessage } from "../models"
 import { generateChatId } from "../utils/utilFunctions"
+import { saveImages } from "../utils/imageHandlers/cloudinary"
 
 export default (io: SocketIOServer | null, socket: Socket) => {
     if (!io) return
@@ -14,7 +15,7 @@ export default (io: SocketIOServer | null, socket: Socket) => {
         data: {
             message: string
             receiverId: string
-            image: string
+            images: Buffer[]
         },
         cb: any,
     ) => {
@@ -26,7 +27,7 @@ export default (io: SocketIOServer | null, socket: Socket) => {
                     data.receiverId.toString(),
                 ),
                 message: data.message,
-                image: data.image,
+                image: data.images ? await saveImages(data.images) : [],
             })
             io.to(data.receiverId.toString()).emit("chat message", newMessage)
             cb(newMessage)
@@ -39,7 +40,7 @@ export default (io: SocketIOServer | null, socket: Socket) => {
         data: {
             message: string
             channelId: string
-            image: string
+            images: Buffer[]
         },
         cb: any,
     ) => {
@@ -60,7 +61,7 @@ export default (io: SocketIOServer | null, socket: Socket) => {
                 senderId: userId,
                 chatId: data.channelId,
                 message: data.message,
-                image: data.image,
+                image: data.images ? await saveImages(data.images) : [],
             })
             io.to(
                 channel.allowedUsers

@@ -32,7 +32,11 @@ type GroupedServices = {
 
 interface Props {}
 
-const CustomTabs: React.FC<{ labels: string[], currentTab: number, onChange: (index: number) => void }> = ({ labels, currentTab, onChange }) => {
+const CustomTabs: React.FC<{
+  labels: string[]
+  currentTab: number
+  onChange: (index: number) => void
+}> = ({ labels, currentTab, onChange }) => {
   return (
     <div className="flex space-x-1">
       {labels.map((label, index) => (
@@ -104,13 +108,12 @@ const BudgetsAndPayment: React.FC<Props> = () => {
 
   const COLORS = ["#aecaf4", "#E0E0E0"]
 
-  const filterServices = (status: string) => {
-    return event.serviceList.filter(
-      (service) => service.paymentStatus === status,
-    )
-  }
+  // const filterServices = (status: string) => {
+  //   return event.serviceList.filter(
+  //     (service) => service.paymentStatus === status,
+  //   )
+  // }
 
-  
   return (
     <div className="p-4 mx-auto lg:w-5/6">
       <div className="">
@@ -200,51 +203,59 @@ const BudgetsAndPayment: React.FC<Props> = () => {
             currentTab={currentTab}
             onChange={handleTabChange}
           />
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 2 }}>
+          <Box
+            sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 2 }}
+          >
             {Object.entries(groupedServices).map(
               ([vendorId, { vendorName, services }]) => {
                 const filteredServices = services.filter((service) => {
                   if (currentTab === 0) return service.paymentStatus === "paid"
-                  if (currentTab === 1) return service.paymentStatus === "failed"
+                  if (currentTab === 1)
+                    return service.paymentStatus === "failed"
                   return service.paymentStatus === "pending"
                 })
 
                 if (filteredServices.length === 0) return null
 
                 return (
-                  <div key={vendorId} className="bg-gray-50 shadow-sm p-3 rounded-md ">
+                  <div
+                    key={vendorId}
+                    className="bg-gray-50 shadow-sm p-3 rounded-md "
+                  >
                     <h3 className="text-base bg-blueShade text-gray-800  font-medium w-fit rounded-lg px-3 py-1 mb-2 ">
                       {vendorName}
                     </h3>
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
-                    {filteredServices.map((service) => (
-                      <div
-                        key={service._id}
-                        className="border p-4  bg-white rounded-xl shadow-sm my-1"
-                      >
-                        <div className="flex justify-between items-start">
-                          <Box>
-                            <div className="">
-                              {service.servicesOffering.serviceName + " "}
+                      {filteredServices.map((service) => (
+                        <div
+                          key={service._id}
+                          className="border p-4  bg-white rounded-xl shadow-sm my-1"
+                        >
+                          <div className="flex justify-between items-start">
+                            <Box>
+                              <div className="">
+                                {service.servicesOffering.serviceName + " "}
+                              </div>
+                              <div className="text-sm text-slate-600">
+                                {service.subEvent.name}
+                              </div>
+                              <div className="text-gray-900 mt-4  bg-yellowShade px-3 text-sm rounded-lg py-1">
+                                Payment: ${service.amount}
+                              </div>
+                            </Box>
+                            <div
+                              className={`p-1 px-3 capitalize rounded-full  font-medium flex items-center text-sm  ${service.paymentStatus === "paid" ? "text-green-500" : service.paymentStatus === "failed" ? "text-red-500" : "text-amber-500"}`}
+                            >
+                              {service.paymentStatus == "pending" ? (
+                                <CircleDot className="inline mr-1" size={16} />
+                              ) : (
+                                <CheckCheck className="inline mr-1" size={16} />
+                              )}
+                              {service.paymentStatus}
                             </div>
-                            <div className="text-sm text-slate-600">{service.subEvent.name}</div>
-                            <div className="text-gray-900 mt-4  bg-yellowShade px-3 text-sm rounded-lg py-1">
-                              Payment: ${service.amount}
-                            </div>
-                          </Box>
-                          <div
-                            className={`p-1 px-3 capitalize rounded-full  font-medium flex items-center text-sm  ${service.paymentStatus === "paid" ? "text-green-500" : service.paymentStatus === "failed" ? "text-red-500" : "text-amber-500"}`}
-                          >
-                            {service.paymentStatus == "pending" ? (
-                              <CircleDot className="inline mr-1" size={16} />
-                            ) : (
-                              <CheckCheck className="inline mr-1" size={16} />
-                            )}
-                            {service.paymentStatus}
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                     </div>
                   </div>
                 )
