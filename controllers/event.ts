@@ -278,15 +278,15 @@ export const createSubEventChannel = async (req: Request, res: Response) => {
     if (name === "") throw new BadRequestError("Channel Name is required")
 
     // make a set of allowedUsers
-    const allowedUsersSet = Array.from(new Set(allowedUsers))
+    const allowedUsersSetArray = Array.from(new Set(allowedUsers))
     //check all allowed users are mongoose object id
-    const isValid = allowedUsersSet.every((id: any) =>
+    const isValid = allowedUsersSetArray.every((id: any) =>
         Types.ObjectId.isValid(id as string),
     )
     if (!isValid) throw new BadRequestError("Invalid User Ids")
     const channel = await Channel.create({
         name,
-        allowedUsers: allowedUsersSet,
+        allowedUsers: allowedUsersSetArray,
         type: CHANNEL_TYPES.OTHER,
     })
 
