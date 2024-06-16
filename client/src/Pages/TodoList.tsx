@@ -77,14 +77,17 @@ const TodoList = () => {
     return <div>You are not authorized to view this page.</div>
 
   return (
-    <div className="px-4 py-2">
-      <h1 className="text-2xl pl-21 font-semibold my-2">{event?.name} Todos</h1>
-      <div className="flex items-center mb-4">
+    <div className="px-5 py-4 lg:w-4/5 bg-white rounded-2xl my-4 mx-auto">
+      <div className="flex justify-between items-end border-b pb-1 mb-1">
+      <h1 className="text-2xl  font-medium my-2 text-slate-800 mb-3">
+        Event Checklist for <br /> <span className="font-medium text-xl">{event?.name}</span>
+      </h1>
+      <div className="flex items-center mb-4 md:w-1/2">
         <Input
           placeholder="Add a new todo"
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
-          className="flex-grow mr-2"
+          className="flex-grow mr-2 bg-white"
         />
         {editingTodo ? (
           <Button onClick={updateTodo}>
@@ -97,6 +100,7 @@ const TodoList = () => {
             Add
           </Button>
         )}
+      </div>
       </div>
       <ul>
         {todo
