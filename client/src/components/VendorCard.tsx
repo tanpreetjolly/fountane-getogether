@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Button from "./Button"
 import { IoClose, IoPersonAdd } from "react-icons/io5"
@@ -6,31 +6,28 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
-import { VendorSaveType } from "@/definitions"
-import { useParams } from "react-router-dom"
+import { VendorSaveType, ItemType } from "@/definitions"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 import toast from "react-hot-toast"
 import ButtonSecondary from "./ButtonSecondary"
+import { makeAOffer } from "@/api"
 
 type Props = {
   vendor: VendorSaveType
 }
 
+interface FestivityType {
+  subEventId: string
+  item: ItemType
+}
+
 const VendorCard = ({ vendor }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [selectedFestivities, setSelectedFestivities] = useState<
-    { subEventId: string; itemIds: string[] }[]
+    FestivityType[]
   >([])
-  const { event, loadingEvent } = useEventContext()
-  const { subEventId } = useParams()
-
-  useEffect(() => {
-    if (!event) return
-    if (!subEventId) return
-
-    setSelectedFestivities([{ subEventId, itemIds: [] }])
-  }, [event, subEventId])
+  const { event, loadingEvent, updateEvent } = useEventContext()
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
@@ -45,16 +42,33 @@ const VendorCard = ({ vendor }: Props) => {
 
     // You can use the selectedFestivities array to send the offer with the selected festivity IDs and item IDs
     console.log(selectedFestivities)
+    toast.promise(
+      makeAOffer(event._id, {
+        vendorProfileId: vendor.vendorProfileId,
+        subEventIds: selectedFestivities.map((f) => f.subEventId),
+        selectedItemIds: selectedFestivities.map((f) => f.item._id),
+        serviceId: vendor.servicesOffering._id,
+      }),
+      {
+        loading: "Sending Request...",
+        success: (data) => {
+          console.log(data)
+          updateEvent()
+          return "Offer Sent"
+        },
+        error: (error) => {
+          console.log(error.response)
+          return "Something went wrong!"
+        },
+      },
+    )
 
     setIsDrawerOpen(false)
   }
 
-  const calculateTotalPrice = (
-    selectedFestivities: { subEventId: string; itemIds: string[] }[],
-    basePrice: number,
-  ) => {
+  const calculateTotalPrice = (selectedFestivities: FestivityType[]) => {
     return selectedFestivities.reduce(
-      (total, festivity) => total + basePrice * festivity.itemIds.length,
+      (total, festivity) => total + festivity.item.price,
       0,
     )
   }
@@ -69,9 +83,11 @@ const VendorCard = ({ vendor }: Props) => {
         return prevFestivities.filter(
           (festivity) => festivity.subEventId !== festivityId,
         )
-      } else {
-        return [...prevFestivities, { subEventId: festivityId, itemIds: [] }]
       }
+      return [
+        ...prevFestivities,
+        { subEventId: festivityId, item: vendor.servicesOffering.items[0] },
+      ]
     })
   }
 
@@ -83,18 +99,14 @@ const VendorCard = ({ vendor }: Props) => {
     setIsDrawerOpen(true)
   }
 
-  const handleItemChange = (festivityId: string, itemId: string) => {
-    setSelectedFestivities((prevFestivities) => {
-      const updatedFestivities = prevFestivities.map((festivity) => {
-        if (festivity.subEventId === festivityId) {
-          const updatedItemIds = festivity.itemIds.includes(itemId)
-            ? festivity.itemIds.filter((id) => id !== itemId)
-            : [...festivity.itemIds, itemId]
-          return { ...festivity, itemIds: updatedItemIds }
+  const handleItemChange = (festivityId: string, item: ItemType) => {
+    setSelectedFestivities((p) => {
+      return p.map((f) => {
+        if (f.subEventId === festivityId) {
+          f.item = item
         }
-        return festivity
+        return f
       })
-      return updatedFestivities
     })
   }
 
@@ -113,7 +125,10 @@ const VendorCard = ({ vendor }: Props) => {
               {vendor.servicesOffering.serviceDescription}
             </div>
             <div className="bg-purpleShade w-fit px-3 bg-opacity-85 rounded-full text-[13px] py-1 mt-3 -mx-1">
-              Starting from ${vendor.servicesOffering.price}
+              Starting From $
+              {Math.min(
+                ...vendor.servicesOffering.items.map((item) => item.price),
+              )}
             </div>
           </div>
           <div className="ml-auto mt-4">
@@ -175,16 +190,14 @@ const VendorCard = ({ vendor }: Props) => {
                 <p className="text-sm text-muted-foreground">
                   {item.description}
                 </p>
+                <p className="text-sm text-muted-foreground">${item.price}</p>
               </div>
             ))}
           </div>
           <List className="relative">
             {festivityList.map((festivity) => (
               <div key={festivity._id} className="mb-4">
-                <ListItem
-                  button
-                  onClick={() => handleFestivityChange(festivity._id)}
-                >
+                <ListItem onClick={() => handleFestivityChange(festivity._id)}>
                   <Checkbox
                     edge="start"
                     checked={selectedFestivities.some(
@@ -206,17 +219,14 @@ const VendorCard = ({ vendor }: Props) => {
                         key={item._id}
                         dense
                         className="flex-initial"
-                        button
-                        onClick={() =>
-                          handleItemChange(festivity._id, item._id)
-                        }
+                        onClick={() => handleItemChange(festivity._id, item)}
                       >
                         <Checkbox
                           edge="start"
                           checked={selectedFestivities.some(
                             (selectedFestivity) =>
                               selectedFestivity.subEventId === festivity._id &&
-                              selectedFestivity.itemIds.includes(item._id),
+                              selectedFestivity.item === item,
                           )}
                           tabIndex={-1}
                           disableRipple
@@ -230,11 +240,8 @@ const VendorCard = ({ vendor }: Props) => {
             ))}
           </List>
           <div className="py-3 px-2 text-xl font-medium text-indigo-700">
-            Total Price: $
-            {calculateTotalPrice(
-              selectedFestivities,
-              vendor.servicesOffering.price,
-            )}
+            Estimated Total Price: $
+            {calculateTotalPrice(selectedFestivities).toFixed()}
           </div>
         </div>
       </SwipeableDrawer>

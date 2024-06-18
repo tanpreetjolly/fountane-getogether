@@ -29,7 +29,10 @@ const formatDate = (date: string) => {
 const VendorHome: React.FC<{}> = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState<{
+    eventId: string
+    serviceListId: string
+  } | null>(null)
   const [offerPrice, setOfferPrice] = useState("")
 
   const { user } = useAppSelector((state) => state.user)
@@ -59,19 +62,32 @@ const VendorHome: React.FC<{}> = () => {
     )
   }
 
+  const handleAcceptVendorNewOffer = (
+    eventId: string,
+    serviceListId: string,
+    status: string,
+    newOfferPrice: number,
+  ) => {
+    dispatch(
+      acceptRejectNotification(eventId, {
+        status: status,
+        serviceListId: serviceListId,
+        newOfferPrice,
+        offerBy: "vendor",
+      }),
+    )
+  }
+
   let count = 0
   serviceNotifications.map((notification) =>
     notification.serviceList.map((_service) => count++),
   )
-  const handleNewOffer = () => {
-    setShowModal(true)
-  }
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOfferPrice(e.target.value)
   }
   return (
     <div className="px-4 pt-2">
-      {showModal && (
+      {showModal !== null && (
         <div className="fixed inset-0 flex items-center justify-center z-50 outline w-screen bg-gray-700 bg-opacity-50">
           <div className="bg-white rounded-lg p-6 shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Make a New Offer</h2>
@@ -90,13 +106,21 @@ const VendorHome: React.FC<{}> = () => {
             <div className="flex justify-end">
               <button
                 className="bg-indigo-500 text-white rounded-md px-4 py-2"
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  handleAcceptVendorNewOffer(
+                    showModal.eventId,
+                    showModal.serviceListId,
+                    "pending",
+                    parseInt(offerPrice, 10),
+                  )
+                  setShowModal(null)
+                }}
               >
                 Submit
               </button>
               <button
                 className="ml-2 bg-gray-200 rounded-md px-4 py-2"
-                onClick={() => setShowModal(false)}
+                onClick={() => setShowModal(null)}
               >
                 Cancel
               </button>
@@ -152,13 +176,30 @@ const VendorHome: React.FC<{}> = () => {
                     <UserIcon className="mr-2 text-indigo-500" size={16} />
                     <span>{notification.host.name}</span>
                   </div>
+                  <div className="flex items-center">
+                    <span>Estimated Guest: {service.estimatedGuests}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span>Offered Price: ${service.planSelected.price}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span>
+                      Plan Selected:
+                      {service.planSelected.name}
+                    </span>
+                  </div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end p-4 pt-0">
                 <Button
                   variant="outline"
                   className="mr-2"
-                  onClick={handleNewOffer}
+                  onClick={() =>
+                    setShowModal({
+                      eventId: notification.eventId,
+                      serviceListId: service._id,
+                    })
+                  }
                 >
                   New Offer
                 </Button>

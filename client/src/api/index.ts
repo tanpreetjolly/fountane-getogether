@@ -186,6 +186,7 @@ export const acceptRejectInvite = (
     userListId?: string
     serviceListId?: string
     newOfferPrice?: number
+    offerBy?: string
   },
 ) => API.post(`/event/${eventId}/guest/invite/accept-reject`, eventUpdate)
 
@@ -195,6 +196,7 @@ export const makeAOffer = (
     vendorProfileId: string
     subEventIds: string[]
     serviceId: string
+    selectedItemIds: string[]
   },
 ) => API.post(`/event/${eventId}/vendor/offer`, offerData)
 

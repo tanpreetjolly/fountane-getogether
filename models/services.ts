@@ -10,11 +10,14 @@ const ServicesSchema = new Schema<IServices>({
         type: String,
         required: [true, "Service Description is required."],
     },
-    price: { type: Number, required: [true, "Price is required."] },
+    serviceImage: {
+        type: String,
+    },
     items: [
         {
             name: String,
             description: String,
+            price: Number,
         },
     ],
 })

@@ -44,19 +44,29 @@ const ServiceList = new Schema<IServiceList>(
             ref: "SubEvent",
             required: true,
         },
+        estimatedGuests: {
+            type: String,
+            default: "NA",
+        },
         status: {
             type: String,
             enum: ["accepted", "rejected", "pending"],
             default: "pending",
+        },
+        offerBy: {
+            type: String,
+            enum: ["vendor", "user"],
+            default: "user",
         },
         servicesOffering: {
             type: Schema.Types.ObjectId,
             required: [true, "servicesOffering is required"],
             ref: "Services",
         },
-        amount: {
-            type: Number,
-            required: [true, "Please Provide Amount."],
+        planSelected: {
+            name: String,
+            description: String,
+            price: Number,
         },
         paymentStatus: {
             type: String,
