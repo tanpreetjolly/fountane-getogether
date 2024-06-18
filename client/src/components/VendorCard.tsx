@@ -20,6 +20,8 @@ type Props = {
 interface FestivityType {
   subEventId: string
   item: ItemType
+  estimatedGuestNo: string
+  offerPrice: string
 }
 
 const VendorCard = ({ vendor }: Props) => {
@@ -48,6 +50,8 @@ const VendorCard = ({ vendor }: Props) => {
         subEventIds: selectedFestivities.map((f) => f.subEventId),
         selectedItemIds: selectedFestivities.map((f) => f.item._id),
         serviceId: vendor.servicesOffering._id,
+        estimatedGuestNos: selectedFestivities.map((f) => f.estimatedGuestNo),
+        offerPrices: selectedFestivities.map((f) => f.offerPrice),
       }),
       {
         loading: "Sending Request...",
@@ -66,12 +70,10 @@ const VendorCard = ({ vendor }: Props) => {
     setIsDrawerOpen(false)
   }
 
-  const calculateTotalPrice = (selectedFestivities: FestivityType[]) => {
-    return selectedFestivities.reduce(
-      (total, festivity) => total + festivity.item.price,
-      0,
-    )
-  }
+  const estimatedTotalPrice = selectedFestivities.reduce(
+    (total, festivity) => total + parseInt(festivity.offerPrice),
+    0,
+  )
 
   const handleFestivityChange = (festivityId: string) => {
     setSelectedFestivities((prevFestivities) => {
@@ -86,7 +88,19 @@ const VendorCard = ({ vendor }: Props) => {
       }
       return [
         ...prevFestivities,
-        { subEventId: festivityId, item: vendor.servicesOffering.items[0] },
+        {
+          subEventId: festivityId,
+          item: vendor.servicesOffering.items[0],
+          offerPrice: vendor.servicesOffering.items[0].price.toString(),
+          estimatedGuestNo: event.userList
+            .reduce((acc, user) => {
+              if (user.subEvents.some((subEvent) => subEvent === festivityId)) {
+                return acc + 1
+              }
+              return acc
+            }, 0)
+            .toString(),
+        },
       ]
     })
   }
@@ -104,6 +118,7 @@ const VendorCard = ({ vendor }: Props) => {
       return p.map((f) => {
         if (f.subEventId === festivityId) {
           f.item = item
+          f.offerPrice = item.price.toString()
         }
         return f
       })
@@ -214,6 +229,54 @@ const VendorCard = ({ vendor }: Props) => {
                     selectedFestivity.subEventId === festivity._id,
                 ) && (
                   <div className="flex flex-wrap gap-2 mt-2 ml-6">
+                    <label htmlFor="estimatedGuestNo" className="text-sm">
+                      Estimated Guest No
+                    </label>
+                    <input
+                      id="estimatedGuestNo"
+                      type="text"
+                      value={
+                        selectedFestivities.find((f) => {
+                          return f.subEventId === festivity._id
+                        })?.estimatedGuestNo
+                      }
+                      className="border p-2 rounded-md w-24"
+                      placeholder="Estimated Guest No"
+                      onChange={(e) => {
+                        setSelectedFestivities((p) => {
+                          return p.map((f) => {
+                            if (f.subEventId === festivity._id) {
+                              f.estimatedGuestNo = e.target.value
+                            }
+                            return f
+                          })
+                        })
+                      }}
+                    />
+                    <label htmlFor="offerPrice" className="text-sm">
+                      Offer Price ($)
+                    </label>
+                    <input
+                      id="offerPrice"
+                      type="text"
+                      value={
+                        selectedFestivities.find((f) => {
+                          return f.subEventId === festivity._id
+                        })?.offerPrice
+                      }
+                      className="border p-2 rounded-md w-24"
+                      placeholder="Offer Price"
+                      onChange={(e) => {
+                        setSelectedFestivities((p) => {
+                          return p.map((f) => {
+                            if (f.subEventId === festivity._id) {
+                              f.offerPrice = e.target.value
+                            }
+                            return f
+                          })
+                        })
+                      }}
+                    />
                     {vendor.servicesOffering.items.map((item) => (
                       <ListItem
                         key={item._id}
@@ -240,8 +303,7 @@ const VendorCard = ({ vendor }: Props) => {
             ))}
           </List>
           <div className="py-3 px-2 text-xl font-medium text-indigo-700">
-            Estimated Total Price: $
-            {calculateTotalPrice(selectedFestivities).toFixed()}
+            Estimated Total Price: ${estimatedTotalPrice}
           </div>
         </div>
       </SwipeableDrawer>

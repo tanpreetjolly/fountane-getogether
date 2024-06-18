@@ -484,8 +484,14 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
 }
 export const offerAVendor = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const { vendorProfileId, subEventIds, serviceId, selectedItemIds } =
-        req.body
+    const {
+        vendorProfileId,
+        subEventIds,
+        serviceId,
+        selectedItemIds,
+        estimatedGuestNos,
+        offerPrices,
+    } = req.body
 
     //check vendorProfileId is valid
     const vendorProfile = await VendorProfile.findById(vendorProfileId)
@@ -533,10 +539,11 @@ export const offerAVendor = async (req: Request, res: Response) => {
         event.serviceList.push({
             vendorProfile: vendorProfileId,
             subEvent: subEventId,
+            estimatedGuests: estimatedGuestNos[index],
             servicesOffering: serviceId,
             planSelected: {
                 name: selectedItem.name,
-                price: selectedItem.price,
+                price: parseInt(offerPrices[index]),
                 description: selectedItem.description,
             },
             offerBy: "user",

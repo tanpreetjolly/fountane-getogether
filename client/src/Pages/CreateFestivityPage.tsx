@@ -55,22 +55,22 @@ const CreateFestivity = () => {
         />
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1">
-      <input
-        id="festivity"
-        name="festivity"
-        placeholder="Your Festivity Name Here"
-        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none"
-        value={festivityName}
-        onChange={(e) => setFestivityName(e.target.value)}
-      />
-      <input
-        id="venue"
-        name="venue"
-        placeholder="Event Venue"
-        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none"
-        value={venue}
-        onChange={(e) => setVenue(e.target.value)}
-      />
+        <input
+          id="festivity"
+          name="festivity"
+          placeholder="Your Festivity Name Here"
+          className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none"
+          value={festivityName}
+          onChange={(e) => setFestivityName(e.target.value)}
+        />
+        <input
+          id="venue"
+          name="venue"
+          placeholder="Event Venue"
+          className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none"
+          value={venue}
+          onChange={(e) => setVenue(e.target.value)}
+        />
       </div>
       <DatePickerWithRange
         startDate={startDate}

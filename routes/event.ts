@@ -29,7 +29,6 @@ router.route("/:eventId").get(getEvent)
 
 router.route("/:eventId/guest/invite/accept-reject").post(acceptRejectInvite)
 
-
 const logEventId = async (req: Request, res: Response, next: NextFunction) => {
     const eventId = req.params.eventId
     const event = await Event.findById(eventId).select("host")

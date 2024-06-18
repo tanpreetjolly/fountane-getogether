@@ -79,28 +79,29 @@ const TodoList = () => {
   return (
     <div className="px-5 py-4 lg:w-4/5 bg-white rounded-2xl my-4 mx-auto">
       <div className="flex justify-between items-end border-b pb-1 mb-1">
-      <h1 className="text-2xl  font-medium my-2 text-slate-800 mb-3">
-        Event Checklist for <br /> <span className="font-medium text-xl">{event?.name}</span>
-      </h1>
-      <div className="flex items-center mb-4 md:w-1/2">
-        <Input
-          placeholder="Add a new todo"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          className="flex-grow mr-2 bg-white"
-        />
-        {editingTodo ? (
-          <Button onClick={updateTodo}>
-            <EditIcon className="mr-2 h-4 w-4" />
-            Update
-          </Button>
-        ) : (
-          <Button onClick={addTodo}>
-            <CheckIcon className="mr-2 h-4 w-4" />
-            Add
-          </Button>
-        )}
-      </div>
+        <h1 className="text-2xl  font-medium my-2 text-slate-800 mb-3">
+          Event Checklist for <br />{" "}
+          <span className="font-medium text-xl">{event?.name}</span>
+        </h1>
+        <div className="flex items-center mb-4 md:w-1/2">
+          <Input
+            placeholder="Add a new todo"
+            value={newTodo}
+            onChange={(e) => setNewTodo(e.target.value)}
+            className="flex-grow mr-2 bg-white"
+          />
+          {editingTodo ? (
+            <Button onClick={updateTodo}>
+              <EditIcon className="mr-2 h-4 w-4" />
+              Update
+            </Button>
+          ) : (
+            <Button onClick={addTodo}>
+              <CheckIcon className="mr-2 h-4 w-4" />
+              Add
+            </Button>
+          )}
+        </div>
       </div>
       <ul>
         {todo

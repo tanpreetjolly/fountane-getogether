@@ -119,34 +119,37 @@ const Navbar = () => {
               </DropdownMenuItem>
             )}
           {serviceNotifications.map((notification) =>
-            notification.serviceList.map((service) => (
-              <>
-                <DropdownMenuItem key={service._id}>
-                  <div
-                    onClick={() => navigate(`/invites`)}
-                    role="button"
-                    className="w-64 text-gray-700 hover:bg-gray-100 p-2 rounded-md"
-                  >
-                    <span className="text-blue-500 font-semibold">
-                      {notification.host.name + " "}
-                    </span>
-                    has requested service
-                    <span className="text-indigo-500 font-semibold">
-                      {" " + service.servicesOffering.serviceName + " "}
-                    </span>
-                    for{" "}
-                    <span className="text-indigo-500 font-semibold">
-                      {notification.eventName}
-                    </span>
-                    <span className="text-indigo-500 font-semibold"></span>
-                    <span className="inline">
-                      <MoveRightIcon size={12} className="inline" />
-                    </span>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-              </>
-            )),
+            notification.serviceList.map((service) => {
+              if (service.offerBy === "vendor") return null
+              return (
+                <>
+                  <DropdownMenuItem key={service._id}>
+                    <div
+                      onClick={() => navigate(`/invites`)}
+                      role="button"
+                      className="w-64 text-gray-700 hover:bg-gray-100 p-2 rounded-md"
+                    >
+                      <span className="text-blue-500 font-semibold">
+                        {notification.host.name + " "}
+                      </span>
+                      has requested service
+                      <span className="text-indigo-500 font-semibold">
+                        {" " + service.servicesOffering.serviceName + " "}
+                      </span>
+                      for{" "}
+                      <span className="text-indigo-500 font-semibold">
+                        {notification.eventName}
+                      </span>
+                      <span className="text-indigo-500 font-semibold"></span>
+                      <span className="inline">
+                        <MoveRightIcon size={12} className="inline" />
+                      </span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )
+            }),
           )}
           {guestNotifications.map((notification) => (
             <>

@@ -1,4 +1,4 @@
-import { useState } from "react"  
+import { useState } from "react"
 import Button from "../components/Button"
 import ServiceCard from "../components/ServiceCard"
 import { useEventContext } from "@/context/EventContext"
@@ -28,12 +28,12 @@ const ManageVendors = () => {
 
   const totalVendors = vendorList.length
 
-  const renderVendors = (vendors : any) => (
+  const renderVendors = (vendors: any) => (
     <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
       {vendors.length === 0 ? (
         <span className="mx-auto">Nothing to show</span>
       ) : (
-        vendors.map((vendor : any) => (
+        vendors.map((vendor: any) => (
           <ServiceCard key={vendor.subEvent._id} service={vendor} />
         ))
       )}

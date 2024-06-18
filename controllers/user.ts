@@ -63,6 +63,16 @@ const getMe = async (req: Request, res: Response) => {
     const eventsNotifications = await Event.find({
         $or: [
             {
+                host: user._id,
+                serviceList: {
+                    $elemMatch: {
+                        vendorProfile: user.vendorProfile,
+                        status: "pending",
+                        offerBy: "vendor",
+                    },
+                },
+            },
+            {
                 userList: {
                     $elemMatch: {
                         user: user._id,

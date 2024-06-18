@@ -197,6 +197,8 @@ export const makeAOffer = (
     subEventIds: string[]
     serviceId: string
     selectedItemIds: string[]
+    estimatedGuestNos: string[]
+    offerPrices: string[]
   },
 ) => API.post(`/event/${eventId}/vendor/offer`, offerData)
 

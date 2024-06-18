@@ -18,7 +18,7 @@ import { NotificationsType } from "@/definitions"
 import { useAppDispatch, useAppSelector } from "@/hooks"
 import { format } from "date-fns"
 import { acceptRejectNotification } from "@/features/userSlice"
-import { Link } from "react-router-dom"
+import ServiceNotificationCard from "@/components/ServiceNotificationCard"
 
 const formatDate = (date: string) => {
   return format(new Date(date), "dd MMMM yyyy")
@@ -57,19 +57,6 @@ const Invites = () => {
       acceptRejectNotification(eventId, {
         status: status,
         userListId: userList._id,
-      }),
-    )
-  }
-
-  const handleAcceptVendor = (
-    eventId: string,
-    serviceListId: string,
-    status: string,
-  ) => {
-    dispatch(
-      acceptRejectNotification(eventId, {
-        status: status,
-        serviceListId: serviceListId,
       }),
     )
   }
@@ -147,71 +134,26 @@ const Invites = () => {
             </CardFooter>
           </Card>
         ))}
+        <br />
         {serviceNotifications.map((notification) =>
-          notification.serviceList.map((service) => (
-            <Card key={service._id} className="rounded-lg">
-              <CardHeader className="p-4 relative">
-                <CardTitle>
-                  {service.subEvent.name + " - " + notification.eventName}
-                </CardTitle>
-                <CardDescription>
-                  Service Requested:
-                  {service.servicesOffering.serviceName}
-                </CardDescription>
-                <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
-                  <Link to={`/my-chats/${service.vendorProfile.user}`}>
-                    Discuss
-                  </Link>
-                </div>
-              </CardHeader>
-              <CardContent className=" p-4 pt-0">
-                <div className="space-y-1 text-sm text-zinc-700">
-                  <div className="flex items-center">
-                    <CalendarIcon className="mr-2 text-indigo-500" size={16} />
-                    {formatDate(service.subEvent.startDate)} -{" "}
-                    {formatDate(service.subEvent.endDate)}
-                  </div>
-                  <div className="flex items-center">
-                    <MapPinIcon className="mr-2 text-indigo-500" size={16} />
-                    <span>{service.subEvent.venue}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <UserIcon className="mr-2 text-indigo-500" size={16} />
-                    <span>{notification.host.name}</span>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end p-4 pt-0">
-                <Button
-                  variant="outline"
-                  className="mr-2"
-                  onClick={() =>
-                    handleAcceptVendor(
-                      notification.eventId,
-                      service._id,
-                      "accepted",
-                    )
-                  }
-                >
-                  <CircleCheck className="inline mr-1" size={16} />
-                  Accept
-                </Button>
-                <Button
-                  className="bg-indigo-500"
-                  onClick={() =>
-                    handleAcceptVendor(
-                      notification.eventId,
-                      service._id,
-                      "rejected",
-                    )
-                  }
-                >
-                  <CircleX className="inline mr-1" size={16} />
-                  Reject
-                </Button>
-              </CardFooter>
-            </Card>
-          )),
+          notification.serviceList.map((service) => {
+            if (
+              service.offerBy === "user" &&
+              notification.host._id === user?.userId
+            )
+              return null
+            if (
+              service.offerBy === "vendor" &&
+              notification.host._id !== user?.userId
+            )
+              return null
+            return (
+              <ServiceNotificationCard
+                service={service}
+                notification={notification}
+              />
+            )
+          }),
         )}
       </div>
     </>
