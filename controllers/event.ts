@@ -133,9 +133,13 @@ export const getEvent = async (req: Request, res: Response) => {
         serviceList: isHosted
             ? event.serviceList
             : isVendor.length > 0
-              ? event.serviceList.filter(
-                    (service) => service.status === "accepted",
-                )
+              ? event.serviceList
+                    .filter((service) => service.status === "accepted")
+                    .map((service) => {
+                        //@ts-ignore
+                        const { amount, ...rest } = service.toJSON()
+                        return rest
+                    })
               : [],
     }
 

@@ -87,7 +87,7 @@ export interface ServiceListType {
   subEvent: Omit<SubEventType, "channels">
   status: string
   servicesOffering: ServiceType
-  amount: number
+  amount?: number
   paymentStatus: string
   createdAt: string
 }

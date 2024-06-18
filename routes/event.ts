@@ -27,11 +27,17 @@ const router = Router()
 router.route("/").post(createEvent)
 router.route("/:eventId").get(getEvent)
 
+router.route("/:eventId/guest/invite/accept-reject").post(acceptRejectInvite)
+
+
 const logEventId = async (req: Request, res: Response, next: NextFunction) => {
     const eventId = req.params.eventId
     const event = await Event.findById(eventId).select("host")
     if (!event || event.host.toString() !== req.user.userId)
-        return res.status(403).send("You are not the Host.")
+        return res.status(403).send({
+            success: false,
+            msg: "You are not the Host.",
+        })
     next()
 }
 
@@ -44,7 +50,6 @@ eventRouter.route("/").delete(deleteEvent).patch(updateEvent)
 eventRouter.route("/budget").patch(updateBudget)
 
 eventRouter.route("/guest/invite").post(inviteGuest)
-eventRouter.route("/guest/invite/accept-reject").post(acceptRejectInvite)
 eventRouter.route("/guest/invite/new").post(inviteNewGuest)
 
 eventRouter.route("/vendor/offer").post(offerAVendor)

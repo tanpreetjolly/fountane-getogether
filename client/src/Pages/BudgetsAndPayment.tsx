@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import {
   Box,
   TextField,
@@ -19,7 +19,9 @@ import { PieChart, Pie, Cell } from "recharts"
 
 const calculateBudgetUtilized = (serviceList: ServiceListType[]): number => {
   return parseFloat(
-    serviceList.reduce((acc, service) => acc + service.amount, 0).toFixed(2),
+    serviceList
+      .reduce((acc, service) => acc + (service.amount || 0), 0)
+      .toFixed(2),
   )
 }
 
@@ -59,6 +61,25 @@ const BudgetsAndPayment: React.FC<Props> = () => {
 
   const { event, loadingEvent, updateEvent } = useEventContext()
 
+  const serviceList = useMemo(() => {
+    if (!event) return []
+    return event.serviceList.filter((service) => service.status === "accepted")
+  }, [event?.serviceList])
+
+  const groupedServices: GroupedServices = useMemo(() => {
+    return serviceList.reduce<GroupedServices>((acc, service) => {
+      const vendorId = service.vendorProfile._id
+      if (!acc[vendorId]) {
+        acc[vendorId] = {
+          vendorName: service.vendorProfile.user.name,
+          services: [],
+        }
+      }
+      acc[vendorId].services.push(service)
+      return acc
+    }, {})
+  }, [serviceList])
+
   if (loadingEvent) return <Loader />
   if (!event) return null
 
@@ -72,10 +93,12 @@ const BudgetsAndPayment: React.FC<Props> = () => {
   const handleTotalBudgetChange = () => {
     toast.promise(updateEventBudget(event._id, newTotalBudget), {
       loading: "Updating Budget...",
-      success: "Budget Updated Successfully",
+      success: () => {
+        updateEvent()
+        return "Budget Updated Successfully"
+      },
       error: "Failed to update Budget",
     })
-    updateEvent()
     handleCloseModal()
   }
 
@@ -83,21 +106,8 @@ const BudgetsAndPayment: React.FC<Props> = () => {
     setCurrentTab(newValue)
   }
 
-  const groupedServices: GroupedServices =
-    event.serviceList.reduce<GroupedServices>((acc, service) => {
-      const vendorId = service.vendorProfile._id
-      if (!acc[vendorId]) {
-        acc[vendorId] = {
-          vendorName: service.vendorProfile.user.name,
-          services: [],
-        }
-      }
-      acc[vendorId].services.push(service)
-      return acc
-    }, {})
-
   const totalBudget = event.budget
-  const utilizedBudget = calculateBudgetUtilized(event.serviceList)
+  const utilizedBudget = calculateBudgetUtilized(serviceList)
   const remainingBudget = totalBudget - utilizedBudget
   const spentPercentage = (utilizedBudget / totalBudget) * 100
 
@@ -131,10 +141,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                   Available Budget
                 </span>
                 <div className="text-center font-medium text-2xl">
-                  $
-                  {(
-                    event.budget - calculateBudgetUtilized(event.serviceList)
-                  ).toFixed(2)}
+                  ${(event.budget - utilizedBudget).toFixed(2)}
                 </div>
               </div>
               <div className="flex items-center  justify-center text-gray-200  rounded-xl bg-opacity-90 px-3 py-1 text-[13px] bg-dark">
@@ -173,10 +180,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                   Completed <br /> Payments
                 </span>
                 <div className="text- font-medium text-2xl">
-                  $
-                  {(
-                    event.budget - calculateBudgetUtilized(event.serviceList)
-                  ).toFixed(2)}
+                  ${(event.budget - utilizedBudget).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -186,10 +190,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                   Pending <br /> Payments
                 </span>
                 <div className="text- font-medium text-2xl">
-                  $
-                  {(
-                    event.budget - calculateBudgetUtilized(event.serviceList)
-                  ).toFixed(2)}
+                  ${(event.budget - utilizedBudget).toFixed(2)}
                 </div>
               </div>
             </div>

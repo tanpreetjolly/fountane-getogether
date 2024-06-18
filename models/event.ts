@@ -3,7 +3,6 @@ import { IEvent, IUserList, IServiceList } from "../types/models"
 import Channel from "./channel"
 import SubEvent from "./subEvent"
 import { CHANNEL_TYPES } from "../values"
-import { log } from "util"
 
 const UserList = new Schema<IUserList>(
     {
@@ -112,7 +111,7 @@ const EventSchema = new Schema<IEvent>(
 )
 
 EventSchema.pre("save", async function (next) {
-    console.log(this.isModified("userList"), this.isModified("serviceList"))
+    // console.log(this.isModified("userList"), this.isModified("serviceList"))
 
     if (!this.isModified("userList") && !this.isModified("serviceList"))
         return next()
