@@ -438,7 +438,7 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
 }
 export const acceptRejectInvite = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const { status, userListId, serviceListId } = req.body
+    const { status, userListId, serviceListId, newOfferPrice } = req.body
 
     console.log(eventId, status, userListId, serviceListId)
 
@@ -471,6 +471,7 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
         if (serviceListItem === undefined)
             throw new NotFoundError("Vendor Is Not Part Of This Event")
         serviceListItem.status = status
+        serviceListItem.planSelected.price = newOfferPrice
         await event.save()
     }
 
