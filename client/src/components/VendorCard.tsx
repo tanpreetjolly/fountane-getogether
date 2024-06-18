@@ -146,6 +146,11 @@ const VendorCard = ({ vendor }: Props) => {
               )}
             </div>
           </div>
+          <img
+            src={vendor.servicesOffering.serviceImage}
+            alt="service"
+            className="w-20 h-20 object-cover rounded-md"
+          />
           <div className="ml-auto mt-4">
             <ButtonSecondary
               text="Make an Offer"
@@ -182,6 +187,11 @@ const VendorCard = ({ vendor }: Props) => {
               <span className="text-sm text-gray-500">
                 {vendor.servicesOffering.serviceDescription}
               </span>
+              <img
+                src={vendor.servicesOffering.serviceImage}
+                alt="service"
+                className="w-20 h-20 object-cover rounded-md"
+              />
             </div>
             <div className="flex">
               <Button
@@ -189,9 +199,6 @@ const VendorCard = ({ vendor }: Props) => {
                 onClick={inviteVendor}
                 icon={<IoPersonAdd />}
               />
-              {/* <span className="text-xl text-indigo-700 font-medium">
-                ${vendor.servicesOffering.price}
-              </span> */}
             </div>
           </div>
           <div className="flex flex-wrap gap-4">
