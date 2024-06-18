@@ -151,6 +151,7 @@ const Invites = () => {
               <ServiceNotificationCard
                 service={service}
                 notification={notification}
+                isVendor={notification.host._id === user?.userId}
               />
             )
           }),

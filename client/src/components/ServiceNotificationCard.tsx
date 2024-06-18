@@ -33,7 +33,8 @@ const ServiceNotificationCard: React.FC<{
     eventName: string
     host: OtherUserType
   }
-}> = ({ service, notification }) => {
+  isVendor: boolean
+}> = ({ service, notification, isVendor }) => {
   const dispatch = useAppDispatch()
   const [showModal, setShowModal] = useState<{
     eventId: string
@@ -79,7 +80,7 @@ const ServiceNotificationCard: React.FC<{
         status: status,
         serviceListId: serviceListId,
         newOfferPrice,
-        offerBy: user?.userId === notification.host._id ? "vendor" : "user",
+        offerBy: isVendor ? "vendor" : "user",
       }),
     )
   }

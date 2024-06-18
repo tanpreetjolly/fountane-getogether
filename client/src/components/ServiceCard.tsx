@@ -75,6 +75,12 @@ const VendorCard = ({ service }: Props) => {
                 {service.planSelected.name}
               </span>
             </div>
+            <div className="flex items-center">
+              <span>
+                Offered By:
+                {service.offerBy === "user" ? "You" : "Vendor"}
+              </span>
+            </div>
           </div>
           <div className=" flex justify-between items-start mt-4">
             <div

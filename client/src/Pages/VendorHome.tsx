@@ -46,11 +46,12 @@ const VendorHome: React.FC<{}> = () => {
         )}
         {serviceNotifications.map((notification) =>
           notification.serviceList.map((service) => {
-            if (service.offerBy === "user") return null
+            if (service.offerBy === "vendor") return null
             return (
               <ServiceNotificationCard
                 service={service}
                 notification={notification}
+                isVendor={true}
               />
             )
           }),
@@ -67,11 +68,12 @@ const VendorHome: React.FC<{}> = () => {
         )}
         {serviceNotifications.map((notification) =>
           notification.serviceList.map((service) => {
-            if (service.offerBy === "vendor") return null
+            if (service.offerBy === "user") return null
             return (
               <ServiceNotificationCard
                 service={service}
                 notification={notification}
+                isVendor={true}
               />
             )
           }),
