@@ -20,7 +20,7 @@ import { PieChart, Pie, Cell } from "recharts"
 const calculateBudgetUtilized = (serviceList: ServiceListType[]): number => {
   return parseFloat(
     serviceList
-      .reduce((acc, service) => acc + (service.amount || 0), 0)
+      .reduce((acc, service) => acc + (service.planSelected.price || 0), 0)
       .toFixed(2),
   )
 }
@@ -245,7 +245,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                                 {service.subEvent.name}
                               </div>
                               <div className="text-gray-900 mt-4  bg-yellowShade px-3 text-sm rounded-lg py-1">
-                                Payment: ${service.amount}
+                                Payment: ${service.planSelected.price}
                               </div>
                             </Box>
                             <div

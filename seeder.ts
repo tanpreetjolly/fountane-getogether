@@ -57,6 +57,7 @@ const sampleService = [
         serviceName: "Photographer",
         serviceDescription:
             "We provide the best photography services! for weddings, birthdays, and other events.",
+        serviceImage: faker.image.url(),
         items: [
             {
                 name: "Wedding Photography",
@@ -80,6 +81,7 @@ const sampleService = [
     {
         serviceName: "Caterer",
         serviceDescription: "We provide the best catering services!",
+        serviceImage: faker.image.url(),
         items: [
             {
                 name: "Punjabi Food",
@@ -106,6 +108,7 @@ const sampleService = [
     {
         serviceName: "Decorator",
         serviceDescription: "We provide the best decoration services!",
+        serviceImage: faker.image.url(),
         items: [
             {
                 name: "Flower Decoration",
@@ -132,6 +135,7 @@ const sampleService = [
     {
         serviceName: "Music",
         serviceDescription: "We provide the best music services!",
+        serviceImage: faker.image.url(),
         items: [
             {
                 name: "DJ",
@@ -153,6 +157,7 @@ const sampleService = [
     {
         serviceName: "Transportation",
         serviceDescription: "We provide the best transportation services!",
+        serviceImage: faker.image.url(),
         items: [
             {
                 name: "Car",
@@ -179,6 +184,7 @@ const sampleService = [
     {
         serviceName: "Venue",
         serviceDescription: "We provide the best venue services!",
+        serviceImage: faker.image.url(),
         items: [
             {
                 name: "Hotel",
@@ -205,6 +211,7 @@ const sampleService = [
     {
         serviceName: "Entertainment",
         serviceDescription: "We provide the best entertainment services!",
+        serviceImage: faker.image.url(),
         items: [
             {
                 name: "Magician",
