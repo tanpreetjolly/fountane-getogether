@@ -44,8 +44,17 @@ const CreateFestivity = () => {
   }
 
   return (
-    <div className="px-4 mx-auto flex flex-col min-h-[85vh] gap-3">
-      <div className="text-2xl font-bold text-zinc-800">Create Festivity</div>
+    <div className="px-4 mx-auto flex flex-col min-h-[85vh] gap-3 lg:w-5/6 bg-white p-5 my-2 rounded-2xl border shadow-sm ">
+      <div className="flex items-center justify-between">
+        <div className="text-2xl  text-slate-800">Create Festivity </div>
+
+        <Button
+          text="Create Festivity"
+          icon={<FaRegCalendarPlus />}
+          onClick={handleCreateEvent}
+        />
+      </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1">
       <input
         id="festivity"
         name="festivity"
@@ -62,19 +71,15 @@ const CreateFestivity = () => {
         value={venue}
         onChange={(e) => setVenue(e.target.value)}
       />
+      </div>
       <DatePickerWithRange
         startDate={startDate}
         endDate={endDate}
         setStartDate={setStartDate as any}
         setEndDate={setEndDate as any}
+        className="sm:w-fit"
       />
-      <div className="mt-4">
-        <Button
-          text="Create Festivity"
-          icon={<FaRegCalendarPlus />}
-          onClick={handleCreateEvent}
-        />
-      </div>
+
       <style>
         {`
           .rdrCalendarWrapper{

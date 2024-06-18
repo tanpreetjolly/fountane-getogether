@@ -67,7 +67,7 @@ const Hero: React.FC<Props> = () => {
           </div>
           <div className="ml-2  -space-y-1 items-center">
             <Rating name="rating" value={5} readOnly />
-            <div className="ml-2 font-inter   text-slate-600">
+            <div className="ml-2    text-slate-600">
               5000+ users plans using Getogether
             </div>
           </div>

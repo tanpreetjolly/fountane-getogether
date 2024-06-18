@@ -20,6 +20,9 @@ const InviteGuests = () => {
   const { event, loadingEvent, updateEvent } = useEventContext()
   const { subEventId } = useParams()
 
+  const subEvent = event?.subEvents.find(
+    (subEvent) => subEvent._id === subEventId,
+  )
   const userList = useMemo(() => {
     if (!event) return []
     if (!subEventId) return []
@@ -77,15 +80,22 @@ const InviteGuests = () => {
   if (!subEventId) return <div>No SubEvent Found</div>
 
   return (
-    <div className="px-4 my-2 mb-12 flex flex-col justify-between lg:w-4/5 mx-auto">
+    <div className="my-2 mb-12 flex flex-col justify-between lg:w-4/5 mx-auto p-5 bg-white rounded-2xl">
       <div>
-        <div className="text-2xl pl-1 font-semibold text-zinc-800">
-          Invite Guests for the Festivity
+        <div className="flex justify-between items-center">
+          <div className="text-2xl   text-zinc-800">
+            Invite Guests for the {subEvent?.name}
+          </div>
+          <Button
+            text="Save Selected Guests"
+            onClick={handleSaveGuests}
+            icon={<FaPlusCircle />}
+          />
         </div>
         <Input
           type="search"
           placeholder="Search guests..."
-          className="my-4"
+          className="my-4 lg:w-1/2 rounded-xl"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -126,7 +136,7 @@ const InviteGuests = () => {
           ))}
         </List>
       </div>
-      <div className="flex justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+      <div className="flex lg:hidden justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
         <Button
           text="Save Selected Guests"
           onClick={handleSaveGuests}

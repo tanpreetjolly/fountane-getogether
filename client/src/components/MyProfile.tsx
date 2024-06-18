@@ -148,7 +148,7 @@ const MyProfile = () => {
     )
 
   return (
-    <div className="flex flex-col font-inter w-full sm:mx-6">
+    <div className="flex flex-col  w-full sm:mx-6">
       <nav className="pb-5 px-5 rounded-xl flex flex-col justify-between sm:flex-row ">
         <div className=" text-center sm:text-left">
           <h1 className="text-2xl font-medium">My Profile</h1>
