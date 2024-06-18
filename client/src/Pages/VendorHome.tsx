@@ -72,7 +72,7 @@ const VendorHome: React.FC<{}> = () => {
   return (
     <div className="px-4 pt-2">
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 outline w-screen bg-gray-700 bg-opacity-50">
           <div className="bg-white rounded-lg p-6 shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Make a New Offer</h2>
             <div className="mb-4">

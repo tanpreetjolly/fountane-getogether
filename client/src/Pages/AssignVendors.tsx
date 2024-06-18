@@ -9,6 +9,8 @@ import ListItemText from "@mui/material/ListItemText"
 import { Avatar, ListItemAvatar } from "@mui/material"
 import { useEventContext } from "@/context/EventContext"
 import { NavLink, useNavigate, useParams } from "react-router-dom"
+import ButtonSecondary from "@/components/ButtonSecondary"
+import { ArrowRight } from "lucide-react"
 
 const InviteGuests = () => {
   const { event, loadingEvent } = useEventContext()
@@ -33,24 +35,24 @@ const InviteGuests = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "accepted":
-        return "bg-green-400 text-white "
+        return "bg-green-200 text-green-800 "
       case "pending":
-        return "bg-blue-400 text-white "
+        return "bg-blue-200 text-blue-800 "
       case "rejected":
-        return "bg-red-600 text-gray-300"
+        return "bg-red-200 text-red-800"
       default:
         return ""
     }
   }
 
   return (
-    <div className="px-4 my-2 mb-8 flex flex-col h-[85vh] justify-between lg:w-4/5 mx-auto">
+    <div className=" my-2 mb-8 flex flex-col h-[85vh] justify-between lg:w-4/5 mx-auto bg-white rounded-2xl p-5">
       <div>
-        <div className="text-2xl pl-1 font-semibold text-zinc-800 mb-4">
-          Vendors for {subEvent.name}
-        </div>
-        {event.isHosted && (
-          <>
+        <div className="flex items-center justify-between">
+          <div className="text-2xl pl-1 font-medium text-zinc-800 ">
+            Vendors for {subEvent.name}
+          </div>
+          {event.isHosted && (
             <Button
               text="Assign New Vendors"
               onClick={() => {
@@ -58,17 +60,21 @@ const InviteGuests = () => {
               }}
               icon={<FaPlusCircle />}
             />
+          )}
+        </div>
+        {event.isHosted && (
+          <>
             <Input
               type="search"
               placeholder="Search vendors..."
-              className="my-4"
+              className="my-4 md:w-1/2"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </>
         )}
 
-        <List>
+        <List className="flex gap-2">
           {filteredServiceList.length === 0 &&
             (event.isHosted ? (
               <div className="text-center italic text-xl px-4 text-gray-500 h-[40vh] flex flex-col gap-1 items-center justify-center">
@@ -85,42 +91,54 @@ const InviteGuests = () => {
               <div>Nothing to show</div>
             ))}
           {filteredServiceList.map((service) => (
-            <ListItem key={service._id}>
-              <ListItemAvatar>
-                <Avatar
-                  src={service.vendorProfile.user.profileImage}
-                  className="mr-3"
+            <ListItem
+              key={service._id}
+              className="border rounded-xl bg-white flex flex-col w-full"
+            >
+              <div className="flex items-center justify-between w-full">
+                <ListItemAvatar>
+                  <Avatar
+                    src={service.vendorProfile.user.profileImage}
+                    className="mr-3"
+                  >
+                    {service.servicesOffering.serviceName[0]}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={service.servicesOffering.serviceName}
+                  secondary={
+                    <span>
+                      Offered: ${service.amount}
+                      {service.status === "accepted" && (
+                        <>
+                          <br />
+                          PaymentStatus:{" "}
+                          {service.paymentStatus[0].toUpperCase() +
+                            service.paymentStatus.slice(1)}
+                        </>
+                      )}
+                    </span>
+                  }
+                  secondaryTypographyProps={{ className: "pl-1" }}
+                />
+                <div
+                  className={`px-3 text-sm py-1 capitalize rounded-full ${getStatusColor(service.status)}`}
                 >
-                  {service.servicesOffering.serviceName[0]}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={service.servicesOffering.serviceName}
-                secondary={
-                  <span>
-                    Offered: ${service.amount}
-                    {service.status === "accepted" && (
-                      <>
-                        <br />
-                        PaymentStatus:{" "}
-                        {service.paymentStatus[0].toUpperCase() +
-                          service.paymentStatus.slice(1)}
-                      </>
-                    )}
-                  </span>
-                }
-                secondaryTypographyProps={{ className: "pl-1" }}
-              />
-              <button
-                className={`px-4 py-1.5 capitalize rounded-full ${getStatusColor(service.status)}`}
-                onClick={() =>
-                  navigate(`/my-chats/${service.vendorProfile.user._id}`)
-                }
-              >
-                {service.status === "accepted"
-                  ? "Hired"
-                  : service.status || "Invite"}
-              </button>
+                  {service.status === "accepted"
+                    ? "Hired"
+                    : service.status || "Invite"}
+                </div>
+              </div>
+
+              <div className="w-fit mr-auto mt-5">
+                <ButtonSecondary
+                  text="Discuss"
+                  icon={<ArrowRight size={18} />}
+                  onClick={() => {
+                    navigate(`/my-chats/${service.vendorProfile.user._id}`)
+                  }}
+                />
+              </div>
             </ListItem>
           ))}
         </List>
