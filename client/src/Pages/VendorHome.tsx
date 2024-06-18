@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks"
 import { format } from "date-fns"
 import { acceptRejectNotification } from "@/features/userSlice"
 import { Link, useNavigate } from "react-router-dom"
+import { useState } from "react"
 
 const formatDate = (date: string) => {
   return format(new Date(date), "dd MMMM yyyy")
@@ -28,6 +29,8 @@ const formatDate = (date: string) => {
 const VendorHome: React.FC<{}> = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const [showModal, setShowModal] = useState(false)
+  const [offerPrice, setOfferPrice] = useState("")
 
   const { user } = useAppSelector((state) => state.user)
   const notifications = user?.notifications || []
@@ -60,9 +63,47 @@ const VendorHome: React.FC<{}> = () => {
   serviceNotifications.map((notification) =>
     notification.serviceList.map((_service) => count++),
   )
-
+  const handleNewOffer = () => {
+    setShowModal(true)
+  }
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOfferPrice(e.target.value)
+  }
   return (
     <div className="px-4 pt-2">
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Make a New Offer</h2>
+            <div className="mb-4">
+              <label htmlFor="price" className="block mb-2">
+                Price
+              </label>
+              <input
+                type="text"
+                id="price"
+                value={offerPrice}
+                onChange={handlePriceChange}
+                className="border border-gray-300 rounded-md p-2 w-full"
+              />
+            </div>
+            <div className="flex justify-end">
+              <button
+                className="bg-indigo-500 text-white rounded-md px-4 py-2"
+                onClick={() => setShowModal(false)}
+              >
+                Submit
+              </button>
+              <button
+                className="ml-2 bg-gray-200 rounded-md px-4 py-2"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <ButtonCustom
         text="Change Service & Price"
         onClick={() => {
@@ -114,6 +155,13 @@ const VendorHome: React.FC<{}> = () => {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end p-4 pt-0">
+                <Button
+                  variant="outline"
+                  className="mr-2"
+                  onClick={handleNewOffer}
+                >
+                  New Offer
+                </Button>
                 <Button
                   variant="outline"
                   className="mr-2"
