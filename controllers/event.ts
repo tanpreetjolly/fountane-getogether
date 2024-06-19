@@ -133,9 +133,13 @@ export const getEvent = async (req: Request, res: Response) => {
         serviceList: isHosted
             ? event.serviceList
             : isVendor.length > 0
-              ? event.serviceList.filter(
-                    (service) => service.status === "accepted",
-                )
+              ? event.serviceList
+                    .filter((service) => service.status === "accepted")
+                    .map((service) => {
+                        //@ts-ignore
+                        const { amount, ...rest } = service.toJSON()
+                        return rest
+                    })
               : [],
     }
 
@@ -434,7 +438,8 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
 }
 export const acceptRejectInvite = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const { status, userListId, serviceListId } = req.body
+    const { status, userListId, serviceListId, newOfferPrice, offerBy } =
+        req.body
 
     console.log(eventId, status, userListId, serviceListId)
 
@@ -444,9 +449,9 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
         )
 
     if (!status) throw new BadRequestError("Status is required")
-    if (status !== "accepted" && status !== "rejected")
+    if (status !== "accepted" && status !== "rejected" && status !== "pending")
         throw new BadRequestError(
-            "Status value should be either 'accepted' or 'rejected'",
+            "Status value should be either 'accepted' or 'rejected' or 'pending'",
         )
 
     const event = await Event.findById(eventId)
@@ -467,6 +472,8 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
         if (serviceListItem === undefined)
             throw new NotFoundError("Vendor Is Not Part Of This Event")
         serviceListItem.status = status
+        serviceListItem.offerBy = offerBy
+        serviceListItem.planSelected.price = newOfferPrice
         await event.save()
     }
 
@@ -477,7 +484,14 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
 }
 export const offerAVendor = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const { vendorProfileId, subEventIds, serviceId } = req.body
+    const {
+        vendorProfileId,
+        subEventIds,
+        serviceId,
+        selectedItemIds,
+        estimatedGuestNos,
+        offerPrices,
+    } = req.body
 
     //check vendorProfileId is valid
     const vendorProfile = await VendorProfile.findById(vendorProfileId)
@@ -516,12 +530,23 @@ export const offerAVendor = async (req: Request, res: Response) => {
             throw new NotFoundError(`SubEvent ${subEventId} Not Found`)
     })
 
-    subEventIds.forEach((subEventId) => {
+    subEventIds.forEach((subEventId, index) => {
+        const selectedItem = service.items.find(
+            (item) => item._id.toString() === selectedItemIds[index].toString(),
+        )
+        if (!selectedItem)
+            throw new NotFoundError(`Item ${selectedItemIds[index]} Not Found`)
         event.serviceList.push({
             vendorProfile: vendorProfileId,
             subEvent: subEventId,
+            estimatedGuests: estimatedGuestNos[index],
             servicesOffering: serviceId,
-            amount: service.price,
+            planSelected: {
+                name: selectedItem.name,
+                price: parseInt(offerPrices[index]),
+                description: selectedItem.description,
+            },
+            offerBy: "user",
         })
     })
 

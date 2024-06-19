@@ -27,7 +27,7 @@ const newService: ServiceType = {
   _id: "new",
   serviceName: "",
   serviceDescription: "",
-  price: 0,
+  serviceImage: "",
   items: [],
 }
 
@@ -70,10 +70,11 @@ const EditVendorServices = () => {
       } = {
         serviceName: updatedService.serviceName,
         serviceDescription: updatedService.serviceDescription,
-        price: updatedService.price,
+        serviceImage: updatedService.serviceImage,
         items: updatedService.items.map((item) => ({
           name: item.name,
           description: item.description,
+          price: item.price,
         })),
       }
       toast.promise(createService(user.vendorProfile?._id, createServiceVale), {
@@ -147,9 +148,15 @@ const EditVendorServices = () => {
                     {service.serviceDescription}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Price per Event: ${service.price}
+                    Starting Price $
+                    {Math.min(...service.items.map((item) => item.price))}
                   </p>
                 </div>
+                <img
+                  src={service.serviceImage}
+                  alt={service.serviceName}
+                  className="w-20 h-20 object-cover rounded-md"
+                />
                 <Button
                   variant="outline"
                   onClick={() => handleServiceEdit(service)}
@@ -220,17 +227,22 @@ const EditVendorServices = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="servicePrice" className="mb-2">
-                  Price per Event
+                <Label htmlFor="serviceImage" className="mb-2">
+                  Service Image URL
                 </Label>
+                <img
+                  src={selectedService.serviceImage}
+                  alt={selectedService.serviceName}
+                  className="w-20 h-20 object-cover rounded-md"
+                />
                 <Input
-                  id="servicePrice"
-                  type="number"
-                  value={selectedService.price}
+                  id="serviceImage"
+                  type="string"
+                  value={selectedService.serviceImage}
                   onChange={(e) =>
                     setSelectedService({
                       ...selectedService,
-                      price: parseInt(e.target.value, 10) || 0,
+                      serviceImage: e.target.value,
                     })
                   }
                 />
@@ -315,6 +327,37 @@ const EditVendorServices = () => {
                           }}
                         />
                       </div>
+                      <div>
+                        <Label
+                          htmlFor={`itemPrice-${item._id}`}
+                          className="mb-2"
+                        >
+                          Item Price
+                        </Label>
+                        <Input
+                          id={`itemPrice-${item._id}`}
+                          value={item.price}
+                          type="number"
+                          onChange={(e) => {
+                            e.preventDefault()
+                            setSelectedService((p) => {
+                              const updatedItems = p.items.map((i) => {
+                                if (i._id === item._id) {
+                                  return {
+                                    ...i,
+                                    price: parseFloat(e.target.value),
+                                  }
+                                }
+                                return i
+                              })
+                              return {
+                                ...p,
+                                items: updatedItems,
+                              }
+                            })
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -328,6 +371,7 @@ const EditVendorServices = () => {
                       isNew: true,
                       name: "",
                       description: "",
+                      price: 0,
                     }
                     setSelectedService({
                       ...selectedService,

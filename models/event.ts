@@ -3,7 +3,6 @@ import { IEvent, IUserList, IServiceList } from "../types/models"
 import Channel from "./channel"
 import SubEvent from "./subEvent"
 import { CHANNEL_TYPES } from "../values"
-import { log } from "util"
 
 const UserList = new Schema<IUserList>(
     {
@@ -45,19 +44,29 @@ const ServiceList = new Schema<IServiceList>(
             ref: "SubEvent",
             required: true,
         },
+        estimatedGuests: {
+            type: String,
+            default: "NA",
+        },
         status: {
             type: String,
             enum: ["accepted", "rejected", "pending"],
             default: "pending",
+        },
+        offerBy: {
+            type: String,
+            enum: ["vendor", "user"],
+            default: "user",
         },
         servicesOffering: {
             type: Schema.Types.ObjectId,
             required: [true, "servicesOffering is required"],
             ref: "Services",
         },
-        amount: {
-            type: Number,
-            required: [true, "Please Provide Amount."],
+        planSelected: {
+            name: String,
+            description: String,
+            price: Number,
         },
         paymentStatus: {
             type: String,
@@ -112,7 +121,7 @@ const EventSchema = new Schema<IEvent>(
 )
 
 EventSchema.pre("save", async function (next) {
-    console.log(this.isModified("userList"), this.isModified("serviceList"))
+    // console.log(this.isModified("userList"), this.isModified("serviceList"))
 
     if (!this.isModified("userList") && !this.isModified("serviceList"))
         return next()

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import SwipeableDrawer from "@mui/material/SwipeableDrawer"
 import Button from "./Button"
 import { IoClose, IoPersonAdd } from "react-icons/io5"
@@ -6,31 +6,30 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
-import { VendorSaveType } from "@/definitions"
-import { useParams } from "react-router-dom"
+import { VendorSaveType, ItemType } from "@/definitions"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 import toast from "react-hot-toast"
 import ButtonSecondary from "./ButtonSecondary"
+import { makeAOffer } from "@/api"
 
 type Props = {
   vendor: VendorSaveType
 }
 
+interface FestivityType {
+  subEventId: string
+  item: ItemType
+  estimatedGuestNo: string
+  offerPrice: string
+}
+
 const VendorCard = ({ vendor }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [selectedFestivities, setSelectedFestivities] = useState<
-    { subEventId: string; itemIds: string[] }[]
+    FestivityType[]
   >([])
-  const { event, loadingEvent } = useEventContext()
-  const { subEventId } = useParams()
-
-  useEffect(() => {
-    if (!event) return
-    if (!subEventId) return
-
-    setSelectedFestivities([{ subEventId, itemIds: [] }])
-  }, [event, subEventId])
+  const { event, loadingEvent, updateEvent } = useEventContext()
 
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
@@ -45,19 +44,36 @@ const VendorCard = ({ vendor }: Props) => {
 
     // You can use the selectedFestivities array to send the offer with the selected festivity IDs and item IDs
     console.log(selectedFestivities)
+    toast.promise(
+      makeAOffer(event._id, {
+        vendorProfileId: vendor.vendorProfileId,
+        subEventIds: selectedFestivities.map((f) => f.subEventId),
+        selectedItemIds: selectedFestivities.map((f) => f.item._id),
+        serviceId: vendor.servicesOffering._id,
+        estimatedGuestNos: selectedFestivities.map((f) => f.estimatedGuestNo),
+        offerPrices: selectedFestivities.map((f) => f.offerPrice),
+      }),
+      {
+        loading: "Sending Request...",
+        success: (data) => {
+          console.log(data)
+          updateEvent()
+          return "Offer Sent"
+        },
+        error: (error) => {
+          console.log(error.response)
+          return "Something went wrong!"
+        },
+      },
+    )
 
     setIsDrawerOpen(false)
   }
 
-  const calculateTotalPrice = (
-    selectedFestivities: { subEventId: string; itemIds: string[] }[],
-    basePrice: number,
-  ) => {
-    return selectedFestivities.reduce(
-      (total, festivity) => total + basePrice * festivity.itemIds.length,
-      0,
-    )
-  }
+  const estimatedTotalPrice = selectedFestivities.reduce(
+    (total, festivity) => total + parseInt(festivity.offerPrice),
+    0,
+  )
 
   const handleFestivityChange = (festivityId: string) => {
     setSelectedFestivities((prevFestivities) => {
@@ -69,9 +85,23 @@ const VendorCard = ({ vendor }: Props) => {
         return prevFestivities.filter(
           (festivity) => festivity.subEventId !== festivityId,
         )
-      } else {
-        return [...prevFestivities, { subEventId: festivityId, itemIds: [] }]
       }
+      return [
+        ...prevFestivities,
+        {
+          subEventId: festivityId,
+          item: vendor.servicesOffering.items[0],
+          offerPrice: vendor.servicesOffering.items[0].price.toString(),
+          estimatedGuestNo: event.userList
+            .reduce((acc, user) => {
+              if (user.subEvents.some((subEvent) => subEvent === festivityId)) {
+                return acc + 1
+              }
+              return acc
+            }, 0)
+            .toString(),
+        },
+      ]
     })
   }
 
@@ -83,18 +113,15 @@ const VendorCard = ({ vendor }: Props) => {
     setIsDrawerOpen(true)
   }
 
-  const handleItemChange = (festivityId: string, itemId: string) => {
-    setSelectedFestivities((prevFestivities) => {
-      const updatedFestivities = prevFestivities.map((festivity) => {
-        if (festivity.subEventId === festivityId) {
-          const updatedItemIds = festivity.itemIds.includes(itemId)
-            ? festivity.itemIds.filter((id) => id !== itemId)
-            : [...festivity.itemIds, itemId]
-          return { ...festivity, itemIds: updatedItemIds }
+  const handleItemChange = (festivityId: string, item: ItemType) => {
+    setSelectedFestivities((p) => {
+      return p.map((f) => {
+        if (f.subEventId === festivityId) {
+          f.item = item
+          f.offerPrice = item.price.toString()
         }
-        return festivity
+        return f
       })
-      return updatedFestivities
     })
   }
 
@@ -113,9 +140,17 @@ const VendorCard = ({ vendor }: Props) => {
               {vendor.servicesOffering.serviceDescription}
             </div>
             <div className="bg-purpleShade w-fit px-3 bg-opacity-85 rounded-full text-[13px] py-1 mt-3 -mx-1">
-              Starting from ${vendor.servicesOffering.price}
+              Starting From $
+              {Math.min(
+                ...vendor.servicesOffering.items.map((item) => item.price),
+              )}
             </div>
           </div>
+          <img
+            src={vendor.servicesOffering.serviceImage}
+            alt="service"
+            className="w-20 h-20 object-cover rounded-md"
+          />
           <div className="ml-auto mt-4">
             <ButtonSecondary
               text="Make an Offer"
@@ -152,6 +187,11 @@ const VendorCard = ({ vendor }: Props) => {
               <span className="text-sm text-gray-500">
                 {vendor.servicesOffering.serviceDescription}
               </span>
+              <img
+                src={vendor.servicesOffering.serviceImage}
+                alt="service"
+                className="w-20 h-20 object-cover rounded-md"
+              />
             </div>
             <div className="flex">
               <Button
@@ -159,9 +199,6 @@ const VendorCard = ({ vendor }: Props) => {
                 onClick={inviteVendor}
                 icon={<IoPersonAdd />}
               />
-              {/* <span className="text-xl text-indigo-700 font-medium">
-                ${vendor.servicesOffering.price}
-              </span> */}
             </div>
           </div>
           <div className="flex flex-wrap gap-4">
@@ -175,16 +212,14 @@ const VendorCard = ({ vendor }: Props) => {
                 <p className="text-sm text-muted-foreground">
                   {item.description}
                 </p>
+                <p className="text-sm text-muted-foreground">${item.price}</p>
               </div>
             ))}
           </div>
           <List className="relative">
             {festivityList.map((festivity) => (
               <div key={festivity._id} className="mb-4">
-                <ListItem
-                  button
-                  onClick={() => handleFestivityChange(festivity._id)}
-                >
+                <ListItem onClick={() => handleFestivityChange(festivity._id)}>
                   <Checkbox
                     edge="start"
                     checked={selectedFestivities.some(
@@ -201,22 +236,67 @@ const VendorCard = ({ vendor }: Props) => {
                     selectedFestivity.subEventId === festivity._id,
                 ) && (
                   <div className="flex flex-wrap gap-2 mt-2 ml-6">
+                    <label htmlFor="estimatedGuestNo" className="text-sm">
+                      Estimated Guest No
+                    </label>
+                    <input
+                      id="estimatedGuestNo"
+                      type="text"
+                      value={
+                        selectedFestivities.find((f) => {
+                          return f.subEventId === festivity._id
+                        })?.estimatedGuestNo
+                      }
+                      className="border p-2 rounded-md w-24"
+                      placeholder="Estimated Guest No"
+                      onChange={(e) => {
+                        setSelectedFestivities((p) => {
+                          return p.map((f) => {
+                            if (f.subEventId === festivity._id) {
+                              f.estimatedGuestNo = e.target.value
+                            }
+                            return f
+                          })
+                        })
+                      }}
+                    />
+                    <label htmlFor="offerPrice" className="text-sm">
+                      Offer Price ($)
+                    </label>
+                    <input
+                      id="offerPrice"
+                      type="text"
+                      value={
+                        selectedFestivities.find((f) => {
+                          return f.subEventId === festivity._id
+                        })?.offerPrice
+                      }
+                      className="border p-2 rounded-md w-24"
+                      placeholder="Offer Price"
+                      onChange={(e) => {
+                        setSelectedFestivities((p) => {
+                          return p.map((f) => {
+                            if (f.subEventId === festivity._id) {
+                              f.offerPrice = e.target.value
+                            }
+                            return f
+                          })
+                        })
+                      }}
+                    />
                     {vendor.servicesOffering.items.map((item) => (
                       <ListItem
                         key={item._id}
                         dense
                         className="flex-initial"
-                        button
-                        onClick={() =>
-                          handleItemChange(festivity._id, item._id)
-                        }
+                        onClick={() => handleItemChange(festivity._id, item)}
                       >
                         <Checkbox
                           edge="start"
                           checked={selectedFestivities.some(
                             (selectedFestivity) =>
                               selectedFestivity.subEventId === festivity._id &&
-                              selectedFestivity.itemIds.includes(item._id),
+                              selectedFestivity.item === item,
                           )}
                           tabIndex={-1}
                           disableRipple
@@ -230,11 +310,7 @@ const VendorCard = ({ vendor }: Props) => {
             ))}
           </List>
           <div className="py-3 px-2 text-xl font-medium text-indigo-700">
-            Total Price: $
-            {calculateTotalPrice(
-              selectedFestivities,
-              vendor.servicesOffering.price,
-            )}
+            Estimated Total Price: ${estimatedTotalPrice}
           </div>
         </div>
       </SwipeableDrawer>

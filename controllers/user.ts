@@ -63,6 +63,16 @@ const getMe = async (req: Request, res: Response) => {
     const eventsNotifications = await Event.find({
         $or: [
             {
+                host: user._id,
+                serviceList: {
+                    $elemMatch: {
+                        vendorProfile: user.vendorProfile,
+                        status: "pending",
+                        offerBy: "vendor",
+                    },
+                },
+            },
+            {
                 userList: {
                     $elemMatch: {
                         user: user._id,
@@ -223,22 +233,12 @@ const getChatMessages = async (req: Request, res: Response) => {
     // if req.user already have chatId then return messages of that chatId
     // else insert chatId in req.user.myChats and return messages of that chatId
 
-    const mySelf = await User.findById(req.user.userId)
-    if (!mySelf) throw new NotFoundError("User Not Found")
-    if (!mySelf.myChats.some((chat) => chat.toString() === otherUserId)) {
-        await User.findByIdAndUpdate(req.user.userId, {
-            $push: { myChats: otherUserId },
-        })
-        await User.findByIdAndUpdate(
-            otherUserId,
-            {
-                $push: { myChats: req.user.userId },
-            },
-            {
-                new: true,
-            },
-        )
-    }
+    await User.findByIdAndUpdate(req.user.userId, {
+        $addToSet: { myChats: otherUserId },
+    })
+    await User.findByIdAndUpdate(otherUserId, {
+        $addToSet: { myChats: req.user.userId },
+    })
 
     const chatId = generateChatId(req.user.userId.toString(), otherUserId)
     const messages = await ChatMessage.find({ chatId }).sort({ createdAt: 1 })

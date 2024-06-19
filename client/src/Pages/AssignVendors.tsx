@@ -108,7 +108,7 @@ const InviteGuests = () => {
                   primary={service.servicesOffering.serviceName}
                   secondary={
                     <span>
-                      Offered: ${service.amount}
+                      Offered: ${service.planSelected.price}
                       {service.status === "accepted" && (
                         <>
                           <br />

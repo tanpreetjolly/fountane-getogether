@@ -18,12 +18,19 @@ export interface ForgotPasswordType {
   password: string
 }
 
+export interface ItemType {
+  _id: string
+  name: string
+  description: string
+  price: number
+}
+
 export interface ServiceType {
   _id: string
   serviceName: string
   serviceDescription: string
-  price: number
-  items: { _id: string; name: string; description: string }[]
+  serviceImage: string
+  items: ItemType[]
 }
 
 export interface VendorProfileType {
@@ -85,9 +92,15 @@ export interface ServiceListType {
   vendorProfile: Omit<VendorProfileType, "services">
   // permission: [string]
   subEvent: Omit<SubEventType, "channels">
+  estimatedGuests: string
   status: string
+  offerBy: string
   servicesOffering: ServiceType
-  amount: number
+  planSelected: {
+    name: string
+    description: string
+    price: number
+  }
   paymentStatus: string
   createdAt: string
 }
@@ -148,8 +161,6 @@ export interface SubEventShort {
 
 export interface ServiceTypeNotifications {
   _id: string
-  amount: number
-  paymentStatus: string
   vendorProfile: {
     _id: string
     user: string
@@ -157,10 +168,17 @@ export interface ServiceTypeNotifications {
     createdAt: string
   }
   subEvent: SubEventShort
+  estimatedGuests: string
   status: string
+  offerBy: string
   servicesOffering: ServiceType
+  planSelected: {
+    name: string
+    description: string
+    price: number
+  }
+  paymentStatus: string
   createdAt: string
-  updatedAt: string
 }
 export interface NotificationsType {
   _id: string

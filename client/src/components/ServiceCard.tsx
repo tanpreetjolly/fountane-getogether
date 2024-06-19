@@ -3,15 +3,9 @@ import { useNavigate } from "react-router-dom"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 import { useState } from "react"
-import {
-  Checkbox,
-  List,
-  ListItem,
-  ListItemText,
-  SwipeableDrawer,
-} from "@mui/material"
-import { ArrowRight, SaveAllIcon, SquarePen } from "lucide-react"
-import Button from "./Button"
+import { SwipeableDrawer } from "@mui/material"
+import { ArrowRight, SquarePen } from "lucide-react"
+// import Button from "./Button"
 import { Cross1Icon } from "@radix-ui/react-icons"
 import ButtonSecondary from "./ButtonSecondary"
 
@@ -22,11 +16,9 @@ type Props = {
 const VendorCard = ({ service }: Props) => {
   const { event, loadingEvent } = useEventContext()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [selectedFestivities, setSelectedFestivities] = useState<string[]>([])
   const navigate = useNavigate()
   if (loadingEvent) return <Loader />
   if (!event) return <div>No Event Found</div>
-  const festivityList = event.subEvents
   const getStatusColor = () => {
     switch (service.status) {
       case "accepted":
@@ -39,19 +31,12 @@ const VendorCard = ({ service }: Props) => {
         return ""
     }
   }
-  const handleFestivityChange = (festivity: string) => {
-    setSelectedFestivities((prevFestivities) =>
-      prevFestivities.includes(festivity)
-        ? prevFestivities.filter((item) => item !== festivity)
-        : [...prevFestivities, festivity],
-    )
-  }
+
   const handleInviteButtonClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.preventDefault()
     e.stopPropagation()
-    setSelectedFestivities([service.subEvent._id])
     setIsDrawerOpen(true)
   }
 
@@ -66,22 +51,36 @@ const VendorCard = ({ service }: Props) => {
             {/* <Trash size={18} className="text-red-500" /> */}
           </div>
         )}
-        <div
-          className="flex flex-col justify-center"
-        >
+        <div className="flex flex-col justify-center">
           <div className="text-left">
             <div className="text-sm text-slate-800 bg-sky-200 w-fit -ml-1 mb-1 px-3 rounded-lg">
               <span className="capitalize">{service.subEvent.name}</span>
             </div>
             <div className="text-lg  font-medium">
-              {service.servicesOffering.serviceName} - ${service.amount}
+              {service.servicesOffering.serviceName} - $
+              {service.planSelected.price}
             </div>
             <div className="text-sm  text-gray-700 mb-2">
               by {service.vendorProfile.user.name}
             </div>
-            {/* <div className="text-sm text-gray-500 capitalize">
-              {service.servicesOffering.serviceDescription}
-            </div> */}
+            <div className="flex items-center">
+              <span>Estimated Guest: {service.estimatedGuests}</span>
+            </div>
+            <div className="flex items-center">
+              <span>Offered Price: ${service.planSelected.price}</span>
+            </div>
+            <div className="flex items-center">
+              <span>
+                Plan Selected:
+                {service.planSelected.name}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <span>
+                Offered By:
+                {service.offerBy === "user" ? "You" : "Vendor"}
+              </span>
+            </div>
           </div>
           <div className=" flex justify-between items-start mt-4">
             <div
@@ -91,14 +90,14 @@ const VendorCard = ({ service }: Props) => {
                 ? "Hired"
                 : service.status || "Invite"}
             </div>
-        <ButtonSecondary
-          text="Contact"
-          backgroundColor="bg-gray-300"
-          icon={<ArrowRight size={20} strokeWidth={1.5}/>}
-          onClick={() => {
-            navigate(`/my-chats/${service.vendorProfile.user._id}`)
-          }}
-        />
+            <ButtonSecondary
+              text="Contact"
+              backgroundColor="bg-gray-300"
+              icon={<ArrowRight size={20} strokeWidth={1.5} />}
+              onClick={() => {
+                navigate(`/my-chats/${service.vendorProfile.user._id}`)
+              }}
+            />
           </div>
         </div>
       </button>
@@ -124,59 +123,38 @@ const VendorCard = ({ service }: Props) => {
           <br />
           <span className="text-base text-gray-500 m">
             {service.servicesOffering.serviceName} - $
-            {service.servicesOffering.price}
+            {service.planSelected.price}
           </span>
           <br />
           <span className="text-sm text-gray-500">
             {service.servicesOffering.serviceDescription}
           </span>
+          <br />
 
-          {festivityList.length === 0 && (
-            <div className="text-center text-gray-500">
-              No Festivities Found, Create Festivities
-            </div>
-          )}
-          <List>
-            {festivityList.map((festivity) => (
-              <ListItem
-                key={festivity._id}
-                secondaryAction={
-                  <Checkbox
-                    edge="end"
-                    checked={selectedFestivities.includes(festivity._id)}
-                    onChange={() => handleFestivityChange(festivity._id)}
-                  />
-                }
-              >
-                <ListItemText primary={festivity.name} />
-              </ListItem>
-            ))}
-          </List>
+          <span className="text-sm text-gray-500">{service.subEvent.name}</span>
           <div className="space-y-2">
-            {service.servicesOffering.items.map((item, index) => (
-              <div key={item._id} className="border rounded-md p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-lg font-semibold">
-                    {index + 1 + ". " + item.name}
-                  </h4>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {item.description}
-                </p>
+            <div className="border rounded-md p-4">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="text-lg font-semibold">
+                  {service.planSelected.name}
+                </h4>
               </div>
-            ))}
+              <p className="text-sm text-muted-foreground">
+                {service.planSelected.description}
+              </p>
+            </div>
           </div>
           <div className="py-3 px-2 text-xl font-medium text-slate-700 border my-2">
-            Total Amount: $
-            {(
-              selectedFestivities.length * service.servicesOffering.price
-            ).toFixed(2)}
+            Amount: ${service.planSelected.price}
           </div>
-          <Button
+          <div className="flex items-center">
+            <span>Estimated Guest: {service.estimatedGuests}</span>
+          </div>
+          {/* <Button
             text="Make a Offer"
             onClick={() => {}}
             icon={<SaveAllIcon />}
-          />
+          /> */}
         </div>
       </SwipeableDrawer>
     </>

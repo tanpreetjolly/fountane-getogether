@@ -28,11 +28,12 @@ export interface IUser extends Document {
 export interface IServices extends Document {
     serviceName: string
     serviceDescription: string
-    price: number
+    serviceImage: string
     items: Types.Array<{
         _id: Schema.Types.ObjectId
         name: string
         description: string
+        price: number
     }>
 }
 
@@ -46,17 +47,17 @@ export interface IVendorProfile extends Document {
 export interface IServiceList extends Document {
     _id: string
     vendorProfile: Schema.Types.ObjectId
-    // permission: [string]
-    // subEvents: [
-    //     {
-    //         _id: string
     subEvent: Schema.Types.ObjectId
+    estimatedGuests: string
     status: string
+    offerBy: string
     servicesOffering: Schema.Types.ObjectId
+    planSelected: {
+        name: string
+        description: string
+        price: number
+    }
     paymentStatus: string
-    amount: number
-    //     },
-    // ]
     createdAt: Date
     updatedAt: Date
 }
@@ -120,7 +121,6 @@ export interface IChannel extends Document {
     _id: Schema.Types.ObjectId
     name: string
     allowedUsers: Types.Array<Schema.Types.ObjectId>
-    // allowedRoles: Types.Array<ROLES>
     type: CHANNEL_TYPES
     createdAt: Date
     updatedAt: Date

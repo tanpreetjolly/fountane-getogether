@@ -52,170 +52,191 @@ const createChannelsForSubEvents = async (
     return newChannels.map((channel) => channel._id)
 }
 
+const sampleService = [
+    {
+        serviceName: "Photographer",
+        serviceDescription:
+            "We provide the best photography services! for weddings, birthdays, and other events.",
+        serviceImage: faker.image.url(),
+        items: [
+            {
+                name: "Wedding Photography",
+                description:
+                    "We provide the best wedding photography services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Birthday Photography",
+                description:
+                    "We provide the best birthday photography services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Event Photography",
+                description: "We provide the best event photography services!",
+                price: faker.finance.amount(),
+            },
+        ],
+    },
+    {
+        serviceName: "Caterer",
+        serviceDescription: "We provide the best catering services!",
+        serviceImage: faker.image.url(),
+        items: [
+            {
+                name: "Punjabi Food",
+                description: "We provide the best food services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "South Indian Food",
+                description: "We provide the best food services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Chinese Food",
+                description: "We provide the best food services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Italian Food",
+                description: "We provide the best food services!",
+                price: faker.finance.amount(),
+            },
+        ],
+    },
+    {
+        serviceName: "Decorator",
+        serviceDescription: "We provide the best decoration services!",
+        serviceImage: faker.image.url(),
+        items: [
+            {
+                name: "Flower Decoration",
+                description: "We provide the best flower decoration services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Balloon Decoration",
+                description: "We provide the best balloon decoration services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Theme Decoration",
+                description: "We provide the best theme decoration services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Light Decoration",
+                description: "We provide the best light decoration services!",
+                price: faker.finance.amount(),
+            },
+        ],
+    },
+    {
+        serviceName: "Music",
+        serviceDescription: "We provide the best music services!",
+        serviceImage: faker.image.url(),
+        items: [
+            {
+                name: "DJ",
+                description: "We provide the best DJ services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Live Band",
+                description: "We provide the best live band services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Singer",
+                description: "We provide the best singer services!",
+                price: faker.finance.amount(),
+            },
+        ],
+    },
+    {
+        serviceName: "Transportation",
+        serviceDescription: "We provide the best transportation services!",
+        serviceImage: faker.image.url(),
+        items: [
+            {
+                name: "Car",
+                description: "We provide the best car services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Bus",
+                description: "We provide the best bus services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Train",
+                description: "We provide the best train services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Flight",
+                description: "We provide the best flight services!",
+                price: faker.finance.amount(),
+            },
+        ],
+    },
+    {
+        serviceName: "Venue",
+        serviceDescription: "We provide the best venue services!",
+        serviceImage: faker.image.url(),
+        items: [
+            {
+                name: "Hotel",
+                description: "We provide the best hotel services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Banquet Hall",
+                description: "We provide the best banquet hall services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Resort",
+                description: "We provide the best resort services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Beach",
+                description: "We provide the best beach services!",
+                price: faker.finance.amount(),
+            },
+        ],
+    },
+    {
+        serviceName: "Entertainment",
+        serviceDescription: "We provide the best entertainment services!",
+        serviceImage: faker.image.url(),
+        items: [
+            {
+                name: "Magician",
+                description: "We provide the best magician services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Clown",
+                description: "We provide the best clown services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Dancer",
+                description: "We provide the best dancer services!",
+                price: faker.finance.amount(),
+            },
+            {
+                name: "Comedian",
+                description: "We provide the best comedian services!",
+                price: faker.finance.amount(),
+            },
+        ],
+    },
+]
 const createVendorServices = async () => {
-    const sampleService = [
-        {
-            serviceName: "Photographer",
-            serviceDescription:
-                "We provide the best photography services! for weddings, birthdays, and other events.",
-            price: faker.finance.amount(),
-            items: [
-                {
-                    name: "Wedding Photography",
-                    description:
-                        "We provide the best wedding photography services!",
-                },
-                {
-                    name: "Birthday Photography",
-                    description:
-                        "We provide the best birthday photography services!",
-                },
-                {
-                    name: "Event Photography",
-                    description:
-                        "We provide the best event photography services!",
-                },
-            ],
-        },
-        {
-            serviceName: "Caterer",
-            serviceDescription: "We provide the best catering services!",
-            price: faker.finance.amount(),
-            items: [
-                {
-                    name: "Punjabi Food",
-                    description: "We provide the best food services!",
-                },
-                {
-                    name: "South Indian Food",
-                    description: "We provide the best food services!",
-                },
-                {
-                    name: "Chinese Food",
-                    description: "We provide the best food services!",
-                },
-                {
-                    name: "Italian Food",
-                    description: "We provide the best food services!",
-                },
-            ],
-        },
-        {
-            serviceName: "Decorator",
-            serviceDescription: "We provide the best decoration services!",
-            price: faker.finance.amount(),
-            items: [
-                {
-                    name: "Flower Decoration",
-                    description:
-                        "We provide the best flower decoration services!",
-                },
-                {
-                    name: "Balloon Decoration",
-                    description:
-                        "We provide the best balloon decoration services!",
-                },
-                {
-                    name: "Theme Decoration",
-                    description:
-                        "We provide the best theme decoration services!",
-                },
-                {
-                    name: "Light Decoration",
-                    description:
-                        "We provide the best light decoration services!",
-                },
-            ],
-        },
-        {
-            serviceName: "Music",
-            serviceDescription: "We provide the best music services!",
-            price: faker.finance.amount(),
-            items: [
-                {
-                    name: "DJ",
-                    description: "We provide the best DJ services!",
-                },
-                {
-                    name: "Live Band",
-                    description: "We provide the best live band services!",
-                },
-                {
-                    name: "Singer",
-                    description: "We provide the best singer services!",
-                },
-            ],
-        },
-        {
-            serviceName: "Transportation",
-            serviceDescription: "We provide the best transportation services!",
-            price: faker.finance.amount(),
-            items: [
-                {
-                    name: "Car",
-                    description: "We provide the best car services!",
-                },
-                {
-                    name: "Bus",
-                    description: "We provide the best bus services!",
-                },
-                {
-                    name: "Train",
-                    description: "We provide the best train services!",
-                },
-                {
-                    name: "Flight",
-                    description: "We provide the best flight services!",
-                },
-            ],
-        },
-        {
-            serviceName: "Venue",
-            serviceDescription: "We provide the best venue services!",
-            price: faker.finance.amount(),
-            items: [
-                {
-                    name: "Hotel",
-                    description: "We provide the best hotel services!",
-                },
-                {
-                    name: "Banquet Hall",
-                    description: "We provide the best banquet hall services!",
-                },
-                {
-                    name: "Resort",
-                    description: "We provide the best resort services!",
-                },
-                {
-                    name: "Beach",
-                    description: "We provide the best beach services!",
-                },
-            ],
-        },
-        {
-            serviceName: "Entertainment",
-            serviceDescription: "We provide the best entertainment services!",
-            price: faker.finance.amount(),
-            items: [
-                {
-                    name: "Magician",
-                    description: "We provide the best magician services!",
-                },
-                {
-                    name: "Clown",
-                    description: "We provide the best clown services!",
-                },
-                {
-                    name: "Dancer",
-                    description: "We provide the best dancer services!",
-                },
-                {
-                    name: "Comedian",
-                    description: "We provide the best comedian services!",
-                },
-            ],
-        },
-    ]
     const newChannels = await Services.insertMany(sampleService)
     return newChannels.map((channel) => channel._id)
 }
@@ -390,13 +411,17 @@ async function main() {
                 ...vendorProfileToCreate.map((vendorUser) => ({
                     vendorProfile: vendorUser._id,
                     subEvent: getRandomElement(subEventToCreate)._id,
+                    estimatedGuests: faker.finance.pin(),
+                    offerBy: getRandomElement(["vendor", "user"]),
                     status: getRandomElement([
                         "accepted",
                         "rejected",
                         "pending",
                     ]),
                     servicesOffering: getRandomElement(vendorUser.services),
-                    amount: faker.finance.amount(),
+                    planSelected: getRandomElement(
+                        getRandomElement(sampleService).items,
+                    ),
                     paymentStatus: getRandomElement([
                         "pending",
                         "paid",
@@ -450,9 +475,13 @@ async function main() {
                 {
                     vendorProfile: user.vendorProfile,
                     subEvent: getRandomElement(inviteSubEventToCreate)._id,
+                    estimatedGuests: faker.finance.pin(),
+                    offerBy: getRandomElement(["vendor", "user"]),
                     status: "pending",
                     servicesOffering: getRandomElement(vendorProfile.services),
-                    amount: faker.finance.amount(),
+                    planSelected: getRandomElement(
+                        getRandomElement(sampleService).items,
+                    ),
                     paymentStatus: getRandomElement([
                         "pending",
                         "paid",
@@ -462,13 +491,17 @@ async function main() {
                 ...vendorProfileToCreate.map((vendorUser) => ({
                     vendorProfile: vendorUser._id,
                     subEvent: getRandomElement(subEventToCreate)._id,
+                    estimatedGuests: faker.finance.pin(),
+                    offerBy: getRandomElement(["vendor", "user"]),
                     status: getRandomElement([
                         "accepted",
                         "rejected",
                         "pending",
                     ]),
                     servicesOffering: getRandomElement(vendorUser.services),
-                    amount: faker.finance.amount(),
+                    planSelected: getRandomElement(
+                        getRandomElement(sampleService).items,
+                    ),
                     paymentStatus: getRandomElement([
                         "pending",
                         "paid",
