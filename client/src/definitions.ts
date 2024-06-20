@@ -219,6 +219,7 @@ export interface ChatMessage {
 export interface ChannelDetails {
   _id: string
   name: string
+  type: string
   allowedUsers: OtherUserType[]
   createdAt: string
 }

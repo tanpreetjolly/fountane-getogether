@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom"
 import { useAppSelector } from "@/hooks"
 import { ChatMessage, ChannelDetails } from "@/definitions"
 import { useSocketContext } from "@/context/SocketContext"
+import { useEventContext } from "@/context/EventContext"
 
 const ChannelChat = () => {
   const [loading, setLoading] = useState(true)
@@ -24,6 +25,8 @@ const ChannelChat = () => {
   const userId = user?.userId
 
   const { socket } = useSocketContext()
+
+  const { event } = useEventContext()
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== "") {
@@ -85,6 +88,9 @@ const ChannelChat = () => {
   if (loading) return <Loader />
   if (user === null) return <div>User not found</div>
   if (channelDetails === null) return <div>Channel not found</div>
+  if (event === null) return <div>Event not found</div>
+
+  console.log(channelDetails)
 
   return (
     <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
@@ -113,66 +119,97 @@ const ChannelChat = () => {
           </div>
         )}
       </div>
-      <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
-        <button
-          className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full"
-          onClick={() => {
-            //show a window message with chat details
-            alert(
-              "Name: " +
-                channelDetails.name +
-                "\nAllowed Users: " +
-                channelDetails.allowedUsers.map((user) => user.name).join(", "),
-            )
+      {channelDetails.type === "announcement" && !event.isHosted ? null : (
+        <InputBar
+          {...{
+            channelDetails,
+            newMessage,
+            setNewMessage,
+            imagesFiles,
+            setImagesFiles,
+            handleSendMessage,
           }}
-        >
-          <Info size={20} />
-        </button>
-        <label
-          htmlFor="file-upload"
-          className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative"
-        >
-          {imagesFiles.length > 0 && (
-            <div className="flex gap-2 absolute bottom-12 right-0">
-              {imagesFiles.map((file) => (
-                <img
-                  key={file.name}
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
-                  className="h-10 w-10 object-cover rounded-lg"
-                />
-              ))}
-            </div>
-          )}
-          <Link size={20} />
-        </label>
-        <input
-          id="file-upload"
-          className="hidden"
-          type="file"
-          accept="image/jpeg, image/png, image/jpg, image/webp"
-          multiple
-          onChange={(e) => {
-            if (e.target.files) {
-              setImagesFiles(Array.from(e.target.files))
-            }
-          }}
-          name="profileImage"
         />
-        <Input
-          fullWidth
-          placeholder="Type a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={(e) => (e.key === "Enter" ? handleSendMessage() : null)}
-        />
-        <button
-          onClick={handleSendMessage}
-          className="py-2.5 px-3 bg-zinc-600 text-white rounded-full"
-        >
-          <SendHorizontal size={18} />
-        </button>
-      </div>
+      )}
+    </div>
+  )
+}
+
+const InputBar = ({
+  channelDetails,
+  newMessage,
+  setNewMessage,
+  imagesFiles,
+  setImagesFiles,
+  handleSendMessage,
+}: {
+  channelDetails: ChannelDetails
+  newMessage: string
+  setNewMessage: (value: string) => void
+  imagesFiles: File[]
+  setImagesFiles: (value: File[]) => void
+  handleSendMessage: () => void
+}) => {
+  return (
+    <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+      <button
+        className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full"
+        onClick={() => {
+          //show a window message with chat details
+          alert(
+            "Name: " +
+              channelDetails.name +
+              "\nAllowed Users: " +
+              channelDetails.allowedUsers.map((user) => user.name).join(", "),
+          )
+        }}
+      >
+        <Info size={20} />
+      </button>
+      <label
+        htmlFor="file-upload"
+        className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative"
+      >
+        {imagesFiles.length > 0 && (
+          <div className="flex gap-2 absolute bottom-12 right-0">
+            {imagesFiles.map((file) => (
+              <img
+                key={file.name}
+                src={URL.createObjectURL(file)}
+                alt={file.name}
+                className="h-10 w-10 object-cover rounded-lg"
+              />
+            ))}
+          </div>
+        )}
+        <Link size={20} />
+      </label>
+      <input
+        id="file-upload"
+        className="hidden"
+        type="file"
+        accept="image/jpeg, image/png, image/jpg, image/webp"
+        multiple
+        onChange={(e) => {
+          if (e.target.files) {
+            setImagesFiles(Array.from(e.target.files))
+          }
+        }}
+        name="profileImage"
+      />
+      <Input
+        fullWidth
+        placeholder="Type a message..."
+        value={newMessage}
+        onChange={(e) => setNewMessage(e.target.value)}
+        onKeyDown={(e) => (e.key === "Enter" ? handleSendMessage() : null)}
+      />
+      <button
+        onClick={handleSendMessage}
+        className="py-2.5 px-3 bg-zinc-600 text-white rounded-full"
+      >
+        <SendHorizontal size={18} />
+      </button>
     </div>
   )
 }
