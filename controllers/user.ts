@@ -257,7 +257,7 @@ const getChatMessages = async (req: Request, res: Response) => {
 const getChannelMessages = async (req: Request, res: Response) => {
     const { channelId } = req.params
     const channel =
-        await Channel.findById(channelId).select("name allowedUsers")
+        await Channel.findById(channelId).select("name allowedUsers type")
 
     if (!channel) throw new NotFoundError("Channel Not Found")
 
@@ -300,6 +300,7 @@ const getChannelMessages = async (req: Request, res: Response) => {
             channelDetails: {
                 _id: channel._id,
                 name: channel.name,
+                type: channel.type,
                 allowedUsers: [
                     ...allowedUsers,
                     ...vendorProfile.map((vp) => vp.user),
