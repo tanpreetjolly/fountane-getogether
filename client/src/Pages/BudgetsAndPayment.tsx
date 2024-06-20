@@ -134,7 +134,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
             </h2>
             <div className="pl-1 text-xl text-gray-700">for {event.name}</div>
           </div>
-          <div className="flex gap-2 mt-2 items-  lg:w-3/5">
+          <div className="flex gap-2 mt-2  justify-end w-3/5">
             <div className="  w-[30%] relative  p-3.5  rounded-3xl flex flex-col gap-1 bg-opacity-80 bg-blueShade text-slate-800">
               <div className="text-center">
                 <span className="mx-auto text-sm  text-slate-800 ">
@@ -174,7 +174,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
               </div>
             </div>
 
-            <div className=" border w-1/4 p-5 rounded-3xl bg-yellowShade relative bg-opacity-90 shadow-sm flex flex-col ">
+            {/* <div className=" border w-1/4 p-5 rounded-3xl bg-yellowShade relative bg-opacity-90 shadow-sm flex flex-col ">
               <div className="text-">
                 <span className="mx-auto text-sm  text-slate-800 ">
                   Completed <br /> Payments
@@ -193,7 +193,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                   ${(event.budget - utilizedBudget).toFixed(2)}
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 

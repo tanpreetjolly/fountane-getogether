@@ -13,6 +13,8 @@ import {
   CircleX,
   MapPinIcon,
   UserIcon,
+  UserPlus,
+  Edit2,
 } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/hooks"
 import { format } from "date-fns"
@@ -93,7 +95,7 @@ const ServiceNotificationCard: React.FC<{
     setOfferPrice(e.target.value)
   }
   return (
-    <div className="px-4 pt-2">
+    <div className=" pt-2">
       {showModal !== null && (
         <div className="fixed inset-0 flex items-center justify-center z-50 outline w-screen bg-gray-700 bg-opacity-50">
           <div className="bg-white rounded-lg p-6 shadow-lg">
@@ -136,49 +138,52 @@ const ServiceNotificationCard: React.FC<{
         </div>
       )}
 
-      <Card className="rounded-lg">
+      <Card className="rounded-lg shadow-sm">
         <CardHeader className="p-4 relative">
-          <CardTitle>
-            {service.subEvent.name + " - " + notification.eventName}
+          <CardTitle className="font-medium text-salte-800">
+            {service.subEvent.name + " in " + notification.eventName}
           </CardTitle>
-          <CardDescription>
-            Service Requested:
-            {service.servicesOffering.serviceName}
+          <CardDescription className="bg-blueShade text-slate-900 w-fit px-2 py-0.5 rounded-lg -ml-1">
+            Service Requested : {service.servicesOffering.serviceName}
           </CardDescription>
           <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
             <Link to={`/my-chats/${service.vendorProfile.user}`}>Discuss</Link>
           </div>
         </CardHeader>
         <CardContent className=" p-4 pt-0">
-          <div className="space-y-1 text-sm text-zinc-700">
+          <div className="space-y-1 text-sm text-zinc-700 grid grid-cols-2 gap-1">
             <div className="flex items-center">
-              <CalendarIcon className="mr-2 text-indigo-500" size={16} />
+              <CalendarIcon className="mr-2 text-slate-500" size={16} />
               {formatDate(service.subEvent.startDate)} -{" "}
               {formatDate(service.subEvent.endDate)}
             </div>
             <div className="flex items-center">
-              <MapPinIcon className="mr-2 text-indigo-500" size={16} />
+              <MapPinIcon className="mr-2 text-slate-500" size={16} />
               <span>{service.subEvent.venue}</span>
             </div>
             <div className="flex items-center">
-              <UserIcon className="mr-2 text-indigo-500" size={16} />
-              <span>{notification.host.name}</span>
+              <UserIcon className="mr-2 text-slate-500" size={16} />
+              <span>Hosted by {notification.host.name}</span>
             </div>
             <div className="flex items-center">
-              <span>Estimated Guest: {service.estimatedGuests}</span>
+              <UserPlus className="mr-2 text-slate-500" size={16} />
+              <span>Total Guest: {service.estimatedGuests}</span>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center bg-green-200 rounded-lg text-slate-800 mt-3 w-fit px-2  ">
               <span>Offered Price: ${service.planSelected.price}</span>
             </div>
-            <div className="flex items-center">
-              <span>
-                Plan Selected:
-                {service.planSelected.name}
-              </span>
+            <div className="flex items-center bg-purpleShade w-fit  px-2 mt-3 rounded-lg bg-opacity-80 text-slate-800">
+              <span>Plan Selected: {service.planSelected.name}</span>
             </div>
             <div className="flex items-center">
-              <span>
-                New Offer By:
+              <span
+                className={`px-2 py-0.5 rounded-lg ${
+                  service.offerBy === "vendor"
+                    ? "bg-yellowShade"
+                    : "bg-purpleShade"
+                }`}
+              >
+                New Offer By:{" "}
                 {service.offerBy[0].toUpperCase() + service.offerBy.slice(1)}
               </span>
             </div>
@@ -208,7 +213,7 @@ const ServiceNotificationCard: React.FC<{
             Accept
           </Button>
           <Button
-            className="bg-indigo-500"
+            className="bg-indigo-500 text-white"
             onClick={() =>
               handleAcceptVendor(notification.eventId, service._id, "rejected")
             }

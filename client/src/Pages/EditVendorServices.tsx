@@ -1,8 +1,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
 import {
   Accordion,
   AccordionContent,
@@ -125,29 +124,31 @@ const EditVendorServices = () => {
   }
 
   return (
-    <div className="px-4">
-      <h2 className="text-2xl font-semibold mb-4">My Services:</h2>
-      <div className="flex justify-end mb-4">
-        <Button variant="default" onClick={() => handleServiceEdit(null)}>
-          <Plus className="h-4 w-4 mr-2" /> Create New Service
-        </Button>
+    <div className="p-5 lg:w-5/6 mx-auto bg-white my-4  rounded-2xl">
+      <div className="flex justify-between items-center px-10">
+        <h2 className="text-2xl font-medium mb-4">My Services:-</h2>
+        <div className="flex justify-end mb-4">
+          <Button variant="default" onClick={() => handleServiceEdit(null)}>
+            <Plus className="h-4 w-4 mr-2" /> Create New Service
+          </Button>
+        </div>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4 mt-7 px-10">
         {serviceData.map((service) => (
           <Accordion
             type="single"
             collapsible
-            className="border rounded-md relative"
+            className="border rounded-lg relative "
             key={service._id}
           >
             <AccordionItem value={service.serviceName}>
               <AccordionTrigger className="px-4 py-2 flex justify-between items-center">
-                <div className="text-left w-4/5 space-y-1">
+                <div className="text-left w-4/5 space-y-2 py-3">
                   <h3 className="text-lg font-medium">{service.serviceName}</h3>
                   <p className="text-sm text-muted-foreground">
                     {service.serviceDescription}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm bg-purpleShade bg-opacity-80 text-slate-80 w-fit px-3 rounded-lg font-normal py-0.5 ">
                     Starting Price $
                     {Math.min(...service.items.map((item) => item.price))}
                   </p>
@@ -166,11 +167,14 @@ const EditVendorServices = () => {
                 </Button>
               </AccordionTrigger>
               <AccordionContent className="px-4 py-2">
+                <p className="p-1 font-medium ">
+                  Plans for {service.serviceName}
+                </p>
                 <div className="space-y-2">
                   {service.items.map((item) => (
-                    <div key={item._id} className="border rounded-md p-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <h4 className="text-lg font-semibold">{item.name}</h4>
+                    <div key={item._id} className="border rounded-md p-3 w-4/5">
+                      <div className="flex justify-between items-center mb-1">
+                        <h4 className="text-">{item.name}</h4>
                       </div>
                       <p className="text-sm text-muted-foreground">
                         {item.description}
@@ -185,9 +189,9 @@ const EditVendorServices = () => {
       </div>
 
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <h3 className="text-lg font-semibold">
+        <DrawerContent className="max-h-[90vh] overflow-y-hidden lg:w-5/6 mx-auto  px-10">
+          <DrawerHeader className="flex items-center justify-between border-b mx-2">
+            <h3 className="text-xl font-medium">
               {selectedService ? "Edit Service" : "Create New Service"}
             </h3>
             <Button variant="ghost" onClick={closeDrawer}>
@@ -195,65 +199,72 @@ const EditVendorServices = () => {
             </Button>
           </DrawerHeader>
           {selectedService && (
-            <div className="space-y-4 p-4 max-h-[80vh] overflow-auto ">
-              <div>
-                <Label htmlFor="serviceType" className="mb-2">
-                  Service Type
-                </Label>
-                <Input
-                  id="serviceType"
-                  value={selectedService.serviceName}
-                  onChange={(e) =>
-                    setSelectedService({
-                      ...selectedService,
-                      serviceName: e.target.value,
-                    })
-                  }
-                />
+            <div className="p-4 max-h-[80vh] overflow-auto ">
+              <div className="grid md:grid-cols-2 gap-2 mb-4">
+                <div>
+                  <Label htmlFor="serviceType" className="mb-2">
+                    Service Type
+                  </Label>
+                  <Input
+                  className="bg-white"
+                    id="serviceType"
+                    value={selectedService.serviceName}
+                    onChange={(e) =>
+                      setSelectedService({
+                        ...selectedService,
+                        serviceName: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="serviceDescription" className="mb-2">
+                    Service Description
+                  </Label>
+                  <Input
+                  className="bg-white"
+                    id="serviceDescription"
+                    value={selectedService.serviceDescription}
+                    onChange={(e) =>
+                      setSelectedService({
+                        ...selectedService,
+                        serviceDescription: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="">
+                  <Label htmlFor="serviceImage" className="mb-2">
+                    Service Image URL
+                  </Label>
+                  <div className="flex gap-2 p-1 items-center">
+                    <img
+                      src={selectedService.serviceImage}
+                      alt={selectedService.serviceName}
+                      className="w-20 h-20 object-cover rounded-md"
+                    />
+                    <Input
+                    className="bg-white"
+                      id="serviceImage"
+                      type="string"
+                      value={selectedService.serviceImage}
+                      onChange={(e) =>
+                        setSelectedService({
+                          ...selectedService,
+                          serviceImage: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="serviceDescription" className="mb-2">
-                  Service Description
-                </Label>
-                <Input
-                  id="serviceDescription"
-                  value={selectedService.serviceDescription}
-                  onChange={(e) =>
-                    setSelectedService({
-                      ...selectedService,
-                      serviceDescription: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="serviceImage" className="mb-2">
-                  Service Image URL
-                </Label>
-                <img
-                  src={selectedService.serviceImage}
-                  alt={selectedService.serviceName}
-                  className="w-20 h-20 object-cover rounded-md"
-                />
-                <Input
-                  id="serviceImage"
-                  type="string"
-                  value={selectedService.serviceImage}
-                  onChange={(e) =>
-                    setSelectedService({
-                      ...selectedService,
-                      serviceImage: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <Separator />
+
               <div className="space-y-2">
                 {selectedService.items.map((item, index) => (
-                  <div key={item._id} className="border rounded-md p-4">
+                  <div key={item._id} className="border rounded-md p-4 bg-gray-50">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="text-lg font-semibold">
-                        Item {index + 1}
+                        Plan {index + 1}
                       </h4>
                       <Button
                         variant="ghost"
@@ -272,15 +283,16 @@ const EditVendorServices = () => {
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
-                    <div className="space-y-2">
+                    <div className=" gap-3 grid md:grid-cols-2 lg:grid-cols-3">
                       <div>
                         <Label
                           htmlFor={`itemName-${item._id}`}
                           className="mb-2"
                         >
-                          Item Name
+                          Plan Name
                         </Label>
                         <Input
+                        className="bg-white"
                           id={`itemName-${item._id}`}
                           value={item.name}
                           onChange={(e) => {
@@ -305,9 +317,10 @@ const EditVendorServices = () => {
                           htmlFor={`itemDescription-${item._id}`}
                           className="mb-2"
                         >
-                          Item Description
+                          Plan Description
                         </Label>
                         <Input
+                        className="bg-white"
                           id={`itemDescription-${item._id}`}
                           value={item.description}
                           onChange={(e) => {
@@ -332,9 +345,10 @@ const EditVendorServices = () => {
                           htmlFor={`itemPrice-${item._id}`}
                           className="mb-2"
                         >
-                          Item Price
+                          Plan Price
                         </Label>
                         <Input
+                        className="bg-white"
                           id={`itemPrice-${item._id}`}
                           value={item.price}
                           type="number"
@@ -365,6 +379,7 @@ const EditVendorServices = () => {
               <div className="flex justify-end mb-4">
                 <Button
                   variant="outline"
+                  className="mt-4"
                   onClick={() => {
                     const newItem = {
                       _id: `new-${selectedService.items.length}`,
@@ -385,7 +400,7 @@ const EditVendorServices = () => {
             </div>
           )}
           <DrawerFooter>
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-1">
               <Button variant="outline" onClick={closeDrawer}>
                 Cancel
               </Button>

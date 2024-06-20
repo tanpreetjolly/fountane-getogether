@@ -63,21 +63,18 @@ const VendorCard = ({ service }: Props) => {
             <div className="text-sm  text-gray-700 mb-2">
               by {service.vendorProfile.user.name}
             </div>
-            <div className="flex items-center">
-              <span>Estimated Guest: {service.estimatedGuests}</span>
+            <div className="text-sm  text-slate-700 flex items-center">
+              <span>Total Guests: <span>{service.estimatedGuests}</span></span>
             </div>
-            <div className="flex items-center">
-              <span>Offered Price: ${service.planSelected.price}</span>
-            </div>
-            <div className="flex items-center">
+            <div className="text-sm  text-slate-700 flex items-center">
               <span>
-                Plan Selected:
+                Plan Selected:{" "}
                 {service.planSelected.name}
               </span>
             </div>
-            <div className="flex items-center">
+            <div className="text-sm  text-slate-700 flex items-center">
               <span>
-                Offered By:
+                Offered By:{" "}
                 {service.offerBy === "user" ? "You" : "Vendor"}
               </span>
             </div>

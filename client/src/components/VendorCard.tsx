@@ -12,6 +12,7 @@ import Loader from "./Loader"
 import toast from "react-hot-toast"
 import ButtonSecondary from "./ButtonSecondary"
 import { makeAOffer } from "@/api"
+import { ListSubheader } from "@mui/material"
 
 type Props = {
   vendor: VendorSaveType
@@ -129,29 +130,31 @@ const VendorCard = ({ vendor }: Props) => {
     <>
       <div className="border px-4 pt-4 rounded-xl w-full mb-3 max-w-xl md:mr-2">
         <div className="flex flex-col gap-2 justify-center items-start">
-          <div className="text-left">
-            <div className="text-lg font-medium">
-              {vendor.servicesOffering.serviceName}
+          <div className="flex items-center justify-between w-full gap-2">
+            <div className="text-left">
+              <div className="text-lg font-medium">
+                {vendor.servicesOffering.serviceName}
+              </div>
+              <div className="text-base mb-1 text-gray-700 capitalize">
+                by {vendor.vendorName}
+              </div>
+              <div className="text-sm text-gray-700 capitalize">
+                {vendor.servicesOffering.serviceDescription}
+              </div>
+              <div className="bg-purpleShade w-fit px-3 bg-opacity-85 rounded-full text-[13px] py-1 mt-3 -mx-1">
+                Starting From $
+                {Math.min(
+                  ...vendor.servicesOffering.items.map((item) => item.price),
+                )}
+              </div>
             </div>
-            <div className="text-base mb-1 text-gray-700 capitalize">
-              by {vendor.vendorName}
-            </div>
-            <div className="text-sm text-gray-700 capitalize">
-              {vendor.servicesOffering.serviceDescription}
-            </div>
-            <div className="bg-purpleShade w-fit px-3 bg-opacity-85 rounded-full text-[13px] py-1 mt-3 -mx-1">
-              Starting From $
-              {Math.min(
-                ...vendor.servicesOffering.items.map((item) => item.price),
-              )}
-            </div>
+            <img
+              src={vendor.servicesOffering.serviceImage}
+              alt="service"
+              className="w-20 h-20 object-cover rounded-md"
+            />
           </div>
-          <img
-            src={vendor.servicesOffering.serviceImage}
-            alt="service"
-            className="w-20 h-20 object-cover rounded-md"
-          />
-          <div className="ml-auto mt-4">
+          <div className="ml-auto mt-auto">
             <ButtonSecondary
               text="Make an Offer"
               onClick={handleInviteButtonClick as any}
@@ -179,49 +182,61 @@ const VendorCard = ({ vendor }: Props) => {
             </button>
           </div>
           <div className="flex justify-between items-center mb-4">
-            <div>
-              <span className="text-xl text-gray-800 font-medium">
-                {vendor.servicesOffering.serviceName} by {vendor.vendorName}
-              </span>
-              <br />
-              <span className="text-sm text-gray-500">
-                {vendor.servicesOffering.serviceDescription}
-              </span>
-              <img
-                src={vendor.servicesOffering.serviceImage}
-                alt="service"
-                className="w-20 h-20 object-cover rounded-md"
-              />
+            <div className="flex flex-col max-w-xl w-1/2 gap-3 justify-between ">
+              <div>
+                <span className="text-xl text-gray-800 font-medium">
+                  {vendor.servicesOffering.serviceName} by {vendor.vendorName}
+                </span>
+                <br />
+                <span className="text-sm text-gray-500">
+                  {vendor.servicesOffering.serviceDescription}
+                </span>
+              </div>
+              <div className="flex">
+                <Button
+                  text="Make a Offer"
+                  onClick={inviteVendor}
+                  icon={<IoPersonAdd />}
+                />
+              </div>
             </div>
-            <div className="flex">
-              <Button
-                text="Make a Offer"
-                onClick={inviteVendor}
-                icon={<IoPersonAdd />}
-              />
-            </div>
+            <img
+              src={vendor.servicesOffering.serviceImage}
+              alt="service"
+              className="w-20 h-20 object-cover rounded-md"
+            />
           </div>
+          <div className="ml-auto w-fit bg-gray-100 rounded-xl px-4 py-1 text-lg  text-slate-900 ">
+            Total Offer Amount: <span className="font-medium">${estimatedTotalPrice}</span>
+          </div>
+          <p className="p-0.5  text-sm text-slate-800">Plans we offer:</p>
           <div className="flex flex-wrap gap-4">
             {vendor.servicesOffering.items.map((item, index) => (
-              <div key={item._id} className="border rounded-md p-4 flex-1">
+              <div key={item._id} className="border rounded-md p-3 flex-1">
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-lg font-semibold">
+                  <h4 className=" font-medium">
                     {index + 1 + ". " + item.name}
                   </h4>
+                  <p className="text-sm bg-green-200  text-green-900 px-2 rounded-xl py-0.5">
+                    ${item.price}
+                  </p>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {item.description}
                 </p>
-                <p className="text-sm text-muted-foreground">${item.price}</p>
               </div>
             ))}
           </div>
-          <List className="relative">
+          <p className="pt-2 mt-3 p-0.5 text-slate-800 text-sm ">
+            Select a festivity and the required plan for it
+          </p>
+          <List className="relative ">
             {festivityList.map((festivity) => (
-              <div key={festivity._id} className="mb-4">
-                <ListItem onClick={() => handleFestivityChange(festivity._id)}>
+              <div key={festivity._id} className="mb-2 border rounded-2xl">
+                <ListItem onClick={() => handleFestivityChange(festivity._id)} >
                   <Checkbox
                     edge="start"
+                    size="small"
                     checked={selectedFestivities.some(
                       (selectedFestivity) =>
                         selectedFestivity.subEventId === festivity._id,
@@ -235,55 +250,61 @@ const VendorCard = ({ vendor }: Props) => {
                   (selectedFestivity) =>
                     selectedFestivity.subEventId === festivity._id,
                 ) && (
-                  <div className="flex flex-wrap gap-2 mt-2 ml-6">
-                    <label htmlFor="estimatedGuestNo" className="text-sm">
-                      Estimated Guest No
-                    </label>
-                    <input
-                      id="estimatedGuestNo"
-                      type="text"
-                      value={
-                        selectedFestivities.find((f) => {
-                          return f.subEventId === festivity._id
-                        })?.estimatedGuestNo
-                      }
-                      className="border p-2 rounded-md w-24"
-                      placeholder="Estimated Guest No"
-                      onChange={(e) => {
-                        setSelectedFestivities((p) => {
-                          return p.map((f) => {
-                            if (f.subEventId === festivity._id) {
-                              f.estimatedGuestNo = e.target.value
-                            }
-                            return f
-                          })
-                        })
-                      }}
-                    />
-                    <label htmlFor="offerPrice" className="text-sm">
-                      Offer Price ($)
-                    </label>
-                    <input
-                      id="offerPrice"
-                      type="text"
-                      value={
-                        selectedFestivities.find((f) => {
-                          return f.subEventId === festivity._id
-                        })?.offerPrice
-                      }
-                      className="border p-2 rounded-md w-24"
-                      placeholder="Offer Price"
-                      onChange={(e) => {
-                        setSelectedFestivities((p) => {
-                          return p.map((f) => {
-                            if (f.subEventId === festivity._id) {
-                              f.offerPrice = e.target.value
-                            }
-                            return f
-                          })
-                        })
-                      }}
-                    />
+                  <div className="border pt-2 mb-2 mx-4 bg-slate-50 rounded-xl">
+                    <div className="flex items-center justify-start ml-3   gap-4">
+                      <div className="flex gap-2 items-center bg-blueShade px-3 py-0.5 rounded-lg">
+                        <label htmlFor="estimatedGuestNo" className="text-sm">
+                          Estimated Total Guests:
+                        </label>
+                        <input
+                          id="estimatedGuestNo"
+                          type="text"
+                          value={
+                            selectedFestivities.find((f) => {
+                              return f.subEventId === festivity._id
+                            })?.estimatedGuestNo
+                          }
+                          className="border  rounded text-sm w-10 text-center"
+                          placeholder="Estimated Guest No"
+                          onChange={(e) => {
+                            setSelectedFestivities((p) => {
+                              return p.map((f) => {
+                                if (f.subEventId === festivity._id) {
+                                  f.estimatedGuestNo = e.target.value
+                                }
+                                return f
+                              })
+                            })
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2 bg-yellowShade rounded-lg px-3 py-0.5">
+                        <label htmlFor="offerPrice" className="text-sm">
+                          Offer Price ($)
+                        </label>
+                        <input
+                          id="offerPrice"
+                          type="text"
+                          value={
+                            selectedFestivities.find((f) => {
+                              return f.subEventId === festivity._id
+                            })?.offerPrice
+                          }
+                          className="border py-0.5 rounded-md w-16 text-center text-sm"
+                          placeholder="Offer Price"
+                          onChange={(e) => {
+                            setSelectedFestivities((p) => {
+                              return p.map((f) => {
+                                if (f.subEventId === festivity._id) {
+                                  f.offerPrice = e.target.value
+                                }
+                                return f
+                              })
+                            })
+                          }}
+                        />
+                      </div>
+                    </div>
                     {vendor.servicesOffering.items.map((item) => (
                       <ListItem
                         key={item._id}
@@ -292,7 +313,9 @@ const VendorCard = ({ vendor }: Props) => {
                         onClick={() => handleItemChange(festivity._id, item)}
                       >
                         <Checkbox
+                          size="small"
                           edge="start"
+                          color="secondary"
                           checked={selectedFestivities.some(
                             (selectedFestivity) =>
                               selectedFestivity.subEventId === festivity._id &&
@@ -309,9 +332,6 @@ const VendorCard = ({ vendor }: Props) => {
               </div>
             ))}
           </List>
-          <div className="py-3 px-2 text-xl font-medium text-indigo-700">
-            Estimated Total Price: ${estimatedTotalPrice}
-          </div>
         </div>
       </SwipeableDrawer>
     </>

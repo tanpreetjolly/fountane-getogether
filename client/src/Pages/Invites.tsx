@@ -62,8 +62,8 @@ const Invites = () => {
   }
 
   return (
-    <>
-      <div className="text-2xl px-5 my-2 font-semibold text-zinc-800">
+    <div className="lg:w-5/6 mx-auto bg-white my-4 p-5 rounded-2xl border shadow-sm">
+      <div className="text-2xl px-5 my-2 font-medium text-zinc-800 ">
         Your Invites
       </div>
       <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -72,11 +72,11 @@ const Invites = () => {
             <span>You don't have any invites yet</span>
           )}
         {guestNotifications.map((invite) => (
-          <Card key={invite._id} className="rounded-lg">
+          <Card key={invite._id} className="rounded-lg shadow-sm">
             <CardHeader className="p-4 relative">
               <CardTitle className="text-lg">{invite.name}</CardTitle>
               <CardDescription className="flex flex-col ml-2">
-                <span className="flex items-center">
+                <span className="flex Plans-center">
                   <CalendarIcon className="text-indigo-500 mr-2" size={14} />
                   {formatDate(invite.startDate)} - {formatDate(invite.endDate)}
                 </span>
@@ -157,7 +157,7 @@ const Invites = () => {
           }),
         )}
       </div>
-    </>
+    </div>
   )
 }
 

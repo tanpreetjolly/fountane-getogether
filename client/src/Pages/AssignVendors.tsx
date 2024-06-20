@@ -130,7 +130,7 @@ const InviteGuests = () => {
                 </div>
               </div>
 
-              <div className="w-fit mr-auto mt-5">
+              <div className="w-fit mr-auto mt-auto pt-4">
                 <ButtonSecondary
                   text="Discuss"
                   icon={<ArrowRight size={18} />}

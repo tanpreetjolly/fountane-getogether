@@ -48,7 +48,7 @@ const ManageVendors = () => {
           <span className="font-medium md:text-xl">{event.name}</span>
         </div>
         <div className="flex justify-between mt-4 items-centre">
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1.5 items-center">
             <div className="bg-purpleShade bg-opacity-90 text-dark px-3 py-1.5 rounded-xl">
               Total Vendors: {totalVendors}
             </div>
