@@ -94,7 +94,11 @@ const InvitationPage = () => {
       <p className="mb-1">Start Date: {formatDate(inviteDetails.startDate)}</p>
       <p className="mb-4">End Date: {formatDate(inviteDetails.endDate)}</p>
       <h2 className="text-xl font-bold mb-2">User List</h2>
-      <p className="mb-1">Status: {inviteDetails.userList.status}</p>
+      <p className="mb-1">
+        Status:{" "}
+        {inviteDetails.userList.status[0].toUpperCase() +
+          inviteDetails.userList.status.slice(1)}
+      </p>
       <p className="mb-4">
         Expected Guests: {inviteDetails.userList.expectedGuests}
       </p>
@@ -138,9 +142,12 @@ const InvitationPage = () => {
           </button>
         </div>
       </div>
-      Or you can also create <NavLink to="/sign-in">Sign In</NavLink> with the
-      same email you received the invitation for more features and real-time
-      updates.
+      Or you can also create{" "}
+      <NavLink to="/sign-in" className="text-blue-500">
+        Sign In
+      </NavLink>{" "}
+      with the same email you received the invitation for more features and
+      real-time updates.
     </div>
   )
 }

@@ -150,6 +150,7 @@ export const getEvent = async (req: Request, res: Response) => {
         msg: "Event Fetched Successfully",
     })
 }
+
 export const createEvent = async (req: Request, res: Response) => {
     const { name, startDate, endDate, budget, eventType } = req.body
     const host = req.user
@@ -178,6 +179,7 @@ export const createEvent = async (req: Request, res: Response) => {
         msg: `Event ${name} Created`,
     })
 }
+
 export const createSubEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, venue } = req.body
@@ -236,6 +238,7 @@ export const createSubEvent = async (req: Request, res: Response) => {
         msg: "Sub Event Created Successfully",
     })
 }
+
 export const updateEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, startDate, endDate, budget, eventType } = req.body
@@ -265,6 +268,7 @@ export const updateEvent = async (req: Request, res: Response) => {
         msg: "Event Updated Successfully",
     })
 }
+
 export const deleteEvent = async (req: Request, res: Response) => {
     const { eventId } = req.params
 
@@ -491,6 +495,7 @@ export const acceptRejectInviteVendor = async (req: Request, res: Response) => {
         msg: "Status Updated Successfully",
     })
 }
+
 export const newOfferVendor = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { serviceListId, newOfferPrice, offerBy } = req.body

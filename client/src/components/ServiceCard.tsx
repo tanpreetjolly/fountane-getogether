@@ -57,25 +57,29 @@ const VendorCard = ({ service }: Props) => {
               <span className="capitalize">{service.subEvent.name}</span>
             </div>
             <div className="text-lg  font-medium">
-              {service.servicesOffering.serviceName} - $
-              {service.planSelected.price}
+              {service.servicesOffering.serviceName}{" "}
+              {event.isHosted && <>- $ {service.planSelected.price}</>}
             </div>
             <div className="text-sm  text-gray-700 mb-2">
               by {service.vendorProfile.user.name}
             </div>
-            <div className="text-sm  text-slate-700 flex items-center">
-              <span>
-                Total Guests: <span>{service.estimatedGuests}</span>
-              </span>
-            </div>
-            <div className="text-sm  text-slate-700 flex items-center">
-              <span>Plan Selected: {service.planSelected.name}</span>
-            </div>
-            <div className="text-sm  text-slate-700 flex items-center">
-              <span>
-                Offered By: {service.offerBy === "user" ? "You" : "Vendor"}
-              </span>
-            </div>
+            {event.isHosted && (
+              <>
+                <div className="text-sm  text-slate-700 flex items-center">
+                  <span>
+                    Total Guests: <span>{service.estimatedGuests}</span>
+                  </span>
+                </div>
+                <div className="text-sm  text-slate-700 flex items-center">
+                  <span>Plan Selected: {service.planSelected.name}</span>
+                </div>
+                <div className="text-sm  text-slate-700 flex items-center">
+                  <span>
+                    Offered By: {service.offerBy === "user" ? "You" : "Vendor"}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
           <div className=" flex justify-between items-start mt-4">
             <div
