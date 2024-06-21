@@ -42,7 +42,9 @@ const Invites = () => {
               <ServiceNotificationCard
                 service={service}
                 notification={notification}
-                isVendor={notification.host._id === user?.userId}
+                isVendor={
+                  service.vendorProfile._id === user?.vendorProfile?._id
+                }
               />
             )
           }),

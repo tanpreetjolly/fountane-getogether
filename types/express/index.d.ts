@@ -6,6 +6,11 @@ export interface UserPayload {
     vendorProfile: string | null
 }
 
+export interface InvitationTokenPayload {
+    eventId: string
+    userListId: string
+}
+
 export interface SocketTokenPayload {
     userId: string
     vendorProfile: string | null

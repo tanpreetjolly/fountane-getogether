@@ -17,7 +17,10 @@ import {
 } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/hooks"
 import { format } from "date-fns"
-import { acceptRejectNotification } from "@/features/userSlice"
+import {
+  acceptRejectNotificationVendor,
+  newOfferNotificationVendor,
+} from "@/features/userSlice"
 import { Link } from "react-router-dom"
 import { useState } from "react"
 import { ServiceTypeNotifications, OtherUserType } from "@/definitions"
@@ -63,9 +66,10 @@ const ServiceNotificationCard: React.FC<{
     status: string,
   ) => {
     dispatch(
-      acceptRejectNotification(eventId, {
+      acceptRejectNotificationVendor(eventId, {
         status: status,
         serviceListId: serviceListId,
+        offerBy: isVendor ? "vendor" : "user",
       }),
     )
   }
@@ -73,12 +77,10 @@ const ServiceNotificationCard: React.FC<{
   const handleAcceptVendorNewOffer = (
     eventId: string,
     serviceListId: string,
-    status: string,
     newOfferPrice: number,
   ) => {
     dispatch(
-      acceptRejectNotification(eventId, {
-        status: status,
+      newOfferNotificationVendor(eventId, {
         serviceListId: serviceListId,
         newOfferPrice,
         offerBy: isVendor ? "vendor" : "user",
@@ -118,7 +120,6 @@ const ServiceNotificationCard: React.FC<{
                   handleAcceptVendorNewOffer(
                     showModal.eventId,
                     showModal.serviceListId,
-                    "pending",
                     parseInt(offerPrice, 10),
                   )
                   setShowModal(null)

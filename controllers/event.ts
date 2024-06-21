@@ -13,7 +13,8 @@ import { StatusCodes } from "http-status-codes"
 import { Types } from "mongoose"
 import { CHANNEL_TYPES, ROLES } from "../values"
 import sendMail from "../utils/sendMail"
-import { UserPayload } from "../types/express"
+import { InvitationTokenPayload, UserPayload } from "../types/express"
+import jwt from "jsonwebtoken"
 
 function filterSubEvents(
     subEvents: any[],
@@ -276,6 +277,7 @@ export const deleteEvent = async (req: Request, res: Response) => {
         msg: "Event Deleted Successfully",
     })
 }
+
 export const createSubEventChannel = async (req: Request, res: Response) => {
     const { eventId, subEventId } = req.params
     const { name, allowedUsers } = req.body
@@ -309,6 +311,7 @@ export const createSubEventChannel = async (req: Request, res: Response) => {
         msg: `Channel ${name} Created`,
     })
 }
+
 export const inviteGuest = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { guestId, subEventsIds } = req.body
@@ -351,9 +354,18 @@ export const inviteGuest = async (req: Request, res: Response) => {
 
     //@ts-ignore
     const hostName = event.host.name
+    const token = jwt.sign(
+        {
+            eventId,
+            userListId: event.userList.find(
+                (user) => user.user.toString() === guestId,
+            )?._id,
+        },
+        process.env.JWT_SECRET as jwt.Secret,
+    )
+    const invitationURL = `${process.env.CLIENT_URL}/invitation?token=${token}`
 
-    // Send mail (implementation omitted for brevity)
-    if (subEventsIds.length > 0)
+    if (subEventsIds.length > 0) {
         sendMail({
             to: user.email,
             subject: `You have been invited to the event ${event.name}`,
@@ -364,15 +376,16 @@ export const inviteGuest = async (req: Request, res: Response) => {
                 })
                 .join(
                     "",
-                )} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
+                )} Please click the link below to confirm your attendance: ${invitationURL} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
             html: `<p>Dear ${user.name},</p> <p>You have been invited to the event <strong>${event.name}</strong> by ${hostName}.</p> <p>We are excited to have you join us for this special occasion. Below are the details of the sub-events:</p> <ul> ${subEvents
                 .map((subEvent) => {
                     return `<li><strong>${subEvent.name}</strong> at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate}</li>`
                 })
                 .join(
                     "",
-                )} </ul> <p>We hope you can make it and look forward to seeing you there.</p> <p>Thank you,<br/>${hostName}</p>`,
+                )} </ul> <p>Please click the button below to confirm your attendance:</p> <p><a href="${invitationURL}" style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">RSVP Accept</a> <a href="${invitationURL}" style="background-color: #f44336; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">No, I can't make it.</a></p> <p>Thank you,<br/>${hostName}</p>`,
         })
+    }
 
     res.status(StatusCodes.CREATED).json({
         success: true,
@@ -382,6 +395,7 @@ export const inviteGuest = async (req: Request, res: Response) => {
                 : "Guest Invited Successfully",
     })
 }
+
 export const inviteNewGuest = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const { name, email, phoneNo, subEventsIds } = req.body
@@ -409,86 +423,101 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
 
     //@ts-ignore
     const hostName = event.host.name
+    const token = jwt.sign(
+        {
+            eventId,
+            userListId: user._id,
+        },
+        process.env.JWT_SECRET as jwt.Secret,
+    )
+    const invitationURL = `${process.env.CLIENT_URL}/invitation?token=${token}`
 
     // Send mail (implementation omitted for brevity)
-    sendMail({
-        to: user.email,
-        subject: `You have been invited to the event ${event.name}`,
-        // @ts-ignore
-        text: `Dear ${user.name}, You have been invited to the event "${event.name}" by ${hostName}. We are excited to have you join us for this special occasion. Below are the details of the sub-events: ${subEvents
-            .map((subEvent) => {
-                return ` - ${subEvent.name} at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate} `
-            })
-            .join(
-                "",
-            )} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
-        html: `<p>Dear ${user.name},</p> <p>You have been invited to the event <strong>${event.name}</strong> by ${hostName}.</p> <p>We are excited to have you join us for this special occasion. Below are the details of the sub-events:</p> <ul> ${subEvents
-            .map((subEvent) => {
-                return `<li><strong>${subEvent.name}</strong> at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate}</li>`
-            })
-            .join(
-                "",
-            )} </ul> <p>We hope you can make it and look forward to seeing you there.</p> <p>Thank you,<br/>${hostName}</p>`,
-    })
+    if (subEventsIds.length > 0) {
+        sendMail({
+            to: user.email,
+            subject: `You have been invited to the event ${event.name}`,
+            // @ts-ignore
+            text: `Dear ${user.name}, You have been invited to the event "${event.name}" by ${hostName}. We are excited to have you join us for this special occasion. Below are the details of the sub-events: ${subEvents
+                .map((subEvent) => {
+                    return ` - ${subEvent.name} at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate} `
+                })
+                .join(
+                    "",
+                )} Please click the link below to confirm your attendance: ${invitationURL} We hope you can make it and look forward to seeing you there. Thank you, ${hostName},`,
+            html: `<p>Dear ${user.name},</p> <p>You have been invited to the event <strong>${event.name}</strong> by ${hostName}.</p> <p>We are excited to have you join us for this special occasion. Below are the details of the sub-events:</p> <ul> ${subEvents
+                .map((subEvent) => {
+                    return `<li><strong>${subEvent.name}</strong> at ${subEvent.venue} from ${subEvent.startDate} to ${subEvent.endDate}</li>`
+                })
+                .join(
+                    "",
+                )} </ul> <p>Please click the button below to confirm your attendance:</p> <p><a href="${invitationURL}" style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">RSVP Accept</a> <a href="${invitationURL}" style="background-color: #f44336; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">No, I can't make it.</a></p> <p>Thank you,<br/>${hostName}</p>`,
+        })
+    }
 
     res.status(StatusCodes.CREATED).json({
         success: true,
         msg: "Guest Invited Successfully",
     })
 }
-export const acceptRejectInvite = async (req: Request, res: Response) => {
+
+export const acceptRejectInviteVendor = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const {
-        status,
-        userListId,
-        serviceListId,
-        newOfferPrice,
-        offerBy,
-        expectedGuest,
-    } = req.body
+    const { status, serviceListId, offerBy } = req.body
 
-    console.log(eventId, status, userListId, serviceListId, expectedGuest)
-
-    if (!userListId && !serviceListId)
-        throw new BadRequestError(
-            "At least one of userListId or serviceListId is required",
-        )
+    if (!serviceListId) throw new BadRequestError("ServiceListId is required")
 
     if (!status) throw new BadRequestError("Status is required")
-    if (status !== "accepted" && status !== "rejected" && status !== "pending")
+    const acceptedStatusValues = ["accepted", "rejected", "pending"]
+    if (!acceptedStatusValues.includes(status))
         throw new BadRequestError(
-            "Status value should be either 'accepted' or 'rejected' or 'pending'",
+            `Status value must be one of ${acceptedStatusValues.join(",")}`,
         )
 
     const event = await Event.findById(eventId)
     if (!event) throw new NotFoundError("Event Not Found")
 
-    if (userListId) {
-        const userIndex = event.userList.findIndex(
-            (user) => user._id.toString() === userListId,
-        )
-        if (userIndex === -1)
-            throw new NotFoundError("User Is Not Part Of This Event")
-        event.userList[userIndex].status = status
-        event.userList[userIndex].expectedGuests = parseInt(expectedGuest) || 1
-        await event.save()
-    } else if (serviceListId) {
-        const serviceListItem = event.serviceList.find(
-            (service) => service._id.toString() === serviceListId.toString(),
-        )
-        if (serviceListItem === undefined)
-            throw new NotFoundError("Vendor Is Not Part Of This Event")
-        serviceListItem.status = status
-        serviceListItem.offerBy = offerBy
-        serviceListItem.planSelected.price = newOfferPrice
-        await event.save()
-    }
+    const serviceListItem = event.serviceList.find(
+        (service) => service._id.toString() === serviceListId.toString(),
+    )
+    if (serviceListItem === undefined)
+        throw new NotFoundError("Vendor Is Not Part Of This Event")
+    serviceListItem.status = status
+    serviceListItem.offerBy = offerBy
+    await event.save()
 
     res.status(StatusCodes.OK).json({
         success: true,
         msg: "Status Updated Successfully",
     })
 }
+export const newOfferVendor = async (req: Request, res: Response) => {
+    const { eventId } = req.params
+    const { serviceListId, newOfferPrice, offerBy } = req.body
+
+    if (!serviceListId) throw new BadRequestError("ServiceListId is required")
+
+    const event = await Event.findById(eventId)
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    const serviceListItem = event.serviceList.find(
+        (service) => service._id.toString() === serviceListId.toString(),
+    )
+    if (serviceListItem === undefined)
+        throw new NotFoundError("Vendor Is Not Part Of This Event")
+    if (serviceListItem.status !== "pending")
+        throw new BadRequestError(`Offer is already ${serviceListItem.status}`)
+
+    serviceListItem.offerBy = offerBy
+    serviceListItem.planSelected.price = newOfferPrice
+    await event.save()
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Status Updated Successfully",
+    })
+}
+
 export const offerAVendor = async (req: Request, res: Response) => {
     const { eventId } = req.params
     const {
@@ -564,6 +593,7 @@ export const offerAVendor = async (req: Request, res: Response) => {
         msg: "Offer Price Updated Successfully",
     })
 }
+
 export const addRemoveGuestsToSubEvent = async (
     req: Request,
     res: Response,
@@ -617,5 +647,81 @@ export const updateBudget = async (req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({
         success: true,
         msg: "Budget Updated Successfully",
+    })
+}
+
+export const acceptRejectInviteGuest = async (req: Request, res: Response) => {
+    const { token, status, expectedGuest } = req.body
+    console.log(token)
+
+    let invitationsPayload: InvitationTokenPayload
+
+    if (token) {
+        invitationsPayload = jwt.verify(
+            token,
+            process.env.JWT_SECRET as jwt.Secret,
+        ) as InvitationTokenPayload
+
+        console.log(invitationsPayload)
+    } else {
+        invitationsPayload = req.body
+    }
+
+    const event = await Event.findById(invitationsPayload.eventId)
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    const userIndex = event.userList.findIndex(
+        (user) => user._id.toString() === invitationsPayload.userListId,
+    )
+    if (userIndex === -1)
+        throw new NotFoundError("User is Not Part Of This Event")
+    event.userList[userIndex].status = status
+    event.userList[userIndex].expectedGuests = parseInt(expectedGuest) || 1
+    await event.save()
+
+    res.status(StatusCodes.OK).json({
+        data: {},
+        success: true,
+        msg: "Invitation Updated Successfully",
+    })
+}
+
+export const getUserEventDetails = async (req: Request, res: Response) => {
+    const { token } = req.body
+
+    const payload = jwt.verify(
+        token,
+        process.env.JWT_SECRET as jwt.Secret,
+    ) as InvitationTokenPayload
+
+    const event = await Event.findById(payload.eventId)
+        .select("name host startDate endDate userList")
+        .populate({
+            path: "host",
+            select: "name profileImage email phoneNo",
+        })
+        .populate({
+            path: "userList.subEvents",
+            select: "name startDate endDate venue",
+        })
+
+    if (!event) throw new NotFoundError("Event Not Found")
+
+    console.log(event.userList.map((user) => user._id.toString()))
+    console.log(payload.userListId)
+
+    const eventData = {
+        ...event.toJSON(),
+        userList: event.userList.find(
+            (user) => payload.userListId === user._id.toString(),
+        ),
+    }
+    if (eventData.userList === undefined)
+        throw new UnauthenticatedError("User Not Found")
+
+    res.status(StatusCodes.OK).json({
+        data: eventData,
+        success: true,
+        msg: "Events Fetched Successfully",
     })
 }

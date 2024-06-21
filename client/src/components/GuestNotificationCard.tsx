@@ -17,7 +17,7 @@ import {
 import { NotificationsType } from "@/definitions"
 import { useAppDispatch } from "@/hooks"
 import { format } from "date-fns"
-import { acceptRejectNotification } from "@/features/userSlice"
+import { acceptRejectNotificationGuest } from "@/features/userSlice"
 import { useState } from "react"
 
 const formatDate = (date: string) => {
@@ -39,9 +39,10 @@ const GuestNotificationCard: React.FC<{ invite: NotificationsType }> = ({
     status: string,
   ) => {
     dispatch(
-      acceptRejectNotification(eventId, {
+      acceptRejectNotificationGuest(eventId, {
         status: status,
         userListId: userList._id,
+        eventId: eventId,
         expectedGuest: expectedGuest,
       }),
     )
