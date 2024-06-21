@@ -52,3 +52,17 @@ export const saveImages = async (images: Buffer[]) => {
     }
     return urls
 }
+
+export const saveImage = async (req: Request) => {
+    const result = await cloudinary.uploader.upload(
+        `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+        {
+            folder: `blogmind/${req.user.userId}`,
+            public_id: "images",
+            overwrite: true,
+            format: "webp",
+            invalidate: true,
+        },
+    )
+    return result.secure_url
+}

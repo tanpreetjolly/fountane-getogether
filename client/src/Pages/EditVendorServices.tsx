@@ -21,6 +21,8 @@ import Loader from "@/components/Loader"
 import { createService, updateService } from "@/api"
 import toast from "react-hot-toast"
 import { loadUser } from "@/features/userSlice"
+import { uploadImage as uploadImageAPI } from "@/api"
+import { TbPhotoPlus } from "react-icons/tb"
 
 const newService: ServiceType = {
   _id: "new",
@@ -34,6 +36,8 @@ const EditVendorServices = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
   const [selectedService, setSelectedService] =
     useState<ServiceType>(newService)
+
+  const [uploadingProfileImage, setLoadingProfileImage] = useState(false)
 
   const { user, loading } = useAppSelector((state) => state.user)
   const dispatch = useAppDispatch()
@@ -55,6 +59,30 @@ const EditVendorServices = () => {
   const closeDrawer = () => {
     setIsDrawerOpen(false)
     setSelectedService(newService)
+  }
+
+  const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setLoadingProfileImage(true)
+      uploadImageAPI(e.target.files[0])
+        .then(
+          (response: {
+            data: {
+              imageUrl: string
+            }
+          }) => {
+            console.log(response.data)
+            setSelectedService({
+              ...selectedService,
+              serviceImage: response.data.imageUrl,
+            })
+          },
+        )
+        .catch((error) => console.log(error))
+        .finally(() => {
+          setLoadingProfileImage(false)
+        })
+    }
   }
 
   const handleServiceUpdate = (updatedService: ServiceType | null) => {
@@ -206,7 +234,7 @@ const EditVendorServices = () => {
                     Service Type
                   </Label>
                   <Input
-                  className="bg-white"
+                    className="bg-white"
                     id="serviceType"
                     value={selectedService.serviceName}
                     onChange={(e) =>
@@ -222,7 +250,7 @@ const EditVendorServices = () => {
                     Service Description
                   </Label>
                   <Input
-                  className="bg-white"
+                    className="bg-white"
                     id="serviceDescription"
                     value={selectedService.serviceDescription}
                     onChange={(e) =>
@@ -240,20 +268,27 @@ const EditVendorServices = () => {
                   <div className="flex gap-2 p-1 items-center">
                     <img
                       src={selectedService.serviceImage}
-                      alt={selectedService.serviceName}
+                      alt={selectedService.serviceName || "No Image"}
                       className="w-20 h-20 object-cover rounded-md"
                     />
+                    {uploadingProfileImage && (
+                      <div className="absolute top-0 left-0 w-full h-full bg-white bg-opacity-70 flex items-center justify-center rounded-lg z-50">
+                        <Loader />
+                      </div>
+                    )}
+                    <label
+                      htmlFor="file-upload"
+                      className="w-fit flex gap-1 text-sm border rounded-lg py-2 px-5 cursor-pointer hover:border-highlight duration-150 mx-auto md:ml-0"
+                    >
+                      <TbPhotoPlus className="my-auto text-base" />
+                      Upload Image
+                    </label>
                     <Input
-                    className="bg-white"
-                      id="serviceImage"
-                      type="string"
-                      value={selectedService.serviceImage}
-                      onChange={(e) =>
-                        setSelectedService({
-                          ...selectedService,
-                          serviceImage: e.target.value,
-                        })
-                      }
+                      id="file-upload"
+                      className="hidden"
+                      type="file"
+                      accept="image/jpeg, image/png, image/jpg, image/webp"
+                      onChange={uploadImage}
                     />
                   </div>
                 </div>
@@ -261,7 +296,10 @@ const EditVendorServices = () => {
 
               <div className="space-y-2">
                 {selectedService.items.map((item, index) => (
-                  <div key={item._id} className="border rounded-md p-4 bg-gray-50">
+                  <div
+                    key={item._id}
+                    className="border rounded-md p-4 bg-gray-50"
+                  >
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="text-lg font-semibold">
                         Plan {index + 1}
@@ -292,7 +330,7 @@ const EditVendorServices = () => {
                           Plan Name
                         </Label>
                         <Input
-                        className="bg-white"
+                          className="bg-white"
                           id={`itemName-${item._id}`}
                           value={item.name}
                           onChange={(e) => {
@@ -320,7 +358,7 @@ const EditVendorServices = () => {
                           Plan Description
                         </Label>
                         <Input
-                        className="bg-white"
+                          className="bg-white"
                           id={`itemDescription-${item._id}`}
                           value={item.description}
                           onChange={(e) => {
@@ -348,7 +386,7 @@ const EditVendorServices = () => {
                           Plan Price
                         </Label>
                         <Input
-                        className="bg-white"
+                          className="bg-white"
                           id={`itemPrice-${item._id}`}
                           value={item.price}
                           type="number"

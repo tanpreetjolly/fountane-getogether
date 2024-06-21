@@ -5,6 +5,7 @@ import { Request, Response } from "express"
 import {
     uploadProfileImage as cloudinaryUploadProfileImage,
     deleteProfileImage as cloudinaryDeleteProfileImage,
+    saveImage,
 } from "../utils/imageHandlers/cloudinary"
 import setAuthTokenCookie from "../utils/setCookie/setAuthToken"
 import { generateChatId } from "../utils/utilFunctions"
@@ -256,8 +257,9 @@ const getChatMessages = async (req: Request, res: Response) => {
 
 const getChannelMessages = async (req: Request, res: Response) => {
     const { channelId } = req.params
-    const channel =
-        await Channel.findById(channelId).select("name allowedUsers type")
+    const channel = await Channel.findById(channelId).select(
+        "name allowedUsers type",
+    )
 
     if (!channel) throw new NotFoundError("Channel Not Found")
 
@@ -312,6 +314,16 @@ const getChannelMessages = async (req: Request, res: Response) => {
     })
 }
 
+const uploadImage = async (req: Request, res: Response) => {
+    if (!req.file) throw new BadRequestError("Image is required")
+    const url = await saveImage(req)
+    res.status(StatusCodes.OK).json({
+        data: { imageUrl: url },
+        success: true,
+        msg: "Image Uploaded Successfully",
+    })
+}
+
 export {
     getMe,
     updateCompleteProfile,
@@ -320,4 +332,5 @@ export {
     makeMeVendor,
     getChatMessages,
     getChannelMessages,
+    uploadImage,
 }
