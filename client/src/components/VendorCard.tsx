@@ -6,16 +6,15 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 import Checkbox from "@mui/material/Checkbox"
-import { VendorSaveType, ItemType } from "@/definitions"
+import { ServiceSearchType, ItemType } from "@/definitions"
 import { useEventContext } from "@/context/EventContext"
 import Loader from "./Loader"
 import toast from "react-hot-toast"
 import ButtonSecondary from "./ButtonSecondary"
 import { makeAOffer } from "@/api"
-import { ListSubheader } from "@mui/material"
 
 type Props = {
-  vendor: VendorSaveType
+  service: ServiceSearchType
 }
 
 interface FestivityType {
@@ -25,7 +24,7 @@ interface FestivityType {
   offerPrice: string
 }
 
-const VendorCard = ({ vendor }: Props) => {
+const VendorCard = ({ service }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [selectedFestivities, setSelectedFestivities] = useState<
     FestivityType[]
@@ -47,10 +46,10 @@ const VendorCard = ({ vendor }: Props) => {
     console.log(selectedFestivities)
     toast.promise(
       makeAOffer(event._id, {
-        vendorProfileId: vendor.vendorProfileId,
+        vendorProfileId: service.vendorProfileId._id,
         subEventIds: selectedFestivities.map((f) => f.subEventId),
         selectedItemIds: selectedFestivities.map((f) => f.item._id),
-        serviceId: vendor.servicesOffering._id,
+        serviceId: service._id,
         estimatedGuestNos: selectedFestivities.map((f) => f.estimatedGuestNo),
         offerPrices: selectedFestivities.map((f) => f.offerPrice),
       }),
@@ -91,8 +90,8 @@ const VendorCard = ({ vendor }: Props) => {
         ...prevFestivities,
         {
           subEventId: festivityId,
-          item: vendor.servicesOffering.items[0],
-          offerPrice: vendor.servicesOffering.items[0].price.toString(),
+          item: service.items[0],
+          offerPrice: service.items[0].price.toString(),
           estimatedGuestNo: event.userList
             .reduce((acc, user) => {
               if (user.subEvents.some((subEvent) => subEvent === festivityId)) {
@@ -132,24 +131,20 @@ const VendorCard = ({ vendor }: Props) => {
         <div className="flex flex-col gap-2 justify-center items-start">
           <div className="flex items-center justify-between w-full gap-2">
             <div className="text-left">
-              <div className="text-lg font-medium">
-                {vendor.servicesOffering.serviceName}
-              </div>
+              <div className="text-lg font-medium">{service.serviceName}</div>
               <div className="text-base mb-1 text-gray-700 capitalize">
-                by {vendor.vendorName}
+                by {service.vendorProfileId.user.name}
               </div>
               <div className="text-sm text-gray-700 capitalize">
-                {vendor.servicesOffering.serviceDescription}
+                {service.serviceDescription}
               </div>
               <div className="bg-purpleShade w-fit px-3 bg-opacity-85 rounded-full text-[13px] py-1 mt-3 -mx-1">
                 Starting From $
-                {Math.min(
-                  ...vendor.servicesOffering.items.map((item) => item.price),
-                )}
+                {Math.min(...service.items.map((item) => item.price))}
               </div>
             </div>
             <img
-              src={vendor.servicesOffering.serviceImage}
+              src={service.serviceImage}
               alt="service"
               className="w-20 h-20 object-cover rounded-md"
             />
@@ -185,11 +180,11 @@ const VendorCard = ({ vendor }: Props) => {
             <div className="flex flex-col max-w-xl w-1/2 gap-3 justify-between ">
               <div>
                 <span className="text-xl text-gray-800 font-medium">
-                  {vendor.servicesOffering.serviceName} by {vendor.vendorName}
+                  {service.serviceName} by {service.vendorProfileId.user.name}
                 </span>
                 <br />
                 <span className="text-sm text-gray-500">
-                  {vendor.servicesOffering.serviceDescription}
+                  {service.serviceDescription}
                 </span>
               </div>
               <div className="flex">
@@ -201,17 +196,18 @@ const VendorCard = ({ vendor }: Props) => {
               </div>
             </div>
             <img
-              src={vendor.servicesOffering.serviceImage}
+              src={service.serviceImage}
               alt="service"
               className="w-20 h-20 object-cover rounded-md"
             />
           </div>
           <div className="ml-auto w-fit bg-gray-100 rounded-xl px-4 py-1 text-lg  text-slate-900 ">
-            Total Offer Amount: <span className="font-medium">${estimatedTotalPrice}</span>
+            Total Offer Amount:{" "}
+            <span className="font-medium">${estimatedTotalPrice}</span>
           </div>
           <p className="p-0.5  text-sm text-slate-800">Plans we offer:</p>
           <div className="flex flex-wrap gap-4">
-            {vendor.servicesOffering.items.map((item, index) => (
+            {service.items.map((item, index) => (
               <div key={item._id} className="border rounded-md p-3 flex-1">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className=" font-medium">
@@ -233,7 +229,7 @@ const VendorCard = ({ vendor }: Props) => {
           <List className="relative ">
             {festivityList.map((festivity) => (
               <div key={festivity._id} className="mb-2 border rounded-2xl">
-                <ListItem onClick={() => handleFestivityChange(festivity._id)} >
+                <ListItem onClick={() => handleFestivityChange(festivity._id)}>
                   <Checkbox
                     edge="start"
                     size="small"
@@ -305,7 +301,7 @@ const VendorCard = ({ vendor }: Props) => {
                         />
                       </div>
                     </div>
-                    {vendor.servicesOffering.items.map((item) => (
+                    {service.items.map((item) => (
                       <ListItem
                         key={item._id}
                         dense

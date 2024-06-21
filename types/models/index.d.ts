@@ -29,6 +29,7 @@ export interface IServices extends Document {
     serviceName: string
     serviceDescription: string
     serviceImage: string
+    vendorProfileId: Schema.Types.ObjectId
     items: Types.Array<{
         _id: Schema.Types.ObjectId
         name: string

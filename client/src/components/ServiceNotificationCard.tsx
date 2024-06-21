@@ -14,7 +14,6 @@ import {
   MapPinIcon,
   UserIcon,
   UserPlus,
-  Edit2,
 } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/hooks"
 import { format } from "date-fns"
