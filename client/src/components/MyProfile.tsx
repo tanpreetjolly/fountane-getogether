@@ -124,14 +124,11 @@ const MyProfile = () => {
       .finally(() => setLoadingProfileImage(false))
   }
   const handleLogout = async () => {
-    const confirmLogout = await confirm(
-      "Are you sure you want to logout? This will clear all saved blog data.",
-      {
-        title: "Logout",
-        deleteButton: "Logout",
-        cancelButton: "Cancel",
-      },
-    )
+    const confirmLogout = await confirm("Are you sure you want to logout?", {
+      title: "Logout",
+      deleteButton: "Logout",
+      cancelButton: "Cancel",
+    })
     if (confirmLogout === false) return
     dispatch(logout())
   }

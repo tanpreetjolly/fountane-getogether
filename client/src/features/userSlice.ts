@@ -17,7 +17,9 @@ import {
   verifyOtp,
   forgotPasswordSendOtpApi,
   forgotPasswordVerifyOtpApi,
-  acceptRejectInvite,
+  acceptRejectInviteGuest as acceptRejectInviteGuestAPI,
+  acceptRejectInviteVendor as acceptRejectInviteVendorAPI,
+  newOfferVendor,
 } from "../api/index.ts"
 
 interface CounterState {
@@ -262,20 +264,77 @@ export const updateEventSlice =
     dispatch(userSlice.actions.UPDATE_EVENT(event))
   }
 
-export const acceptRejectNotification =
+export const acceptRejectNotificationGuest =
   (
     eventId: string,
     eventUpdate: {
       status: string
-      userListId?: string
-      serviceListId?: string
-      newOfferPrice?: number
-      offerBy?: string
+      eventId: string
+      userListId: string
+      expectedGuest: number
     },
   ) =>
   async (dispatch: any) => {
     toast.promise(
-      acceptRejectInvite(eventId, eventUpdate),
+      acceptRejectInviteGuestAPI(eventId, eventUpdate),
+      {
+        loading: "Processing",
+        success: () => {
+          dispatch(loadUser(false))
+          return "Success"
+        },
+        error: (err) => {
+          console.log(err)
+          toast.dismiss(err.response.data.msg)
+          return err.response.data.msg
+        },
+      },
+      {
+        id: "acceptRejectNotification",
+      },
+    )
+  }
+export const newOfferNotificationVendor =
+  (
+    eventId: string,
+    eventUpdate: {
+      serviceListId: string
+      newOfferPrice: number
+      offerBy: string
+    },
+  ) =>
+  async (dispatch: any) => {
+    toast.promise(
+      newOfferVendor(eventId, eventUpdate),
+      {
+        loading: "Processing",
+        success: () => {
+          dispatch(loadUser(false))
+          return "Success"
+        },
+        error: (err) => {
+          console.log(err)
+          toast.dismiss(err.response.data.msg)
+          return err.response.data.msg
+        },
+      },
+      {
+        id: "acceptRejectNotification",
+      },
+    )
+  }
+export const acceptRejectNotificationVendor =
+  (
+    eventId: string,
+    eventUpdate: {
+      status: string
+      serviceListId: string
+      offerBy: string
+    },
+  ) =>
+  async (dispatch: any) => {
+    toast.promise(
+      acceptRejectInviteVendorAPI(eventId, eventUpdate),
       {
         loading: "Processing",
         success: () => {

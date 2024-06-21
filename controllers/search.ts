@@ -1,4 +1,4 @@
-import { User, VendorProfile } from "../models"
+import { User, VendorProfile, Services } from "../models"
 import { Request, Response } from "express"
 import { BadRequestError } from "../errors"
 import { StatusCodes } from "http-status-codes"
@@ -40,7 +40,7 @@ const search = async (req: Request, res: Response) => {
                 success: true,
                 msg: "Users Fetched Successfully",
             })
-        case "vendor":
+        case "service":
             // const vendorTotalCount = await Vendor.countDocuments({
             //     services: {
             //         $elemMatch: {
@@ -49,67 +49,73 @@ const search = async (req: Request, res: Response) => {
             //     },
             // })
 
-            const vendors = await VendorProfile.aggregate([
-                {
-                    $lookup: {
-                        from: "services",
-                        localField: "services",
-                        foreignField: "_id",
-                        as: "servicesData",
-                    },
+            // const vendors = await VendorProfile.aggregate([
+            //     {
+            //         $lookup: {
+            //             from: "services",
+            //             localField: "services",
+            //             foreignField: "_id",
+            //             as: "servicesData",
+            //         },
+            //     },
+            //     {
+            //         $match: {
+            //             "servicesData.serviceName": {
+            //                 $regex: query,
+            //                 $options: "i",
+            //             },
+            //         },
+            //     },
+            //     {
+            //         $project: {
+            //             user: 1,
+            //             services: 1,
+            //             servicesData: 1,
+            //         },
+            //     },
+            //     {
+            //         $lookup: {
+            //             from: "users",
+            //             localField: "user",
+            //             foreignField: "_id",
+            //             as: "userData",
+            //         },
+            //     },
+            //     {
+            //         $unwind: "$userData",
+            //     },
+            //     {
+            //         $project: {
+            //             userId: "$userData._id",
+            //             name: "$userData.name",
+            //             email: "$userData.email",
+            //             phoneNo: "$userData.phoneNo",
+            //             profileImage: "$userData.profileImage",
+            //             servicesData: 1,
+            //         },
+            //     },
+            // ])
+
+            const services = await Services.find({
+                serviceName: { $regex: query, $options: "i" },
+            }).populate({
+                path: "vendorProfileId",
+                select: "user",
+                populate: {
+                    path: "user",
+                    select: "name email phoneNo profileImage",
                 },
-                {
-                    $match: {
-                        "servicesData.serviceName": {
-                            $regex: query,
-                            $options: "i",
-                        },
-                    },
-                },
-                {
-                    $project: {
-                        user: 1,
-                        services: 1,
-                        servicesData: 1,
-                    },
-                },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "user",
-                        foreignField: "_id",
-                        as: "userData",
-                    },
-                },
-                {
-                    $unwind: "$userData",
-                },
-                {
-                    $project: {
-                        userId: "$userData._id",
-                        name: "$userData.name",
-                        email: "$userData.email",
-                        phoneNo: "$userData.phoneNo",
-                        profileImage: "$userData.profileImage",
-                        servicesData: 1,
-                    },
-                },
-            ])
+            })
 
             return res.status(StatusCodes.OK).json({
-                data: {
-                    vendors,
-                    // totalCount: vendorTotalCount,
-                    // page: req.pagination.page,
-                    // limit: req.pagination.limit,
-                },
+                data: services,
                 success: true,
-                msg: "Vendors Fetched Successfully",
+                msg: "Services Fetched Successfully",
             })
 
         default:
             throw new BadRequestError(
-                "Invalid type, accepted types are 'user' and 'vendor'",
+                "Invalid type, accepted types are 'user' and 'service'",
             )
     }
 }

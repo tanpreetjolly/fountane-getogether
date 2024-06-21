@@ -50,6 +50,7 @@ import Invites from "./Pages/Invites"
 import TodoList from "./Pages/TodoList"
 import MyChats from "./components/MyChats"
 import VendorChat from "./Pages/VendorChat"
+import InvitationPage from "./Pages/InvitationPage"
 
 const Layout = () => {
   const location = useLocation()
@@ -59,6 +60,7 @@ const Layout = () => {
     "/verify",
     "/forgot-password",
     "/",
+    "/invitation",
   ]
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname)
   return (
@@ -116,6 +118,7 @@ const router = createBrowserRouter([
       { path: "sign-up", element: <SignUp /> },
       { path: "forgot-password", element: <ForgotPassword /> },
       { path: "verify", element: <VerifyOTP /> },
+      { path: "invitation", element: <InvitationPage /> },
       { path: "about", element: <About /> },
       {
         path: "invites",

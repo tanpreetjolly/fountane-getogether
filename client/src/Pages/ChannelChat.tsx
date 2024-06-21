@@ -119,7 +119,13 @@ const ChannelChat = () => {
           </div>
         )}
       </div>
-      {channelDetails.type === "announcement" && !event.isHosted ? null : (
+      {channelDetails.type === "announcement" && !event.isHosted ? (
+        <div>
+          <p className="text-center text-red-500">
+            Only host can send messages to this channel
+          </p>
+        </div>
+      ) : (
         <InputBar
           {...{
             channelDetails,

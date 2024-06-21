@@ -5,12 +5,19 @@ import UserRouter from "./user"
 import SearchRouter from "./search"
 import EventRouter from "./event"
 import VendorRouter from "./vendor"
+import {
+    acceptRejectInviteGuest,
+    getUserEventDetails,
+} from "../controllers/event"
 
 const router = Router()
 
 router.use("/auth", AuthRouter)
 
 router.use("/public/search", SearchRouter)
+
+router.post("/public/invite/guest/accept-reject", acceptRejectInviteGuest)
+router.post("/public/invite/guest/details", getUserEventDetails)
 
 router.use(AuthMiddleware)
 

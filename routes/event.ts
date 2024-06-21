@@ -8,10 +8,12 @@ import {
     createSubEventChannel,
     inviteGuest,
     inviteNewGuest,
-    acceptRejectInvite,
+    acceptRejectInviteGuest,
+    acceptRejectInviteVendor,
     offerAVendor,
     addRemoveGuestsToSubEvent,
     updateBudget,
+    newOfferVendor,
 } from "../controllers/event"
 import {
     getTasks,
@@ -27,7 +29,13 @@ const router = Router()
 router.route("/").post(createEvent)
 router.route("/:eventId").get(getEvent)
 
-router.route("/:eventId/guest/invite/accept-reject").post(acceptRejectInvite)
+router
+    .route("/:eventId/guest/invite/accept-reject")
+    .post(acceptRejectInviteGuest)
+router
+    .route("/:eventId/vendor/invite/accept-reject")
+    .post(acceptRejectInviteVendor)
+router.route("/:eventId/vendor/new-offer").post(newOfferVendor)
 
 const logEventId = async (req: Request, res: Response, next: NextFunction) => {
     const eventId = req.params.eventId

@@ -123,17 +123,6 @@ export interface EventFull extends EventShortType {
   checkList: TodoType[]
 }
 
-export interface VendorSearchType {
-  //_id is vendorProfile id here
-  _id: string
-  name: string
-  email: string
-  profileImage: string
-  phoneNo: string
-  userId: string
-  servicesData: ServiceType[]
-}
-
 export interface UserType {
   userId: string
   name: string
@@ -196,14 +185,16 @@ export interface NotificationsType {
   }
   serviceList: ServiceTypeNotifications[]
 }
-export interface VendorSaveType {
-  vendorUserId: string
-  vendorProfileId: string
-  vendorName: string
-  vendorProfileImage: string
-  vendorEmail: string
-  vendorPhoneNo: string
-  servicesOffering: ServiceType
+export interface ServiceSearchType {
+  _id: string
+  serviceName: string
+  serviceDescription: string
+  serviceImage: string
+  vendorProfileId: {
+    _id: string
+    user: OtherUserType
+  }
+  items: ItemType[]
 }
 
 export interface ChatMessage {

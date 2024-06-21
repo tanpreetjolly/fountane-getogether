@@ -54,190 +54,199 @@ const createChannelsForSubEvents = async (
 
 const sampleService = [
     {
-        serviceName: "Photographer",
+        serviceName: "Photography ",
         serviceDescription:
             "We provide the best photography services! for weddings, birthdays, and other events.",
-        serviceImage: faker.image.url(),
+        serviceImage:
+            "https://media.wired.com/photos/65f48f0eb170002287195c73/master/w_1600%2Cc_limit/NatGeo_CampbellAddyFeelingSeen_106_UHD_Photographer_03.jpg",
         items: [
             {
-                name: "Wedding Photography",
+                name: "Standard",
                 description:
-                    "We provide the best wedding photography services!",
-                price: faker.finance.amount(),
+                    "Full Day photography for any event - wedding, birthday etc. ",
+                price: 500,
             },
             {
-                name: "Birthday Photography",
+                name: "Deluxe Plan",
                 description:
-                    "We provide the best birthday photography services!",
-                price: faker.finance.amount(),
+                    "All benefits of standard plan included and full event video added.",
+                price: 900,
             },
             {
-                name: "Event Photography",
-                description: "We provide the best event photography services!",
-                price: faker.finance.amount(),
+                name: "Custom Plan",
+                description: "Need customization, choose our custom plan",
+                price: 0,
             },
         ],
     },
     {
-        serviceName: "Caterer",
-        serviceDescription: "We provide the best catering services!",
-        serviceImage: faker.image.url(),
+        serviceName: "Catering",
+        serviceDescription:
+            "We offer a variety of catering services for your events. From casual buffets to formal sit-down dinners, we have got you covered.",
+        serviceImage:
+            "https://cdn0.weddingwire.in/vendor/5137/3_2/960/png/annotation-2_15_275137-159901860574657.jpeg",
         items: [
             {
-                name: "Punjabi Food",
-                description: "We provide the best food services!",
-                price: faker.finance.amount(),
+                name: "Buffet Service",
+                description:
+                    "A variety of food options served in a buffet style.",
+                price: 250,
             },
             {
-                name: "South Indian Food",
-                description: "We provide the best food services!",
-                price: faker.finance.amount(),
+                name: "Plated Dinner Service",
+                description:
+                    "A formal dining experience with a three-course meal.",
+                price: 350,
             },
             {
-                name: "Chinese Food",
-                description: "We provide the best food services!",
-                price: faker.finance.amount(),
-            },
-            {
-                name: "Italian Food",
-                description: "We provide the best food services!",
-                price: faker.finance.amount(),
+                name: "Custom Menu",
+                description:
+                    "Need a custom menu? We can accommodate your dietary needs and preferences.",
+                price: 0,
             },
         ],
     },
     {
-        serviceName: "Decorator",
-        serviceDescription: "We provide the best decoration services!",
-        serviceImage: faker.image.url(),
+        serviceName: "Decorating",
+        serviceDescription:
+            "We specialize in creating beautiful and unique event decorations. From centerpieces to lighting, we can transform any venue into a magical space.",
+        serviceImage:
+            "https://media-api.xogrp.com/images/e6e01f3a-1d1e-42eb-a1f7-4f033534e6f2~rs_768.h",
         items: [
             {
-                name: "Flower Decoration",
-                description: "We provide the best flower decoration services!",
-                price: faker.finance.amount(),
+                name: "Standard Decor Package",
+                description:
+                    "Includes basic decorations such as tablecloths, centerpieces, and lighting.",
+                price: 300,
             },
             {
-                name: "Balloon Decoration",
-                description: "We provide the best balloon decoration services!",
-                price: faker.finance.amount(),
+                name: "Premium Decor Package",
+                description:
+                    "Includes all standard decorations, plus additional features such as custom centerpieces and upgraded lighting.",
+                price: 500,
             },
             {
-                name: "Theme Decoration",
-                description: "We provide the best theme decoration services!",
-                price: faker.finance.amount(),
-            },
-            {
-                name: "Light Decoration",
-                description: "We provide the best light decoration services!",
-                price: faker.finance.amount(),
+                name: "Custom Decor Package",
+                description:
+                    "Need a unique decoration for your event? We can create a custom package to suit your needs.",
+                price: 0,
             },
         ],
     },
     {
         serviceName: "Music",
-        serviceDescription: "We provide the best music services!",
-        serviceImage: faker.image.url(),
+        serviceDescription:
+            "We provide live music for all types of events. From a soloist to a full band, we have the perfect music for your event.",
+        serviceImage:
+            "https://t3.ftcdn.net/jpg/06/16/07/70/360_F_616077017_Jp4pLORx9f3TihEDLq0P9tX6mpXmk6iO.jpg",
         items: [
             {
-                name: "DJ",
-                description: "We provide the best DJ services!",
-                price: faker.finance.amount(),
+                name: "Soloist",
+                description:
+                    "A single musician performing a variety of genres.",
+                price: 200,
             },
             {
-                name: "Live Band",
-                description: "We provide the best live band services!",
-                price: faker.finance.amount(),
+                name: "Duo",
+                description: "Two musicians performing a variety of genres.",
+                price: 300,
             },
             {
-                name: "Singer",
-                description: "We provide the best singer services!",
-                price: faker.finance.amount(),
+                name: "Full Band",
+                description:
+                    "A full band with a variety of instruments and a wide repertoire.",
+                price: 500,
             },
         ],
     },
     {
         serviceName: "Transportation",
-        serviceDescription: "We provide the best transportation services!",
-        serviceImage: faker.image.url(),
+        serviceDescription:
+            "We offer transportation services for your guests. From shuttle buses to limousines, we can get your guests to and from your event safely and in style.",
+        serviceImage:
+            "https://navata.com/cms/wp-content/uploads/2021/05/transportation-modes-for-shifting-households.jpg",
         items: [
             {
-                name: "Car",
-                description: "We provide the best car services!",
-                price: faker.finance.amount(),
+                name: "Shuttle Bus",
+                description: "A bus that can transport up to 50 guests.",
+                price: 150,
             },
             {
-                name: "Bus",
-                description: "We provide the best bus services!",
-                price: faker.finance.amount(),
+                name: "Limousine",
+                description:
+                    "A luxury vehicle that can transport up to 10 guests.",
+                price: 300,
             },
             {
-                name: "Train",
-                description: "We provide the best train services!",
-                price: faker.finance.amount(),
-            },
-            {
-                name: "Flight",
-                description: "We provide the best flight services!",
-                price: faker.finance.amount(),
+                name: "Custom Transportation",
+                description:
+                    "Need transportation for a larger group or a unique vehicle? We can accommodate your needs.",
+                price: 0,
             },
         ],
     },
     {
         serviceName: "Venue",
-        serviceDescription: "We provide the best venue services!",
-        serviceImage: faker.image.url(),
+        serviceDescription:
+            "We offer a variety of venues for your event. From intimate spaces to large event halls, we have the perfect venue for your needs.",
+        serviceImage:
+            "https://www.travelopro.com/public/images/contents/hotel-provider1.jpg",
         items: [
             {
-                name: "Hotel",
-                description: "We provide the best hotel services!",
-                price: faker.finance.amount(),
+                name: "Intimate Space",
+                description:
+                    "A small venue that can accommodate up to 50 guests.",
+                price: 500,
             },
             {
-                name: "Banquet Hall",
-                description: "We provide the best banquet hall services!",
-                price: faker.finance.amount(),
+                name: "Large Event Hall",
+                description:
+                    "A large venue that can accommodate up to 500 guests.",
+                price: 1500,
             },
             {
-                name: "Resort",
-                description: "We provide the best resort services!",
-                price: faker.finance.amount(),
-            },
-            {
-                name: "Beach",
-                description: "We provide the best beach services!",
-                price: faker.finance.amount(),
+                name: "Custom Venue",
+                description:
+                    "Need a unique venue for your event? We can help you find the perfect space.",
+                price: 0,
             },
         ],
     },
     {
         serviceName: "Entertainment",
-        serviceDescription: "We provide the best entertainment services!",
-        serviceImage: faker.image.url(),
+        serviceDescription:
+            "We offer a variety of entertainment options for your event. From magicians to DJs, we can keep your guests entertained all night long.",
+        serviceImage:
+            "https://miro.medium.com/v2/resize:fit:1400/0*3N3v1wVmf6tuvU88.jpg",
         items: [
             {
                 name: "Magician",
-                description: "We provide the best magician services!",
-                price: faker.finance.amount(),
+                description:
+                    "A professional magician who will amaze and delight your guests.",
+                price: 200,
             },
             {
-                name: "Clown",
-                description: "We provide the best clown services!",
-                price: faker.finance.amount(),
+                name: "DJ",
+                description:
+                    "A DJ who will play a variety of music to keep your guests dancing.",
+                price: 300,
             },
             {
-                name: "Dancer",
-                description: "We provide the best dancer services!",
-                price: faker.finance.amount(),
-            },
-            {
-                name: "Comedian",
-                description: "We provide the best comedian services!",
-                price: faker.finance.amount(),
+                name: "Custom Entertainment",
+                description:
+                    "Need a unique entertainment option for your event? We can help you find the perfect act.",
+                price: 0,
             },
         ],
     },
 ]
-const createVendorServices = async () => {
-    const newChannels = await Services.insertMany(sampleService)
+const createVendorServices = async (vendorId: string) => {
+    const newChannels = await Services.insertMany(
+        sampleService.map((service) => ({
+            ...service,
+            vendorProfileId: vendorId,
+        })),
+    )
     return newChannels.map((channel) => channel._id)
 }
 
@@ -257,11 +266,15 @@ async function main() {
         await SubEvent.deleteMany({})
         await ChatMessage.deleteMany({})
         await Channel.deleteMany({})
+        await Task.deleteMany({})
+        await Services.deleteMany({})
+        console.log("Old data has been successfully removed!")
 
         // Create a vendor profile for the user
         const vendorProfile = await VendorProfile.create({
+            _id: "60f1b9e3b3f1f3b3b3f45678",
             user: "60f1b9e3b3f1f3b3b3f1f3b3",
-            services: await createVendorServices(),
+            services: await createVendorServices("60f1b9e3b3f1f3b3b3f45678"),
         })
 
         const mainUser = {
@@ -299,11 +312,16 @@ async function main() {
             ...manyUser
                 .slice(0, 4)
                 .filter((user) => user.vendorProfile)
-                .map(async (user) => ({
-                    _id: new mongoose.Types.ObjectId(),
-                    user: user._id,
-                    services: await createVendorServices(),
-                })),
+                .map(async (user) => {
+                    const vendorId = new mongoose.Types.ObjectId()
+                    return {
+                        _id: vendorId,
+                        user: user._id,
+                        services: await createVendorServices(
+                            vendorId.toString(),
+                        ),
+                    }
+                }),
         ]
         const vendorProfileToCreate = await Promise.all(
             vendorProfileToCreatePromise,
@@ -391,6 +409,7 @@ async function main() {
 
         // Create an event for the user
         const event = await Event.create({
+            _id: "60f1b9e3b3f1f3b3b3785151",
             name: "Rakesh weds Ritu",
             host: user._id,
             startDate: new Date("2024-05-24T09:00:00Z"),
@@ -401,10 +420,22 @@ async function main() {
                 {
                     user: user._id,
                     subEvents: assignRandomSubEvents(subEventToCreate),
+                    status: getRandomElement([
+                        "accepted",
+                        "rejected",
+                        "pending",
+                    ]),
+                    expectedGuests: 9,
                 },
                 ...guestUsers.map((user) => ({
                     user: user._id,
                     subEvents: assignRandomSubEvents(subEventToCreate),
+                    status: getRandomElement([
+                        "accepted",
+                        "rejected",
+                        "pending",
+                    ]),
+                    expectedGuests: Math.floor(Math.random() * 10),
                 })),
             ],
             serviceList: [

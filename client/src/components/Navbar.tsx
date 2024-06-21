@@ -120,7 +120,8 @@ const Navbar = () => {
             )}
           {serviceNotifications.map((notification) =>
             notification.serviceList.map((service) => {
-              if (service.offerBy === "vendor") return null
+              if (notification.host._id === user?.userId) return null
+
               return (
                 <>
                   <DropdownMenuItem key={service._id}>

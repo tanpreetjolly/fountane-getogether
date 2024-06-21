@@ -107,20 +107,23 @@ const InviteGuests = () => {
                 <ListItemText
                   primary={service.servicesOffering.serviceName}
                   secondary={
-                    <span>
-                      Offered: ${service.planSelected.price}
-                      {service.status === "accepted" && (
-                        <>
-                          <br />
-                          PaymentStatus:{" "}
-                          {service.paymentStatus[0].toUpperCase() +
-                            service.paymentStatus.slice(1)}
-                        </>
-                      )}
-                    </span>
+                    event.isHosted && (
+                      <span>
+                        Offered: ${service.planSelected.price}
+                        {service.status === "accepted" && (
+                          <>
+                            <br />
+                            PaymentStatus:{" "}
+                            {service.paymentStatus[0].toUpperCase() +
+                              service.paymentStatus.slice(1)}
+                          </>
+                        )}
+                      </span>
+                    )
                   }
                   secondaryTypographyProps={{ className: "pl-1" }}
                 />
+
                 <div
                   className={`px-3 text-sm py-1 capitalize rounded-full ${getStatusColor(service.status)}`}
                 >

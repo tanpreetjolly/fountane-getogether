@@ -179,16 +179,33 @@ export const inviteNewGuest = (
   },
 ) => API.post(`/event/${eventId}/guest/invite/new`, guestData)
 
-export const acceptRejectInvite = (
+export const acceptRejectInviteGuest = (
   eventId: string,
   eventUpdate: {
     status: string
-    userListId?: string
-    serviceListId?: string
-    newOfferPrice?: number
-    offerBy?: string
+    eventId: string
+    userListId: string
+    expectedGuest: number
   },
 ) => API.post(`/event/${eventId}/guest/invite/accept-reject`, eventUpdate)
+
+export const acceptRejectInviteVendor = (
+  eventId: string,
+  eventUpdate: {
+    status: string
+    serviceListId: string
+    offerBy: string
+  },
+) => API.post(`/event/${eventId}/vendor/invite/accept-reject`, eventUpdate)
+
+export const newOfferVendor = (
+  eventId: string,
+  eventUpdate: {
+    serviceListId: string
+    newOfferPrice: number
+    offerBy: string
+  },
+) => API.post(`/event/${eventId}/vendor/new-offer`, eventUpdate)
 
 export const makeAOffer = (
   eventId: string,
@@ -241,3 +258,23 @@ export const updateTask = (
 
 export const deleteTask = (eventId: string, taskId: string) =>
   API.delete(`/event/${eventId}/task/${taskId}`)
+
+export const uploadImage = (image: File) => {
+  const formData = new FormData()
+  formData.append("image", image)
+  return API.post("/user/upload/image", formData)
+}
+
+export const getInvitationDetails = (token: string) =>
+  API.post(`/public/invite/guest/details`, { token })
+
+export const acceptRejectInviteGuestPublic = (
+  token: string,
+  status: string,
+  expectedGuest: number,
+) =>
+  API.post(`/public/invite/guest/accept-reject`, {
+    token,
+    status,
+    expectedGuest,
+  })

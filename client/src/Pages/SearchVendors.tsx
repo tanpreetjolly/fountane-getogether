@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import { search } from "@/api"
-import { VendorSaveType, VendorSearchType } from "@/definitions"
+import { ServiceSearchType } from "@/definitions"
 import VendorCard from "@/components/VendorCard"
 import { useEventContext } from "@/context/EventContext"
 import { Skeleton } from "@/components/ui/skeleton"
 
 const SearchVendors = () => {
   const [searchQuery, setSearchQuery] = useState("")
-  const [vendors, setVendors] = useState<VendorSaveType[]>([])
+  const [vendors, setVendors] = useState<ServiceSearchType[]>([])
   const [timeoutId, setTimeoutId] = useState<ReturnType<
     typeof setTimeout
   > | null>(null)
@@ -16,36 +16,13 @@ const SearchVendors = () => {
 
   const { event, loadingEvent } = useEventContext()
 
-  const handleSearchChange = (event: any) => {
-    setSearchQuery(event.target.value)
-  }
   useEffect(() => {
     const fetchData = async () => {
       setLoadingSearch(true)
-      search(searchQuery, "vendor", 1, 20)
-        .then((response: { data: { vendors: VendorSearchType[] } }) => {
+      search(searchQuery, "service", 1, 20)
+        .then((response: { data: ServiceSearchType[] }) => {
           // console.log(response.data)
-
-          setVendors(() =>
-            response.data.vendors
-              .map((vendor) =>
-                vendor.servicesData.map((service) => ({
-                  vendorUserId: vendor.userId,
-                  vendorProfileId: vendor._id,
-                  vendorName: vendor.name,
-                  vendorProfileImage: vendor.profileImage,
-                  vendorEmail: vendor.email,
-                  vendorPhoneNo: vendor.phoneNo,
-                  servicesOffering: service,
-                })),
-              )
-              .flat()
-              .filter((vendor) => {
-                return vendor.servicesOffering.serviceName
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase())
-              }),
-          )
+          setVendors(response.data)
         })
         .catch((error) => console.error(error.response))
         .finally(() => setLoadingSearch(false))
@@ -75,7 +52,7 @@ const SearchVendors = () => {
             className="border border-gray-300 bg-white text-sm rounded-xl px-3 py-2 focus:outline-none"
             placeholder="Search vendors by services..."
             value={searchQuery}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
@@ -110,7 +87,7 @@ const SearchVendors = () => {
         ) : (
           <div className="bg-white p-5 rounded-2xl grid grid-cols-3 gap-2">
             {displayVendors.map((vendor) => (
-              <VendorCard key={vendor.servicesOffering._id} vendor={vendor} />
+              <VendorCard key={vendor._id} service={vendor} />
             ))}
           </div>
         )

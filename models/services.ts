@@ -13,6 +13,10 @@ const ServicesSchema = new Schema<IServices>({
     serviceImage: {
         type: String,
     },
+    vendorProfileId: {
+        type: Schema.Types.ObjectId,
+        ref: "VendorProfile",
+    },
     items: [
         {
             name: String,

@@ -203,7 +203,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
               Manage Payments
             </h2>
             <CustomTabs
-              labels={["Paid", "Failed", "Pending"]}
+              labels={["Paid", "Unfulfilled", "Pending"]}
               currentTab={currentTab}
               onChange={handleTabChange}
             />
@@ -256,7 +256,9 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                               ) : (
                                 <CheckCheck className="inline mr-1" size={16} />
                               )}
-                              {service.paymentStatus}
+                              {service.paymentStatus === "failed"
+                                ? "Unfulfilled"
+                                : service.paymentStatus}
                             </div>
                           </div>
                         </div>
