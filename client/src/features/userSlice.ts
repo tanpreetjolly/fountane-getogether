@@ -271,6 +271,7 @@ export const acceptRejectNotification =
       serviceListId?: string
       newOfferPrice?: number
       offerBy?: string
+      expectedGuest?: number
     },
   ) =>
   async (dispatch: any) => {

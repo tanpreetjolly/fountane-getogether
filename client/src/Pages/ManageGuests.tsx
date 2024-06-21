@@ -96,7 +96,10 @@ const ManageGuests = () => {
 
   const filteredGuests =
     searchResult !== null ? searchResult : guestList.map((user) => user.user)
-  const totalGuests = guestList.length
+  const totalGuests = guestList.reduce(
+    (acc, user) => acc + user.expectedGuests || 1,
+    0,
+  )
   const acceptedGuests = guestList.filter(
     (guest) => guest.status === "accepted",
   ).length
@@ -113,8 +116,11 @@ const ManageGuests = () => {
         </div>
         <div className="flex justify-between mt-4 items-centre">
           <div className="flex flex-wrap gap-2 ">
-            <div className="bg-purpleShade text-pruple-800 px-3 py-1.5 rounded-lg">
+            <div className="bg-purpleShade text-purple-800 px-3 py-1.5 rounded-lg">
               Total Guests: {totalGuests}
+            </div>
+            <div className="bg-purpleShade text-purple-800 px-3 py-1.5 rounded-lg">
+              Invitations: {guestList.length}
             </div>
             <div className="bg-green-200 text-green-800 px-3 py-1.5 rounded-lg">
               Accepted: {acceptedGuests}
@@ -162,10 +168,16 @@ const ManageGuests = () => {
                 <div className="ml-auto w-fit">
                   <ButtonSecondary
                     backgroundColor="bg-blueShade"
-                    text={capitalizeFirstLetter(
-                      guestList.find((user) => user.user._id === guest._id)
-                        ?.status || "Invite",
-                    )}
+                    text={
+                      capitalizeFirstLetter(
+                        guestList.find((user) => user.user._id === guest._id)
+                          ?.status || "Invite",
+                      ) +
+                      (guestList.find((user) => user.user._id === guest._id)
+                        ?.status === "accepted"
+                        ? ` (${guestList.find((user) => user.user._id === guest._id)?.expectedGuests})`
+                        : "")
+                    }
                     // className="capitalize"
                     onClick={() => setSelectedGuest(guest)}
                     icon={<RsvpRounded />}
@@ -351,15 +363,32 @@ const ShowSelectedGuest = ({
     closeDrawer()
   }
 
-  const isInvited = (guestId: string) => {
-    return event.userList.some((guest) => guest.user._id === guestId)
-  }
+  const isInvited = event.userList.find(
+    (guest) => guest.user._id === selectedGuest._id,
+  )
 
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h6" gutterBottom>
-        {selectedGuest.name}
+        {selectedGuest.name + " "}
       </Typography>
+      {isInvited ? (
+        isInvited.status === "accepted" ? (
+          <>
+            <span className="text-green-500">Accepted🎉</span>
+            <span className="text">
+              {" "}
+              Guests Coming: {isInvited.expectedGuests}
+            </span>
+          </>
+        ) : isInvited.status === "pending" ? (
+          <span className="text-yellow-500">Pending</span>
+        ) : (
+          <span className="text-red-500">Rejected</span>
+        )
+      ) : (
+        <span className="text-gray-500">Not Invited</span>
+      )}
       <List>
         <ListItem>
           <ListItemText primary="Email" secondary={selectedGuest.email} />
@@ -383,7 +412,7 @@ const ShowSelectedGuest = ({
         ))}
       </List>
       <Button
-        text={isInvited(selectedGuest._id) ? "Update" : "Invite"}
+        text={isInvited ? "Update" : "Invite"}
         onClick={handleInviteGuest}
         icon={<FaPlusCircle />}
       />

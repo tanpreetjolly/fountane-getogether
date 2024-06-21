@@ -438,10 +438,16 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
 }
 export const acceptRejectInvite = async (req: Request, res: Response) => {
     const { eventId } = req.params
-    const { status, userListId, serviceListId, newOfferPrice, offerBy } =
-        req.body
+    const {
+        status,
+        userListId,
+        serviceListId,
+        newOfferPrice,
+        offerBy,
+        expectedGuest,
+    } = req.body
 
-    console.log(eventId, status, userListId, serviceListId)
+    console.log(eventId, status, userListId, serviceListId, expectedGuest)
 
     if (!userListId && !serviceListId)
         throw new BadRequestError(
@@ -464,6 +470,7 @@ export const acceptRejectInvite = async (req: Request, res: Response) => {
         if (userIndex === -1)
             throw new NotFoundError("User Is Not Part Of This Event")
         event.userList[userIndex].status = status
+        event.userList[userIndex].expectedGuests = parseInt(expectedGuest) || 1
         await event.save()
     } else if (serviceListId) {
         const serviceListItem = event.serviceList.find(

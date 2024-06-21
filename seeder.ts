@@ -409,6 +409,7 @@ async function main() {
 
         // Create an event for the user
         const event = await Event.create({
+            _id: "60f1b9e3b3f1f3b3b3785151",
             name: "Rakesh weds Ritu",
             host: user._id,
             startDate: new Date("2024-05-24T09:00:00Z"),
@@ -419,10 +420,22 @@ async function main() {
                 {
                     user: user._id,
                     subEvents: assignRandomSubEvents(subEventToCreate),
+                    status: getRandomElement([
+                        "accepted",
+                        "rejected",
+                        "pending",
+                    ]),
+                    expectedGuests: 9,
                 },
                 ...guestUsers.map((user) => ({
                     user: user._id,
                     subEvents: assignRandomSubEvents(subEventToCreate),
+                    status: getRandomElement([
+                        "accepted",
+                        "rejected",
+                        "pending",
+                    ]),
+                    expectedGuests: Math.floor(Math.random() * 10),
                 })),
             ],
             serviceList: [

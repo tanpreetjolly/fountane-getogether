@@ -187,6 +187,7 @@ export const acceptRejectInvite = (
     serviceListId?: string
     newOfferPrice?: number
     offerBy?: string
+    expectedGuest?: number
   },
 ) => API.post(`/event/${eventId}/guest/invite/accept-reject`, eventUpdate)
 
@@ -241,3 +242,9 @@ export const updateTask = (
 
 export const deleteTask = (eventId: string, taskId: string) =>
   API.delete(`/event/${eventId}/task/${taskId}`)
+
+export const uploadImage = (image: File) => {
+  const formData = new FormData()
+  formData.append("image", image)
+  return API.post("/user/upload/image", formData)
+}
