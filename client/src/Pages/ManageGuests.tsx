@@ -17,6 +17,7 @@ import { inviteGuest, inviteNewGuest, search } from "@/api"
 import { OtherUserType, SubEventType } from "@/definitions"
 import toast from "react-hot-toast"
 import { Input } from "@/components/ui/input"
+import { Cross1Icon } from "@radix-ui/react-icons"
 
 function capitalizeFirstLetter(string: string) {
   if (string.length === 0) {
@@ -376,27 +377,48 @@ const ShowSelectedGuest = ({
   )
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        {selectedGuest.name + " "}
-      </Typography>
-      {isInvited ? (
-        isInvited.status === "accepted" ? (
-          <>
-            <span className="text-green-500">Accepted🎉</span>
-            <span className="text">
-              {" "}
-              Guests Coming: {isInvited.expectedGuests}
+    <div className="lg:w-4/5 mx-auto p-5">
+      {/* close button */}
+      <div className="flex justify-end">
+        <ButtonSecondary
+          text="Close"
+          onClick={closeDrawer}
+          backgroundColor="bg-gray-200"
+          icon={<Cross1Icon/>}
+        />
+      </div>
+      <div className="flex  items-center  justify-between">
+        <Typography variant="h6" gutterBottom>
+          {selectedGuest.name + " "}
+        </Typography>
+        <div className="flex gap-2">
+          {isInvited ? (
+            isInvited.status === "accepted" ? (
+              <>
+                <span className="bg-green-200 px-2 py-0.5 rounded-lg">
+                  Accepted🎉
+                </span>
+                <span className="bg-blueShade px-2 py-0.5 rounded-lg">
+                  {" "}
+                  Total Guests: {isInvited.expectedGuests}
+                </span>
+              </>
+            ) : isInvited.status === "pending" ? (
+              <span className="bg-yellow-200 px-2 py-0.5 rounded-lg">
+                Pending
+              </span>
+            ) : (
+              <span className="bg-red-200 px-2 py-0.5 rounded-lg">
+                Rejected
+              </span>
+            )
+          ) : (
+            <span className="bg-gray-200 px-2 py-0.5 rounded-lg">
+              Not Invited
             </span>
-          </>
-        ) : isInvited.status === "pending" ? (
-          <span className="text-yellow-500">Pending</span>
-        ) : (
-          <span className="text-red-500">Rejected</span>
-        )
-      ) : (
-        <span className="text-gray-500">Not Invited</span>
-      )}
+          )}
+        </div>
+      </div>
       <List>
         <ListItem>
           <ListItemText primary="Email" secondary={selectedGuest.email} />
@@ -419,12 +441,14 @@ const ShowSelectedGuest = ({
           </ListItem>
         ))}
       </List>
-      <Button
-        text={isInvited ? "Update" : "Invite"}
-        onClick={handleInviteGuest}
-        icon={<FaPlusCircle />}
-      />
-    </Box>
+      <div className="ml-auto w-fit">
+        <Button
+          text={isInvited ? "Update" : "Invite"}
+          onClick={handleInviteGuest}
+          icon={<FaPlusCircle />}
+        />
+      </div>
+    </div>
   )
 }
 export default ManageGuests

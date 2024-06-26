@@ -158,7 +158,7 @@ const MyProfile = () => {
           <button
             onClick={handleEdit}
             type="button"
-            className="w-fit text-dark hover:text-white border border-dark hover:bg-highlight hover:border-highlight font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-purple-900 duration-150 flex items-center justify-center gap-1 mx-auto sm:mr-0 mt-3 sm:mt-0"
+            className="w-fit text-dark hover:text-blue-700 border border-dark hover:bg-highlight hover:border-highlight font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-purple-900 duration-150 flex items-center justify-center gap-1 mx-auto sm:mr-0 mt-3 sm:mt-0"
           >
             <CiEdit className="text-base" />
             Edit profile
@@ -168,14 +168,14 @@ const MyProfile = () => {
             <button
               onClick={handleUpdate}
               type="button"
-              className="text-dark hover:text-white border border-dark hover:bg-highlight hover:border-highlight font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:focus:ring-purple-900 duration-150 flex items-center justify-center gap-1"
+              className="text-dark hover:text-blue-700 border border-dark hover:bg-highlight hover:border-highlight font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:focus:ring-purple-900 duration-150 flex items-center justify-center gap-1"
             >
               Save
             </button>
             <button
               onClick={handleCancel}
               type="button"
-              className="text-dark hover:text-white border border-dark hover:bg-highlight hover:border-highlight font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:focus:ring-purple-900 duration-150 flex items-center justify-center gap-1"
+              className="text-dark hover:text-blue-700 border border-dark hover:bg-highlight hover:border-highlight font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:focus:ring-purple-900 duration-150 flex items-center justify-center gap-1"
             >
               Cancel
             </button>
