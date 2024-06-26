@@ -1,14 +1,16 @@
-import { Input } from "@mui/material"
+import { Input, Modal, Box, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import MessageComponent from "../components/MessageComponent"
-import { Link, SendHorizontal, Info } from "lucide-react"
+import { Link, SendHorizontal, Info, ArrowLeft } from "lucide-react"
 import Loader from "../components/Loader"
 import { getChannelMessages } from "../api"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useAppSelector } from "@/hooks"
 import { ChatMessage, ChannelDetails } from "@/definitions"
 import { useSocketContext } from "@/context/SocketContext"
 import { useEventContext } from "@/context/EventContext"
+import ButtonSecondary from "@/components/ButtonSecondary"
+import { Close } from "@mui/icons-material"
 
 const ChannelChat = () => {
   const [loading, setLoading] = useState(true)
@@ -23,7 +25,7 @@ const ChannelChat = () => {
   const { channelId } = useParams()
   const { user } = useAppSelector((state) => state.user)
   const userId = user?.userId
-
+  const navigate = useNavigate()
   const { socket } = useSocketContext()
 
   const { event } = useEventContext()
@@ -39,7 +41,6 @@ const ChannelChat = () => {
           images: imagesFiles,
         },
         (res: ChatMessage) => {
-          // console.log(res)
           setMessages((prev) => [...prev, res])
           setSendingMessage(false)
         },
@@ -90,13 +91,23 @@ const ChannelChat = () => {
   if (channelDetails === null) return <div>Channel not found</div>
   if (event === null) return <div>Event not found</div>
 
-  console.log(channelDetails)
-
   return (
-    <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
+    <div className="px-4 bg-white flex-col flex justify-between h-[90vh] py-4 relative mx-auto">
+      <div className="absolute top-0 z-10 bg-white border-b py-3 w-full lg:w-4/5 left-1/2 -translate-x-[50%] flex items-center gap-2 px-3">
+        <ArrowLeft
+          size={18}
+          onClick={() => navigate(-1)}
+          className="cursor-pointer"
+        />
+        <div className="flex justify-between w-full">
+          <div>
+            <p className="text-gray-800">{channelDetails.name}</p>
+          </div>
+        </div>
+      </div>
       <div
         id="chatBox"
-        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-2"
+        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 py-20 lg:w-4/5 mx-auto"
       >
         {messages.map((msg) => (
           <MessageComponent
@@ -141,6 +152,57 @@ const ChannelChat = () => {
   )
 }
 
+const ChannelInfoModal = ({
+  open,
+  handleClose,
+  channelDetails,
+}: {
+  open: boolean
+  handleClose: () => void
+  channelDetails: ChannelDetails
+}) => {
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="channel-info-modal"
+      aria-describedby="channel-info-description"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 2,
+        }}
+      >
+        <Typography id="channel-info-modal" variant="h6" component="h2">
+          Channel Information
+        </Typography>
+        <Typography id="channel-info-description" sx={{ mt: 1 }}>
+          Name: {channelDetails.name}
+        </Typography>
+        <Typography sx={{ mt: 1 }}>
+          Allowed Users:{" "}
+          {channelDetails.allowedUsers.map((user) => user.name).join(", ")}
+        </Typography>
+        <div className="w-fit mt-4 ml-auto">
+          <ButtonSecondary
+            onClick={handleClose}
+            text="Close"
+            icon={<Close />}
+          />
+        </div>
+      </Box>
+    </Modal>
+  )
+}
+
 const InputBar = ({
   channelDetails,
   newMessage,
@@ -156,25 +218,27 @@ const InputBar = ({
   setImagesFiles: (value: File[]) => void
   handleSendMessage: () => void
 }) => {
+  const [openModal, setOpenModal] = useState(false)
+
+  const handleOpenModal = () => setOpenModal(true)
+  const handleCloseModal = () => setOpenModal(false)
+
   return (
-    <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+    <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md py-4 px-4 left-1/2 translate-x-[-50%] bottom-4">
       <button
         className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full"
-        onClick={() => {
-          //show a window message with chat details
-          alert(
-            "Name: " +
-              channelDetails.name +
-              "\nAllowed Users: " +
-              channelDetails.allowedUsers.map((user) => user.name).join(", "),
-          )
-        }}
+        onClick={handleOpenModal}
       >
         <Info size={20} />
       </button>
+      <ChannelInfoModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        channelDetails={channelDetails}
+      />
       <label
         htmlFor="file-upload"
-        className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative"
+        className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative hover:bg-zinc-600 hover:text-white cursor-pointer"
       >
         {imagesFiles.length > 0 && (
           <div className="flex gap-2 absolute bottom-12 right-0">

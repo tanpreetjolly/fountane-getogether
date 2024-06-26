@@ -5,6 +5,7 @@ import GuestNotificationCard from "@/components/GuestNotificationCard"
 const Invites = () => {
   const { user } = useAppSelector((state) => state.user)
   const notifications = user?.notifications || []
+  console.log(user)
 
   const guestNotifications = notifications.filter(
     (notification) => notification.userList !== undefined,
@@ -26,7 +27,7 @@ const Invites = () => {
       <div className="text-2xl px-5 my-2 font-medium text-zinc-800 ">
         Your Invites
       </div>
-      <div className=" px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className=" px-4 grid grid-cols-1 md:grid-cols-2 gap-2 ">
         {guestNotifications.length === 0 &&
           serviceNotifications.length === 0 && (
             <span>You don't have any invites yet</span>
@@ -34,7 +35,6 @@ const Invites = () => {
         {guestNotifications.map((invite) => (
           <GuestNotificationCard invite={invite} />
         ))}
-        <br />
         {serviceNotifications.map((notification) =>
           notification.serviceList.map((service) => {
             if (notification.host._id === user?.userId) return null

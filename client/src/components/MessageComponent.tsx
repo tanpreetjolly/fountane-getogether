@@ -19,9 +19,9 @@ const MessageComponent = ({
       className={`flex items-start gap-1 ${isUserMessage ? "flex-row-reverse" : ""}`}
     >
       <div
-        className={` h-8 w-8  rounded-xl  flex justify-center  items-center ${isUserMessage ? "bg-indigo-700 text-white" : "bg-slate-300"}`}
+        className={` h-8 w-8  rounded-xl  overflow-hidden flex justify-center  items-center ${isUserMessage ? "bg-indigo-700 text-white" : "bg-slate-300"}`}
       >
-        <img src={profileImage} alt={name} />
+        <img src={profileImage} alt={name}  />
       </div>
       <div
         className={`flex flex-col w-full max-w-[220px] leading-1.5 py-2 px-4   ${isUserMessage ? "text-right  bg-indigo-600 rounded-ee-2xl rounded-s-2xl text-white" : "  bg-slate-200 text-zinc-700 rounded-e-2xl  rounded-es-2xl"}`}

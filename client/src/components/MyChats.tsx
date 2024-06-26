@@ -11,13 +11,13 @@ const MyChats = () => {
   const vendorChats = user.myChats
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-2xl pl-2 my-2 font-semibold">My Chats</h2>
-      <div className="grid gap-6 max-w-2xl">
+    <div className="lg:w-4/5 mx-auto p-5 my-2 bg-white rounded-2xl">
+      <h2 className="text-2xl mb-4 font-medium">My Conversations</h2>
+      <div className="grid gap-6 ">
         {vendorChats?.map((vendor: any) => (
           <div
             key={vendor.id}
-            className="flex items-center gap-4 p-4 rounded-md shadow"
+            className="flex items-center gap-4 p-4 rounded-xl border shadow-sm cursor-pointer"
             onClick={() => navigate(`/my-chats/${vendor._id}`)}
           >
             <div className="aspect-square h-10 flex justify-center items-center bg-slate-200 rounded-full">
@@ -26,7 +26,7 @@ const MyChats = () => {
 
             <div className="flex justify-between w-full">
               <div>
-                <p className="text-lg font-semibold text-gray-600">
+                <p className="text-lg font-medium text-gray-600">
                   {vendor.name}
                 </p>
                 <p className="text-sm text-muted-foreground">{vendor.type}</p>

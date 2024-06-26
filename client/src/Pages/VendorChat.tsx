@@ -1,10 +1,10 @@
 import { Input } from "@mui/material"
 import { useEffect, useState } from "react"
 import MessageComponent from "../components/MessageComponent"
-import { Link, SendHorizontal } from "lucide-react"
+import { ArrowLeft, Link, SendHorizontal } from "lucide-react"
 import Loader from "../components/Loader"
 import { getChatMessages } from "../api"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useAppSelector } from "@/hooks"
 import { ChatMessage, OtherUserType } from "@/definitions"
 import { useSocketContext } from "@/context/SocketContext"
@@ -15,8 +15,7 @@ const VendorChat = () => {
   const [chatDetails, setChatDetails] = useState<OtherUserType | null>(null)
   const [newMessage, setNewMessage] = useState("")
   const [imagesFiles, setImagesFiles] = useState<File[]>([])
-  const [sendingMessage, setSendingMessage] = useState(false)
-
+  const navigate = useNavigate()
   const { chatId } = useParams()
   const { user } = useAppSelector((state) => state.user)
   const userId = user?.userId
@@ -25,7 +24,6 @@ const VendorChat = () => {
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== "") {
-      setSendingMessage(true)
       socket?.emit(
         "send:chat:message",
         {
@@ -36,7 +34,6 @@ const VendorChat = () => {
         (res: ChatMessage) => {
           // console.log(res)
           setMessages((prev) => [...prev, res])
-          setSendingMessage(false)
         },
       )
       setNewMessage("")
@@ -83,12 +80,15 @@ const VendorChat = () => {
   if (loading) return <Loader />
   if (user === null) return <div>User not found</div>
   if (chatDetails === null) return <div>User not found</div>
-
+ 
   return (
-    <div className="px-4 flex-col flex justify-between h-[87vh] py-4 relative lg:w-4/5 mx-auto">
+    <div className="px-4 bg-white  flex-col flex justify-between h-[90vh] py-4 relative  mx-auto">
+      <div className="absolute top-0 z-10 bg-white border-b   py-3 w-full lg:w-4/5  left-1/2 -translate-x-[50%] flex items-center gap-2 px-3">
+        <ArrowLeft size={18} onClick={()=>navigate("/my-chats")} className="cursor-pointer"/> <span>{chatDetails?.name}</span>
+      </div>
       <div
         id="chatBox"
-        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 pb-2"
+        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 py-20 lg:w-4/5 mx-auto"
       >
         {messages.map((msg) => (
           <MessageComponent
@@ -105,19 +105,15 @@ const VendorChat = () => {
             images={msg.image}
           />
         ))}
-        {sendingMessage && (
-          <div className="flex justify-center items-center">
-            <Loader />
-          </div>
-        )}
+        
       </div>
-      <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+      <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-2 pb-4 px-4 left-1/2 translate-x-[-50%] bottom-4">
         <label
           htmlFor="file-upload"
-          className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative"
+          className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative hover:bg-zinc-600 hover:text-white cursor-pointer"
         >
           {imagesFiles.length > 0 && (
-            <div className="flex gap-2 absolute bottom-12 right-0">
+            <div className="flex gap-2 absolute bottom-12 right-0 ">
               {imagesFiles.map((file) => (
                 <img
                   key={file.name}

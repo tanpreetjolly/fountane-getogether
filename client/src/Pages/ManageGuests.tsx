@@ -256,11 +256,14 @@ const ManageGuests = () => {
               </ListItem>
             ))}
           </List>
-          <Button
-            text="Send Invite"
-            onClick={handleInviteNewGuest}
-            icon={<FaPlusCircle />}
-          />
+          <div className="mx-auto w-1/2">
+            <Button
+              text="Send Invite"
+              onClick={handleInviteNewGuest}
+              icon={<FaPlusCircle />}
+              wfull={true}
+            />
+          </div>
         </Box>
       </SwipeableDrawer>
     </div>
