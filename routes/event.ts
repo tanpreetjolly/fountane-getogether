@@ -14,6 +14,7 @@ import {
     addRemoveGuestsToSubEvent,
     updateBudget,
     newOfferVendor,
+    updatePaymentStatus,
 } from "../controllers/event"
 import {
     getTasks,
@@ -60,6 +61,10 @@ eventRouter.route("/guest/invite").post(inviteGuest)
 eventRouter.route("/guest/invite/new").post(inviteNewGuest)
 
 eventRouter.route("/vendor/offer").post(offerAVendor)
+
+eventRouter
+    .route("/service/:serviceListId/payment-status")
+    .put(updatePaymentStatus)
 
 eventRouter.route("/task").get(getTasks).post(createTasks)
 eventRouter.route("/task/:taskId").get(getTask)

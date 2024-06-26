@@ -438,15 +438,9 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
 
     await event.save()
 
-    console.log(user._id)
-    console.log(event.userList.map((u) => ({ _id: u._id, user: u.user })))
-
     const userListId = event.userList.find(
         (userListItem) => userListItem.user.toString() === user._id.toString(),
     )?._id
-
-    console.log(userListId);
-    
 
     //@ts-ignore
     const hostName = event.host.name
@@ -751,5 +745,34 @@ export const getUserEventDetails = async (req: Request, res: Response) => {
         data: eventData,
         success: true,
         msg: "Events Fetched Successfully",
+    })
+}
+
+export const updatePaymentStatus = async (req: Request, res: Response) => {
+    const { eventId, serviceListId } = req.params
+    const { status } = req.body
+
+    const validStatus = ["pending", "paid", "failed"]
+    if (!validStatus.includes(status))
+        throw new BadRequestError(
+            `Status must be one of ${validStatus.join(",")}`,
+        )
+
+    const event = await Event.findByIdAndUpdate(
+        eventId,
+        {
+            $set: { "serviceList.$[elem].paymentStatus": status },
+        },
+        {
+            arrayFilters: [{ "elem._id": serviceListId }],
+            new: true,
+        },
+    )
+
+    if (!event) throw new NotFoundError("Event not found")
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg: "Payment Status Updated Successfully",
     })
 }
