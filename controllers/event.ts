@@ -416,21 +416,44 @@ export const inviteNewGuest = async (req: Request, res: Response) => {
     })
     if (!event) throw new BadRequestError("Event not found")
 
-    const user = await User.create({ name, email, phoneNo })
+    const user = await User.create({ name, email, phoneNo }).catch((err) => {
+        if (err.name === "MongoServerError")
+            throw new BadRequestError(`User with email ${email} already exists`)
+        throw err
+    })
     if (!user) throw new BadRequestError("User not found")
 
     const subEvents = await SubEvent.find({ _id: { $in: subEventsIds } })
 
     event.userList.push({ user: user._id, role, subEvents: subEventsIds })
 
+    // let user = await User.findOne({ email }).select("_id name email phoneNo")
+    // if (!user) {
+    //     user = await User.create({ name, email, phoneNo })
+
+    //     const subEvents = await SubEvent.find({ _id: { $in: subEventsIds } })
+
+    //     event.userList.push({ user: user._id, role, subEvents: subEventsIds })
+    // }
+
     await event.save()
+
+    console.log(user._id)
+    console.log(event.userList.map((u) => ({ _id: u._id, user: u.user })))
+
+    const userListId = event.userList.find(
+        (userListItem) => userListItem.user.toString() === user._id.toString(),
+    )?._id
+
+    console.log(userListId);
+    
 
     //@ts-ignore
     const hostName = event.host.name
     const token = jwt.sign(
         {
             eventId,
-            userListId: user._id,
+            userListId,
         },
         process.env.JWT_SECRET as jwt.Secret,
     )
