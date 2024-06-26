@@ -232,6 +232,15 @@ export const addRemoveGuestsToSubEvent = (
 export const updateEventBudget = (eventId: string, budget: number) =>
   API.patch(`/event/${eventId}/budget`, { budget })
 
+export const updatePaymentStatus = (
+  eventId: string,
+  serviceListId: string,
+  status: string,
+) =>
+  API.put(`/event/${eventId}/service/${serviceListId}/payment-status`, {
+    status,
+  })
+
 export const createService = (
   vendorId: string,
   serviceData: Omit<ServiceType, "_id" | "items"> & {

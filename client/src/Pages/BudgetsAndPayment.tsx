@@ -14,7 +14,7 @@ import { useEventContext } from "../context/EventContext"
 import Loader from "../components/Loader"
 import { ServiceListType } from "@/definitions"
 import toast from "react-hot-toast"
-import { updateEventBudget } from "@/api"
+import { updateEventBudget, updatePaymentStatus } from "@/api"
 import { PieChart, Pie, Cell } from "recharts"
 
 const calculateBudgetUtilized = (serviceList: ServiceListType[]): number => {
@@ -102,6 +102,17 @@ const BudgetsAndPayment: React.FC<Props> = () => {
     handleCloseModal()
   }
 
+  const handlePaymentStatusUpdate = (serviceListId: string, status: string) => {
+    toast.promise(updatePaymentStatus(event._id, serviceListId, status), {
+      loading: "Updating Payment Status...",
+      success: () => {
+        updateEvent()
+        return "Budget Updated Successfully"
+      },
+      error: "Failed to update Budget",
+    })
+  }
+
   const handleTabChange = (newValue: number) => {
     setCurrentTab(newValue)
   }
@@ -174,13 +185,23 @@ const BudgetsAndPayment: React.FC<Props> = () => {
               </div>
             </div>
 
-            {/* <div className=" border w-1/4 p-5 rounded-3xl bg-yellowShade relative bg-opacity-90 shadow-sm flex flex-col ">
+            <div className=" border w-1/4 p-5 rounded-3xl bg-yellowShade relative bg-opacity-90 shadow-sm flex flex-col ">
               <div className="text-">
                 <span className="mx-auto text-sm  text-slate-800 ">
                   Completed <br /> Payments
                 </span>
                 <div className="text- font-medium text-2xl">
-                  ${(event.budget - utilizedBudget).toFixed(2)}
+                  $
+                  {parseFloat(
+                    serviceList
+                      .filter((service) => service.paymentStatus === "paid")
+                      .reduce(
+                        (acc, service) =>
+                          acc + (service.planSelected.price || 0),
+                        0,
+                      )
+                      .toFixed(2),
+                  )}
                 </div>
               </div>
             </div>
@@ -190,10 +211,20 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                   Pending <br /> Payments
                 </span>
                 <div className="text- font-medium text-2xl">
-                  ${(event.budget - utilizedBudget).toFixed(2)}
+                  ${" "}
+                  {parseFloat(
+                    serviceList
+                      .filter((service) => service.paymentStatus === "pending")
+                      .reduce(
+                        (acc, service) =>
+                          acc + (service.planSelected.price || 0),
+                        0,
+                      )
+                      .toFixed(2),
+                  )}
                 </div>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
 
@@ -260,6 +291,15 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                                 ? "Unfulfilled"
                                 : service.paymentStatus}
                             </div>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                handlePaymentStatusUpdate(service._id, "failed")
+                              }}
+                              className="bg-dark text-white rounded-full px-2 py-1 mt-2"
+                            >
+                              update me
+                            </button>
                           </div>
                         </div>
                       ))}
