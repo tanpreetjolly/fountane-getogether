@@ -5,11 +5,16 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material"
 import Button from "../components/Button"
 import { MdCancel } from "react-icons/md"
 import { SiTicktick } from "react-icons/si"
-import { CheckCheck, CircleDot, SquarePen } from "lucide-react"
+import { CheckCheck, CircleDot, SquarePen, Pencil } from "lucide-react"
 import { useEventContext } from "../context/EventContext"
 import Loader from "../components/Loader"
 import { ServiceListType } from "@/definitions"
@@ -56,8 +61,11 @@ const CustomTabs: React.FC<{
 
 const BudgetsAndPayment: React.FC<Props> = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState<boolean>(false)
   const [newTotalBudget, setNewTotalBudget] = useState<number>(0)
   const [currentTab, setCurrentTab] = useState<number>(0)
+  const [selectedServiceId, setSelectedServiceId] = useState<string>("")
+  const [newPaymentStatus, setNewPaymentStatus] = useState<string>("pending")
 
   const { event, loadingEvent, updateEvent } = useEventContext()
 
@@ -102,15 +110,29 @@ const BudgetsAndPayment: React.FC<Props> = () => {
     handleCloseModal()
   }
 
-  const handlePaymentStatusUpdate = (serviceListId: string, status: string) => {
-    toast.promise(updatePaymentStatus(event._id, serviceListId, status), {
+  const handleOpenPaymentModal = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    // select the current payment status 
+    const selectedService = serviceList.find(
+      (service) => service._id === serviceId,
+    )
+    if (!selectedService) return
+    setNewPaymentStatus(selectedService.paymentStatus)
+    setIsPaymentModalOpen(true)
+  }
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false)
+  }
+  const handlePaymentStatusChange = () => {
+    toast.promise(updatePaymentStatus(event._id, selectedServiceId, newPaymentStatus), {
       loading: "Updating Payment Status...",
       success: () => {
         updateEvent()
-        return "Budget Updated Successfully"
+        return "Payment Status Updated Successfully"
       },
-      error: "Failed to update Budget",
+      error: "Failed to update Payment Status",
     })
+    handleClosePaymentModal()
   }
 
   const handleTabChange = (newValue: number) => {
@@ -128,12 +150,6 @@ const BudgetsAndPayment: React.FC<Props> = () => {
   ]
 
   const COLORS = ["#aecaf4", "#E0E0E0"]
-
-  // const filterServices = (status: string) => {
-  //   return event.serviceList.filter(
-  //     (service) => service.paymentStatus === status,
-  //   )
-  // }
 
   return (
     <div className="p-4 mx-auto lg:w-5/6">
@@ -294,11 +310,11 @@ const BudgetsAndPayment: React.FC<Props> = () => {
                             <button
                               onClick={(e) => {
                                 e.preventDefault()
-                                handlePaymentStatusUpdate(service._id, "failed")
+                                handleOpenPaymentModal(service._id)
                               }}
-                              className="bg-dark text-white rounded-full px-2 py-1 mt-2"
+                              className="text-dark "
                             >
-                              update me
+                              <Pencil size={15} strokeWidth={1.5} />
                             </button>
                           </div>
                         </div>
@@ -323,7 +339,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
               onChange={(e) => setNewTotalBudget(Number(e.target.value))}
             />
           </DialogContent>
-          <div className="grid grid-cols-2 p-3 pt-0 gap-2 px-6">
+          <DialogActions>
             <Button
               onClick={handleCloseModal}
               text="Cancel"
@@ -334,7 +350,46 @@ const BudgetsAndPayment: React.FC<Props> = () => {
               text="Save"
               icon={<SiTicktick />}
             />
-          </div>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={isPaymentModalOpen} onClose={handleClosePaymentModal}>
+          <DialogTitle>Update Payment Status</DialogTitle>
+          <DialogContent>
+            <FormControl component="fieldset">
+              <RadioGroup
+                value={newPaymentStatus}
+                onChange={(e) => setNewPaymentStatus(e.target.value)}
+              >
+                <FormControlLabel
+                  value="paid"
+                  control={<Radio />}
+                  label="Paid"
+                />
+                <FormControlLabel
+                  value="failed"
+                  control={<Radio />}
+                  label="Unfulfilled"
+                />
+                <FormControlLabel
+                  value="pending"
+                  control={<Radio />}
+                  label="Pending"
+                />
+              </RadioGroup>
+            </FormControl>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleClosePaymentModal}
+              text="Cancel"
+              icon={<MdCancel />}
+            />
+            <Button
+              onClick={handlePaymentStatusChange}
+              text="Save"
+              icon={<SiTicktick />}
+            />
+          </DialogActions>
         </Dialog>
       </div>
     </div>
