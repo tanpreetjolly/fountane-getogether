@@ -38,9 +38,10 @@ const InvitationPage = () => {
     if (!token) return
     const getInvitation = async () => {
       getInvitationDetails(token)
-        .then((data: { data: InvitationPageType }) =>
-          setInviteDetails(data.data),
-        )
+        .then((data: { data: InvitationPageType }) => {
+          setInviteDetails(data.data)
+          setEstimatedGuests(data.data.userList.expectedGuests)
+        })
         .catch((err) => console.log(err))
     }
 

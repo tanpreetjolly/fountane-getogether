@@ -70,7 +70,7 @@ const ManageGuests = () => {
         email: newGuest.email,
         phoneNo: newGuest.phoneNo,
         subEventsIds: selectedSubEvents,
-      }),
+      }).finally(closeDrawer),
       {
         loading: "Sending Invite...",
         success: () => {
@@ -79,12 +79,17 @@ const ManageGuests = () => {
         },
         error: (error) => {
           console.log(error)
-          return "Failed to send invite. Please try again later."
+          toast.remove(error.response.data?.msg)
+          return error.response.data?.msg
+        },
+      },
+      {
+        id: "invite-new-guest",
+        style: {
+          minWidth: "250px",
         },
       },
     )
-
-    closeDrawer()
   }
 
   const guestList = event?.userList || []
