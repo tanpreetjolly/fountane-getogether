@@ -63,7 +63,7 @@ const Navbar = () => {
           >
             <ArrowLeft size={24} />
           </button>
-          <figure className="hidden md:block">
+          <figure className="hidden md:block" onClick={()=>navigate("/") as any}>
             <img
               src="https://i.imgur.com/YA68OfS.png"
               alt="logo"
