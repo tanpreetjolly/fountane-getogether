@@ -97,7 +97,7 @@ const ChannelChat = () => {
         <ArrowLeft
           size={18}
           onClick={() => navigate(-1)}
-          className="cursor-pointer"
+          className="hidden md:inline cursor-pointer"
         />
         <div className="flex justify-between w-full">
           <div>
@@ -224,7 +224,7 @@ const InputBar = ({
   const handleCloseModal = () => setOpenModal(false)
 
   return (
-    <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md py-4 px-4 left-1/2 translate-x-[-50%] bottom-4">
+    <div className="md:px-20 flex justify-center gap-2 items-center fixed w-full md:w-4/5 backdrop-blur-md py-4 px-4 left-1/2 translate-x-[-50%] bottom-14 md:bottom-4">
       <button
         className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full"
         onClick={handleOpenModal}
