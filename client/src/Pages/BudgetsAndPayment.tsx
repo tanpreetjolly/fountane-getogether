@@ -112,7 +112,7 @@ const BudgetsAndPayment: React.FC<Props> = () => {
 
   const handleOpenPaymentModal = (serviceId: string) => {
     setSelectedServiceId(serviceId)
-    // select the current payment status 
+    // select the current payment status
     const selectedService = serviceList.find(
       (service) => service._id === serviceId,
     )
@@ -124,14 +124,17 @@ const BudgetsAndPayment: React.FC<Props> = () => {
     setIsPaymentModalOpen(false)
   }
   const handlePaymentStatusChange = () => {
-    toast.promise(updatePaymentStatus(event._id, selectedServiceId, newPaymentStatus), {
-      loading: "Updating Payment Status...",
-      success: () => {
-        updateEvent()
-        return "Payment Status Updated Successfully"
+    toast.promise(
+      updatePaymentStatus(event._id, selectedServiceId, newPaymentStatus),
+      {
+        loading: "Updating Payment Status...",
+        success: () => {
+          updateEvent()
+          return "Payment Status Updated Successfully"
+        },
+        error: "Failed to update Payment Status",
       },
-      error: "Failed to update Payment Status",
-    })
+    )
     handleClosePaymentModal()
   }
 

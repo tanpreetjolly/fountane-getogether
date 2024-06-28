@@ -39,7 +39,9 @@ const EventPage = () => {
               &nbsp;
               {formatDate(event.startDate)} - {formatDate(event.endDate)}
             </div>
-            <div className="text-xl md:ext-2xl font-medium text-dark ">{event.name}</div>
+            <div className="text-xl md:ext-2xl font-medium text-dark ">
+              {event.name}
+            </div>
             <div className="text-sm md:text-base text-gray-700 mb-1 ">
               Hosted by <span className=" font-medium">{event.host.name}</span>
             </div>

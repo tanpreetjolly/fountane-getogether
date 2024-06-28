@@ -88,6 +88,8 @@ export const verifyOtp = (verifyOtpParams: VerifyOtpParams) =>
   API.post("/auth/verify", verifyOtpParams)
 export const signInToken = () => API.get("/user/me")
 export const signOut = () => API.post("/auth/sign-out")
+export const getOtherUserDetails = (otherUserId: string) =>
+  API.get(`/public/user/${otherUserId}`)
 
 /*
  ********************** User Requests **********************

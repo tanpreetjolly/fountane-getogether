@@ -63,7 +63,10 @@ const Navbar = () => {
           >
             <ArrowLeft size={24} />
           </button>
-          <figure className="hidden md:block hover:cursor-pointer" onClick={()=>navigate("/events") as any}>
+          <figure
+            className="hidden md:block hover:cursor-pointer"
+            onClick={() => navigate("/events") as any}
+          >
             <img
               src="https://i.imgur.com/YA68OfS.png"
               alt="logo"

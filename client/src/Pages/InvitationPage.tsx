@@ -125,16 +125,11 @@ const InvitationPage = () => {
       <h2 className="text-2xl font-medium mb-4 text-gray-700">Festivities</h2>
       <div className="grid md:grid-cols-2 gap-4 mb-8">
         {inviteDetails.userList.subEvents.map((subEvent) => (
-          <div
-            key={subEvent._id}
-            className="bg-blue-100 p-4 rounded-md "
-          >
+          <div key={subEvent._id} className="bg-blue-100 p-4 rounded-md ">
             <p className="font-medium mb-1">{subEvent.name}</p>
             <p className="text-sm mb-1 text-gray-800 flex items-center">
               <Calendar size={16} className="mr-2" />{" "}
-              {formatDate(subEvent.startDate)} -
-           
-              {formatDate(subEvent.endDate)}
+              {formatDate(subEvent.startDate)} -{formatDate(subEvent.endDate)}
             </p>
             <p className="text-sm text-gray-800 flex items-center">
               <MapPin size={16} className="mr-2" /> {subEvent.venue}

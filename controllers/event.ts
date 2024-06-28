@@ -600,6 +600,7 @@ export const offerAVendor = async (req: Request, res: Response) => {
             estimatedGuests: estimatedGuestNos[index],
             servicesOffering: serviceId,
             planSelected: {
+                _id: selectedItem._id,
                 name: selectedItem.name,
                 price: parseInt(offerPrices[index]),
                 description: selectedItem.description,

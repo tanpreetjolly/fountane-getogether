@@ -64,6 +64,7 @@ const ServiceList = new Schema<IServiceList>(
             ref: "Services",
         },
         planSelected: {
+            _id: Schema.Types.ObjectId,
             name: String,
             description: String,
             price: Number,

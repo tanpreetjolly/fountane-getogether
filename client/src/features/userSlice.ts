@@ -26,6 +26,7 @@ interface CounterState {
   loading: boolean
   isAuthenticated: boolean
   user: UserType | null
+  unReadChatsId: string[]
   verificationRequired: boolean
   verificationUserID: UserType["userId"] | string
 }
@@ -34,6 +35,7 @@ const initialState: CounterState = {
   loading: true,
   isAuthenticated: false,
   user: null,
+  unReadChatsId: [],
   verificationRequired: false,
   verificationUserID: "",
 }
@@ -79,6 +81,11 @@ export const userSlice = createSlice({
           (event) => event._id !== action.payload,
         )
       }
+    },
+    SET_CHAT_AS_UNREAD: (state, action) => {
+      state.unReadChatsId.includes(action.payload)
+        ? null
+        : state.unReadChatsId.push(action.payload)
     },
     UPDATE_EVENT: (state, action) => {
       if (state.user) {
@@ -352,6 +359,10 @@ export const acceptRejectNotificationVendor =
       },
     )
   }
+
+export const setChatAsUnread = (chatId: string) => async (dispatch: any) => {
+  dispatch(userSlice.actions.SET_CHAT_AS_UNREAD(chatId))
+}
 export const selectUserState = (state: RootState) => state.user
 
 export default userSlice.reducer
