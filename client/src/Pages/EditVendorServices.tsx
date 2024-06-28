@@ -152,16 +152,16 @@ const EditVendorServices = () => {
   }
 
   return (
-    <div className="p-5 lg:w-5/6 mx-auto bg-white my-4  rounded-2xl">
-      <div className="flex justify-between items-center px-10">
-        <h2 className="text-2xl font-medium mb-4">My Services:-</h2>
+    <div className="p-5 w-full lg:w-5/6 mx-auto bg-white my-4  rounded-2xl">
+      <div className="flex  flex-wrap justify-between items-center md:px-10">
+        <h2 className="text-xl md:text-2xl font-medium mb-4">My Services:-</h2>
         <div className="flex justify-end mb-4">
           <Button variant="default" onClick={() => handleServiceEdit(null)}>
             <Plus className="h-4 w-4 mr-2" /> Create New Service
           </Button>
         </div>
       </div>
-      <div className="space-y-4 mt-7 px-10">
+      <div className="space-y-4 mt-7 md:px-10">
         {serviceData.map((service) => (
           <Accordion
             type="single"
@@ -217,7 +217,7 @@ const EditVendorServices = () => {
       </div>
 
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent className="max-h-[90vh] overflow-y-hidden lg:w-5/6 mx-auto  px-10">
+        <DrawerContent className="max-h-[90vh] overflow-y-hidden lg:w-5/6 mx-auto  md:px-10">
           <DrawerHeader className="flex items-center justify-between border-b mx-2">
             <h3 className="text-xl font-medium">
               {selectedService ? "Edit Service" : "Create New Service"}
