@@ -48,18 +48,20 @@ const InviteGuests = () => {
   return (
     <div className=" my-2 mb-8 flex flex-col h-[85vh] justify-between lg:w-4/5 mx-auto bg-white rounded-2xl p-5">
       <div>
-        <div className="flex items-center justify-between">
-          <div className="text-2xl pl-1 font-medium text-zinc-800 ">
+        <div className="flex flex-wrap items-center justify-between">
+          <div className="text-xl md:text-2xl pl-1 font-medium text-zinc-800 ">
             Vendors for {subEvent.name}
           </div>
           {event.isHosted && (
-            <Button
-              text="Assign New Vendors"
-              onClick={() => {
-                navigate("search")
-              }}
-              icon={<FaPlusCircle />}
-            />
+            <div className="mt-3 sm:mt-0">
+              <Button
+                text="Assign New Vendors"
+                onClick={() => {
+                  navigate("search")
+                }}
+                icon={<FaPlusCircle />}
+              />
+            </div>
           )}
         </div>
         {event.isHosted && (
@@ -77,12 +79,12 @@ const InviteGuests = () => {
         <List className="flex gap-2">
           {filteredServiceList.length === 0 &&
             (event.isHosted ? (
-              <div className="text-center italic text-xl px-4 text-gray-500 h-[40vh] flex flex-col gap-1 items-center justify-center">
+              <div className="text-center italic  w-full md:text-xl px-4 text-gray-500 h-[40vh] flex flex-col gap-1 items-center justify-center">
                 No vendors to show
                 <br /> Assign your first vendor
                 <NavLink
                   to="search"
-                  className="p-2.5 border rounded-md border-blue-500 bg-blue-500 text-white hover:text-blue-500 hover:bg-white hover:border-blue-500"
+                  className="py-1 px-4 border rounded-md border-blue-500 bg-blue-500 text-white hover:text-blue-500 hover:bg-white hover:border-blue-500"
                 >
                   Search Vendors
                 </NavLink>
