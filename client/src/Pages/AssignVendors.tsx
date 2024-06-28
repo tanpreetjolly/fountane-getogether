@@ -76,7 +76,7 @@ const InviteGuests = () => {
           </>
         )}
 
-        <List className="flex gap-2">
+        <List className="grid sm:grid-cols-2 xl:grid-cols-3 gap-2">
           {filteredServiceList.length === 0 &&
             (event.isHosted ? (
               <div className="text-center italic  w-full md:text-xl px-4 text-gray-500 h-[40vh] flex flex-col gap-1 items-center justify-center">
