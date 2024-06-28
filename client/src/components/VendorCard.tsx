@@ -177,7 +177,7 @@ const VendorCard = ({ service }: Props) => {
             </button>
           </div>
           <div className="flex justify-between items-center mb-4">
-            <div className="flex flex-col max-w-xl w-1/2 gap-3 justify-between ">
+            <div className="flex  flex-col max-w-xl w-1/2 gap-3 justify-between ">
               <div>
                 <span className="text-xl text-gray-800 font-medium">
                   {service.serviceName} by {service.vendorProfileId.user.name}
@@ -187,11 +187,12 @@ const VendorCard = ({ service }: Props) => {
                   {service.serviceDescription}
                 </span>
               </div>
-              <div className="flex">
+              <div className="flex  ">
                 <Button
                   text="Make a Offer"
                   onClick={inviteVendor}
                   icon={<IoPersonAdd />}
+                  fontSize="text-sm md:text-base"
                 />
               </div>
             </div>
@@ -201,23 +202,23 @@ const VendorCard = ({ service }: Props) => {
               className="w-20 h-20 object-cover rounded-md"
             />
           </div>
-          <div className="ml-auto w-fit bg-gray-100 rounded-xl px-4 py-1 text-lg  text-slate-900 ">
+          <div className="ml-auto w-fit bg-gray-100 rounded-xl px-4 py-1 md:text-lg  text-slate-900 ">
             Total Offer Amount:{" "}
             <span className="font-medium">${estimatedTotalPrice}</span>
           </div>
-          <p className="p-0.5  text-sm text-slate-800">Plans we offer:</p>
-          <div className="flex flex-wrap gap-4">
+          <p className="p-0.5 mt-3 md:mt-0 text-sm text-slate-800">Plans we offer:</p>
+          <div className="flex flex-col md:flex-row gap-4">
             {service.items.map((item, index) => (
               <div key={item._id} className="border rounded-md p-3 flex-1">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className=" font-medium">
+                <div className="flex flex-wrap justify-between items-center mb-2">
+                  <h4 className=" text-sm md:text-base font-medium">
                     {index + 1 + ". " + item.name}
                   </h4>
-                  <p className="text-sm bg-green-200  text-green-900 px-2 rounded-xl py-0.5">
+                  <p className="text-xs md:text-sm bg-green-200  text-green-900 px-2 rounded-xl py-0.5">
                     ${item.price}
                   </p>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-[13px] md:text-sm text-muted-foreground">
                   {item.description}
                 </p>
               </div>
@@ -247,9 +248,9 @@ const VendorCard = ({ service }: Props) => {
                     selectedFestivity.subEventId === festivity._id,
                 ) && (
                   <div className="border pt-2 mb-2 mx-4 bg-slate-50 rounded-xl">
-                    <div className="flex items-center justify-start ml-3   gap-4">
+                    <div className="flex flex-col sm:flex-row  md:items-center justify-start ml-3   gap-1.5 md:gap-4">
                       <div className="flex gap-2 items-center bg-blueShade px-3 py-0.5 rounded-lg">
-                        <label htmlFor="estimatedGuestNo" className="text-sm">
+                        <label htmlFor="estimatedGuestNo" className="text-xs  md:text-sm">
                           Estimated Total Guests:
                         </label>
                         <input
@@ -260,7 +261,7 @@ const VendorCard = ({ service }: Props) => {
                               return f.subEventId === festivity._id
                             })?.estimatedGuestNo
                           }
-                          className="border  rounded text-sm w-10 text-center"
+                          className="border  rounded text-xs  md:text-sm w-10 text-center"
                           placeholder="Estimated Guest No"
                           onChange={(e) => {
                             setSelectedFestivities((p) => {
@@ -275,7 +276,7 @@ const VendorCard = ({ service }: Props) => {
                         />
                       </div>
                       <div className="flex items-center gap-2 bg-yellowShade rounded-lg px-3 py-0.5">
-                        <label htmlFor="offerPrice" className="text-sm">
+                        <label htmlFor="offerPrice" className="text-xs  md:text-sm">
                           Offer Price ($)
                         </label>
                         <input
@@ -286,7 +287,7 @@ const VendorCard = ({ service }: Props) => {
                               return f.subEventId === festivity._id
                             })?.offerPrice
                           }
-                          className="border py-0.5 rounded-md w-16 text-center text-sm"
+                          className="border py-0.5 rounded-md w-16 text-center text-xs  md:text-sm"
                           placeholder="Offer Price"
                           onChange={(e) => {
                             setSelectedFestivities((p) => {

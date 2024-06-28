@@ -85,7 +85,7 @@ const SearchVendors = () => {
         ) : displayVendors.length === 0 ? (
           <div className="text-center text-gray-500">No Vendors Found</div>
         ) : (
-          <div className="bg-white p-5 rounded-2xl grid grid-cols-3 gap-2">
+          <div className="bg-white md:p-5 rounded-2xl grid md:grid-cols-2 xl:grid-cols-3 gap-2">
             {displayVendors.map((vendor) => (
               <VendorCard key={vendor._id} service={vendor} />
             ))}
