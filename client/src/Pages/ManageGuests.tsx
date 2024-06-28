@@ -120,12 +120,12 @@ const ManageGuests = () => {
           Manage Guests for <br className="hidden md:block" />{" "}
           <span className="font-medium md:text-xl">{event.name}</span>
         </div>
-        <div className="flex justify-between mt-4 items-centre">
+        <div className="flex  flex-wrap justify-between mt-4 items-centre">
           <div className="flex flex-wrap gap-2 ">
-            <div className="bg-purpleShade text-purple-800 px-3 py-1.5 rounded-lg">
+            <div className="bg-purpleShade text-slate-800 px-3 py-1.5 rounded-lg">
               Total Guests: {totalGuests}
             </div>
-            <div className="bg-purpleShade text-purple-800 px-3 py-1.5 rounded-lg">
+            <div className="bg-purpleShade text-slate-800 px-3 py-1.5 rounded-lg">
               Invitations: {guestList.length}
             </div>
             <div className="bg-green-200 text-green-800 px-3 py-1.5 rounded-lg">
@@ -135,11 +135,13 @@ const ManageGuests = () => {
               Pending: {pendingGuests}
             </div>
           </div>
+          <div className="w-fit mt-4 mx-auto sm:mx-0 md:mt-0">
           <Button
             text="Invite New Contact"
             onClick={() => setIsInviteDrawerOpen(true)}
             icon={<FaPlusCircle />}
           />
+          </div>
         </div>
       </div>
       <div className="p-4 bg-white bg-opacity-80 rounded-2xl  shadow-sm">
@@ -215,7 +217,7 @@ const ManageGuests = () => {
         onClose={closeDrawer}
         onOpen={() => setIsInviteDrawerOpen(true)}
       >
-        <Box sx={{ p: 2 }} className="lg:!w-3/5 mx-auto">
+        <Box sx={{ p: 2 }} className="w-full lg:!w-3/5 mx-auto">
           <Typography variant="h6" gutterBottom>
             Invite a New Guest
           </Typography>
@@ -301,7 +303,7 @@ const SearchField = ({
   }, [searchQuery])
 
   return (
-    <div className="w-1/3">
+    <div className="md:w-1/3">
       <Input
         placeholder="Write more than 3 characters to search"
         value={searchQuery}
@@ -377,7 +379,7 @@ const ShowSelectedGuest = ({
   )
 
   return (
-    <div className="lg:w-4/5 mx-auto p-5">
+    <div className="w-full lg:w-4/5 mx-auto p-5">
       {/* close button */}
       <div className="flex justify-end">
         <ButtonSecondary
