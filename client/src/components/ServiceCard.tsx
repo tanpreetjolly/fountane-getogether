@@ -42,7 +42,7 @@ const VendorCard = ({ service }: Props) => {
 
   return (
     <>
-      <button className="border p-5 rounded-lg w-full relative">
+      <button className="border p-4 md:p-5 rounded-lg w-full relative">
         {event.isHosted && (
           <div className="flex gap-1 p-2 absolute right-1 top-1 ">
             <button onClick={handleInviteButtonClick}>
@@ -56,24 +56,24 @@ const VendorCard = ({ service }: Props) => {
             <div className="text-sm text-slate-800 bg-sky-200 w-fit -ml-1 mb-1 px-3 rounded-lg">
               <span className="capitalize">{service.subEvent.name}</span>
             </div>
-            <div className="text-lg  font-medium">
+            <div className="sm:text-lg  font-medium">
               {service.servicesOffering.serviceName}{" "}
               {event.isHosted && <>- $ {service.planSelected.price}</>}
             </div>
-            <div className="text-sm  text-gray-700 mb-2">
+            <div className="text-xs sm:text-sm  text-gray-700 mb-2">
               by {service.vendorProfile.user.name}
             </div>
             {event.isHosted && (
               <>
-                <div className="text-sm  text-slate-700 flex items-center">
+                <div className="text-xs sm:text-sm  text-slate-700 flex items-center">
                   <span>
                     Total Guests: <span>{service.estimatedGuests}</span>
                   </span>
                 </div>
-                <div className="text-sm  text-slate-700 flex items-center">
+                <div className="text-xs sm:text-sm  text-slate-700 flex items-center">
                   <span>Plan Selected: {service.planSelected.name}</span>
                 </div>
-                <div className="text-sm  text-slate-700 flex items-center">
+                <div className="text-xs sm:text-sm  text-slate-700 flex items-center">
                   <span>
                     Offered By: {service.offerBy === "user" ? "You" : "Vendor"}
                   </span>
@@ -93,6 +93,7 @@ const VendorCard = ({ service }: Props) => {
               text="Contact"
               backgroundColor="bg-gray-300"
               icon={<ArrowRight size={20} strokeWidth={1.5} />}
+              fontSize="text-xs md:text-sm"
               onClick={() => {
                 navigate(`/my-chats/${service.vendorProfile.user._id}`)
               }}

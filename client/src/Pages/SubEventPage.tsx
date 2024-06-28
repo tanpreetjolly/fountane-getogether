@@ -7,7 +7,6 @@ import { useEventContext } from "../context/EventContext"
 import Loader from "../components/Loader"
 import {
   ArrowRightToLine,
-  BookUser,
   CalendarDays,
   ContactRound,
   Group,
