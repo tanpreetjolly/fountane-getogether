@@ -84,11 +84,11 @@ const VendorChat = () => {
   return (
     <div className="px-4 bg-white  flex-col flex justify-between h-[90vh] py-4 relative  mx-auto">
       <div className="absolute top-0 z-10 bg-white border-b   py-3 w-full lg:w-4/5  left-1/2 -translate-x-[50%] flex items-center gap-2 px-3">
-        <ArrowLeft size={18} onClick={()=>navigate("/my-chats")} className="cursor-pointer"/> <span>{chatDetails?.name}</span>
+        <ArrowLeft size={18} onClick={()=>navigate("/my-chats")} className="hidden md:inline cursor-pointer"/> <span>{chatDetails?.name}</span>
       </div>
       <div
         id="chatBox"
-        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 py-20 lg:w-4/5 mx-auto"
+        className="mb-4 overflow-y-auto max-h-[80vh] flex flex-col gap-3 py-20 lg:w-4/5 w-full mx-auto"
       >
         {messages.map((msg) => (
           <MessageComponent
@@ -107,7 +107,7 @@ const VendorChat = () => {
         ))}
         
       </div>
-      <div className="md:px-20 flex justify-center gap-2 items-center fixed w-4/5 backdrop-blur-md  py-2 pb-4 px-4 left-1/2 translate-x-[-50%] bottom-4">
+      <div className="md:px-20 flex justify-center gap-2 items-center fixed w-full md:w-4/5 backdrop-blur-md  py-2 pb-4 px-4 left-1/2 translate-x-[-50%] bottom-14 md:bottom-4">
         <label
           htmlFor="file-upload"
           className="p-2.5 border border-zinc-600 text-zinc-600 rounded-full relative hover:bg-zinc-600 hover:text-white cursor-pointer"
