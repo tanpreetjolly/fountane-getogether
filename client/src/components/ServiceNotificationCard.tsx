@@ -140,18 +140,24 @@ const ServiceNotificationCard: React.FC<{
 
       <Card className="rounded-lg shadow-sm">
         <CardHeader className="p-4 relative">
-          <CardTitle className="font-medium text-salte-800">
+          <CardTitle className="font-medium text-sate-800 w-4/5 ">
             {service.subEvent.name + " in " + notification.eventName}
           </CardTitle>
-          <CardDescription className="bg-blueShade text-slate-900 w-fit px-2 py-0.5 rounded-lg -ml-1">
+          <CardDescription className=" text-slate-900 w-4/5">
             Service Requested : {service.servicesOffering.serviceName}
           </CardDescription>
-          <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
-            {!isVendor ? <Link to={`/my-chats/${service.vendorProfile.user}`}>Discuss</Link> : <Link to={`/my-chats/${notification.host._id}`}>Discuss</Link>}
+          <div className="absolute right-4 hidden md:block top-2.5 text-xs md:text-sm font-semibold capitalize border rounded-sm p-2">
+            {!isVendor ? (
+              <Link to={`/my-chats/${service.vendorProfile.user}`}>
+                Discuss
+              </Link>
+            ) : (
+              <Link to={`/my-chats/${notification.host._id}`}>Discuss</Link>
+            )}
           </div>
         </CardHeader>
         <CardContent className=" p-4 pt-0">
-          <div className="space-y-1 text-sm text-zinc-700 grid grid-cols-2 gap-1">
+          <div className="space-y-1 text-xs md:text-sm text-zinc-700 grid  gap-1">
             <div className="flex items-center">
               <CalendarIcon className="mr-2 text-slate-500" size={16} />
               {formatDate(service.subEvent.startDate)} -{" "}
@@ -169,27 +175,32 @@ const ServiceNotificationCard: React.FC<{
               <UserPlus className="mr-2 text-slate-500" size={16} />
               <span>Total Guest: {service.estimatedGuests}</span>
             </div>
-            <div className="flex items-center bg-green-200 rounded-lg text-slate-800 mt-3 w-fit px-2  ">
-              <span>Offered Price: ${service.planSelected.price}</span>
-            </div>
-            <div className="flex items-center bg-purpleShade w-fit  px-2 mt-3 rounded-lg bg-opacity-80 text-slate-800">
-              <span>Plan Selected: {service.planSelected.name}</span>
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <div className="flex items-center bg-green-200 rounded-lg text-slate-800 mt-3 w-fit px-3 py-0.5  ">
+                <span>Offered Price: ${service.planSelected.price}</span>
+              </div>
+              <div className="flex items-center bg-purpleShade w-fit  px-3 mt-3 py-0.5 rounded-lg bg-opacity-80 text-slate-800">
+                <span>Plan Selected: {service.planSelected.name}</span>
+              </div>
             </div>
             <div className="flex items-center">
-              <span
-                className={`px-2 py-0.5 rounded-lg ${
-                  service.offerBy === "vendor"
-                    ? "bg-yellowShade"
-                    : "bg-purpleShade"
-                }`}
-              >
+              <span className={`px-2 py-0.5 rounded-lg `}>
                 New Offer By:{" "}
                 {service.offerBy[0].toUpperCase() + service.offerBy.slice(1)}
               </span>
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end p-4 pt-0">
+        <CardFooter className="md:flex justify-end p-4 pt-0 grid grid-cols-2 gap-2">
+          <div className=" md:hidden flex text-sm font-medium text-center justify-center capitalize border rounded-sm py-2">
+            {!isVendor ? (
+              <Link to={`/my-chats/${service.vendorProfile.user}`}>
+                Discuss
+              </Link>
+            ) : (
+              <Link to={`/my-chats/${notification.host._id}`}>Discuss</Link>
+            )}
+          </div>
           <Button
             variant="outline"
             className="mr-2"
@@ -200,7 +211,7 @@ const ServiceNotificationCard: React.FC<{
               })
             }
           >
-            Make a New Offer
+            Make New Offer
           </Button>
           <Button
             variant="outline"

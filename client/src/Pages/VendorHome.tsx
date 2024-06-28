@@ -26,8 +26,8 @@ const VendorHome: React.FC<{}> = () => {
 
   return (
     <div className="px-4 py-4 lg:w-5/6 mx-auto min-h-[80vh] bg-white rounded-2xl my-4">
-      <div className="flex justify-between items-center border-b ">
-        <h2 className="pl-1 text-slate-800 text-2xl font-medium">
+      <div className="flex  flex-col md:flex-row justify-between md:items-center border-b ">
+        <h2 className="pl-1 mb-2 md:mb-0 text-slate-800 text-xl md:text-2xl font-medium">
           My Vendor Profile
         </h2>
         <ButtonSecondary
