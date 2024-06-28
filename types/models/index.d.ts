@@ -54,6 +54,7 @@ export interface IServiceList extends Document {
     offerBy: string
     servicesOffering: Schema.Types.ObjectId
     planSelected: {
+        _id: Schema.Types.ObjectId
         name: string
         description: string
         price: number

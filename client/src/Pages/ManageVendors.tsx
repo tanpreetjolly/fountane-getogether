@@ -5,6 +5,7 @@ import { useEventContext } from "@/context/EventContext"
 import Loader from "@/components/Loader"
 import { useNavigate } from "react-router-dom"
 import { FaPlusCircle } from "react-icons/fa"
+import { ServiceListType } from "@/definitions"
 
 const ManageVendors = () => {
   const { event, loadingEvent } = useEventContext()
@@ -28,13 +29,19 @@ const ManageVendors = () => {
 
   const totalVendors = vendorList.length
 
-  const renderVendors = (vendors: any) => (
+  const renderVendors = (vendors: ServiceListType[]) => (
     <div className="grid md:grid-cols-2 gap-3 lg:grid-cols-3">
       {vendors.length === 0 ? (
         <span className="mx-auto">Nothing to show</span>
       ) : (
-        vendors.map((vendor: any) => (
-          <ServiceCard key={vendor.subEvent._id} service={vendor} />
+        vendors.map((vendor) => (
+          <ServiceCard
+            key={vendor._id}
+            service={vendor}
+            allPlanFromService={vendors.filter(
+              (v) => v.servicesOffering._id === vendor.servicesOffering._id,
+            )}
+          />
         ))
       )}
     </div>

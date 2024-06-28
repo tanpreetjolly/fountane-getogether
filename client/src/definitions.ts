@@ -96,11 +96,7 @@ export interface ServiceListType {
   status: string
   offerBy: string
   servicesOffering: ServiceType
-  planSelected: {
-    name: string
-    description: string
-    price: number
-  }
+  planSelected: ItemType
   paymentStatus: string
   createdAt: string
 }

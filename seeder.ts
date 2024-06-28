@@ -61,18 +61,21 @@ const sampleService = [
             "https://media.wired.com/photos/65f48f0eb170002287195c73/master/w_1600%2Cc_limit/NatGeo_CampbellAddyFeelingSeen_106_UHD_Photographer_03.jpg",
         items: [
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Standard",
                 description:
                     "Full Day photography for any event - wedding, birthday etc. ",
                 price: 500,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Deluxe Plan",
                 description:
                     "All benefits of standard plan included and full event video added.",
                 price: 900,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Custom Plan",
                 description: "Need customization, choose our custom plan",
                 price: 0,
@@ -87,18 +90,21 @@ const sampleService = [
             "https://cdn0.weddingwire.in/vendor/5137/3_2/960/png/annotation-2_15_275137-159901860574657.jpeg",
         items: [
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Buffet Service",
                 description:
                     "A variety of food options served in a buffet style.",
                 price: 250,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Plated Dinner Service",
                 description:
                     "A formal dining experience with a three-course meal.",
                 price: 350,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Custom Menu",
                 description:
                     "Need a custom menu? We can accommodate your dietary needs and preferences.",
@@ -114,18 +120,21 @@ const sampleService = [
             "https://media-api.xogrp.com/images/e6e01f3a-1d1e-42eb-a1f7-4f033534e6f2~rs_768.h",
         items: [
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Standard Decor Package",
                 description:
                     "Includes basic decorations such as tablecloths, centerpieces, and lighting.",
                 price: 300,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Premium Decor Package",
                 description:
                     "Includes all standard decorations, plus additional features such as custom centerpieces and upgraded lighting.",
                 price: 500,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Custom Decor Package",
                 description:
                     "Need a unique decoration for your event? We can create a custom package to suit your needs.",
@@ -141,17 +150,20 @@ const sampleService = [
             "https://t3.ftcdn.net/jpg/06/16/07/70/360_F_616077017_Jp4pLORx9f3TihEDLq0P9tX6mpXmk6iO.jpg",
         items: [
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Soloist",
                 description:
                     "A single musician performing a variety of genres.",
                 price: 200,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Duo",
                 description: "Two musicians performing a variety of genres.",
                 price: 300,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Full Band",
                 description:
                     "A full band with a variety of instruments and a wide repertoire.",
@@ -167,17 +179,20 @@ const sampleService = [
             "https://navata.com/cms/wp-content/uploads/2021/05/transportation-modes-for-shifting-households.jpg",
         items: [
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Shuttle Bus",
                 description: "A bus that can transport up to 50 guests.",
                 price: 150,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Limousine",
                 description:
                     "A luxury vehicle that can transport up to 10 guests.",
                 price: 300,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Custom Transportation",
                 description:
                     "Need transportation for a larger group or a unique vehicle? We can accommodate your needs.",
@@ -193,18 +208,21 @@ const sampleService = [
             "https://www.travelopro.com/public/images/contents/hotel-provider1.jpg",
         items: [
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Intimate Space",
                 description:
                     "A small venue that can accommodate up to 50 guests.",
                 price: 500,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Large Event Hall",
                 description:
                     "A large venue that can accommodate up to 500 guests.",
                 price: 1500,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Custom Venue",
                 description:
                     "Need a unique venue for your event? We can help you find the perfect space.",
@@ -220,18 +238,21 @@ const sampleService = [
             "https://miro.medium.com/v2/resize:fit:1400/0*3N3v1wVmf6tuvU88.jpg",
         items: [
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Magician",
                 description:
                     "A professional magician who will amaze and delight your guests.",
                 price: 200,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "DJ",
                 description:
                     "A DJ who will play a variety of music to keep your guests dancing.",
                 price: 300,
             },
             {
+                _id: new mongoose.Types.ObjectId(),
                 name: "Custom Entertainment",
                 description:
                     "Need a unique entertainment option for your event? We can help you find the perfect act.",
