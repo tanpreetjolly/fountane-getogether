@@ -36,22 +36,22 @@ const SubEventCard = (props: Props) => {
 
   return (
     <div
-      className="pt-4 relative pl-4 gap-3 pr-5 flex flex-col  max-w-xl aspect-[2.2]    text-left bg-white w-full border border-gray-200 rounded-lg shadow-sm 
+      className="pt-4 relative px-3 md:pl-4 gap-3 md:pr-5 flex flex-col  max-w-xl aspect-[2.2]    text-left bg-white w-full border border-gray-200 rounded-lg shadow-sm 
     "
     >
       <div className="flex justify-between text-left items-start">
         <div className="space-y-3">
           <div className=" flex flex-col">
-            <div className="text-[11px]  text-slate-900  bg-sky-200 bg-opacity-80 px-3 py-1 rounded-full flex items-center gap-1 mb-1 ">
+            <div className="text-[11px]  text-slate-900  bg-sky-200 bg-opacity-80 px-3 md:py-1 rounded-full flex items-center gap-1 mb-1 ">
               <CalendarDays className="inline mb-0.5" size={12} />
               {formatDate(props.subEvent.startDate)} -{" "}
               {formatDate(props.subEvent.endDate)}
             </div>
-            <div className="text-lg pl-1.5 mt-1.5 font-medium text-slate-800 ">
+            <div className="md:text-lg pl-1.5 mt-1.5 font-medium text-slate-800 ">
               {props.subEvent.name}
             </div>
 
-            <div className="text-sm pl-1.5 text-slate-600  rounded-full flex  items-center gap-1">
+            <div className="text-xs md:text-sm pl-1.5 text-slate-600  rounded-full flex  items-center gap-1">
               {props.subEvent.venue}
               <MapPin className="inline gap-1 mb-0.5" size={14} />
             </div>
@@ -68,7 +68,7 @@ const SubEventCard = (props: Props) => {
         <div className="flex -space-x-2">
           {" "}
           {subEventGuest.slice(0, 3).map((guest) => (
-            <div className="w-7 aspect-square rounded-full overflow-hidden opacity-80">
+            <div className="w-6 md:w-7 aspect-square rounded-full overflow-hidden opacity-80">
               <img
                 src={guest.user.profileImage}
                 alt={guest.user.name}
@@ -77,7 +77,7 @@ const SubEventCard = (props: Props) => {
             </div>
           ))}
           {subEventGuest.length > 3 && (
-            <div className="w-7 aspect-square rounded-full overflow-hidden text-white bg-zinc-700 border border-slate-700 z-50 text-xs flex justify-center items-center pr-1 font-medium ">
+            <div className="w-6 md:w-7 aspect-square rounded-full overflow-hidden text-white bg-zinc-700 border border-slate-700 z-50 text-xs flex justify-center items-center pr-1 font-medium ">
               +{subEventGuest.length - 3}
             </div>
           )}
@@ -90,7 +90,7 @@ const SubEventCard = (props: Props) => {
             navigate(props.url as To)
           }}
           icon={<MoveRight size={16} />}
-          fontSize="text-sm"
+          fontSize="text-xs md:text-sm"
         />
       </div>
     </div>

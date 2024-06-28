@@ -81,6 +81,7 @@ const Channel = ({ channel }: { channel: ChannelType }) => {
             navigate(`channel/${channel._id}`)
           }}
           text="View Channel"
+          fontSize="text-xs md:text-sm"
           icon={<ArrowRightToLine size={18} />}
         />
       </div>
@@ -120,9 +121,9 @@ const SubEventChannels = () => {
   if (!user) return <div>User Not Found</div>
 
   return (
-    <div className="px-4 flex flex-col justify-between  h-[85vh] lg:w-5/6 mx-auto py-2">
+    <div className="px-4 flex flex-col justify-between  min-h-[65vh] lg:w-5/6 mx-auto py-2">
       <div>
-        <div className="flex items-center  bg-white rounded-2xl p-5 py-6  border shadow-sm w-full justify-between">
+        <div className="flex flex-wrap items-center  bg-white rounded-2xl p-5 py-6  border shadow-sm w-full justify-between">
           <div className="flex flex-col items-start">
             <div className="">
               <div className="text-[13px] bg-blueShade px-3 py-1 text-slate-800   rounded-lg flex items-center gap-1 mb-1 ">
@@ -130,7 +131,7 @@ const SubEventChannels = () => {
                 {formatDate(subEvent.startDate)} -{" "}
                 {formatDate(subEvent.endDate)}
               </div>
-              <div className="mt-2 pl-1 text-2xl  font-medium text-slate-700">
+              <div className="mt-2 pl-1 text-xl md:text-2xl  font-medium text-slate-700">
                 {subEvent.name}
               </div>
               <div className="pl-1 mb-3 text-slate-600 ">
@@ -144,7 +145,7 @@ const SubEventChannels = () => {
             </div>
           </div>
           {event.isHosted && (
-            <div className="flex justify-around gap-2 mb-1 mt-2  md:w-[25%]">
+            <div className="flex justify-around gap-2 mb-1 mt-4 md:mt-2  lg:w-[25%]">
               <button
                 onClick={() => navigate(`guests`)}
                 className="flex  items-center  justify-around bg-purpleShade aspect-[1.6] bg-opacity-85    text-zinc-800  rounded-2xl w-1/2 px-4 py-4 gap-3"
@@ -174,7 +175,7 @@ const SubEventChannels = () => {
             event.isVendor?.some(
               (service) => service.subEvent._id === subEvent._id,
             ) && (
-              <div className="flex justify-around gap-2 mb-1 mt-2  md:w-[25%]">
+              <div className="flex justify-around gap-2 mb-1 mt-2  lg:w-[25%]">
                 <button
                   onClick={() => navigate(`vendors`)}
                   className="flex  items-center  justify-around bg-dark bg-opacity-90  text-gray-50  rounded-2xl w-1/2 px-4 py-4 gap-3"
@@ -188,42 +189,32 @@ const SubEventChannels = () => {
               </div>
             )}
         </div>
-        {event.isHosted && (
-          <div className="flex md:hidden justify-around gap-3 mb-1 mt-2  md:w-[30%]">
-            <button
-              onClick={() => navigate(`guests`)}
-              className="flex  items-center  justify-around border aspect-[2] border-slate-800  text-slate-800  rounded-3xl w-1/2 px-4 py-4 gap-3"
-            >
-              <div>
-                <div className="text-gray-100 text-sm text-left">Invite</div>
-                <div className="font-semibold text-xl"> Guests</div>
-              </div>
-              <BookUser size={30} />
-            </button>
-            <button
-              onClick={() => navigate(`vendors`)}
-              className="flex items-center justify-around  bg-zinc-800 text-white  rounded-lg w-1/2 px-4 py-3 gap-4"
-            >
-              <div>
-                <div className="text-zinc-100 text-left text-sm">Assign</div>
-                <div className="font-semibold text-xl"> Vendors</div>
-              </div>
-              <ListTodo size={30} />
-            </button>
-          </div>
-        )}
+
         <div className="bg-white p-5 mt-4 rounded-2xl shadow-sm border">
-          <div className="flex border-b mb-2 justify-between items-center pb-2">
-            <div className="text-lg  text-zinc-700  pl-1 font-medium">
+          <div className="flex  border-b mb-2 justify-between items-center pb-2">
+            <div className="text-sm md:text-lg  text-zinc-700  pl-1 font-medium">
               Text Channels
             </div>
-            {event.isHosted && (
-              <Button
-                text="Create Channel"
-                onClick={() => setDrawerOpen(true)}
-                icon={<PlusCircleIcon size={18} />}
-              />
-            )}
+            <div className="md:hidden">
+              {event.isHosted && (
+                <Button
+                  text=" Channel"
+                  onClick={() => setDrawerOpen(true)}
+                  icon={<PlusCircleIcon size={18} />}
+                  fontSize="text-sm md:text-base"
+                />
+              )}
+            </div>
+            <div className="hidden md:block">
+              {event.isHosted && (
+                <Button
+                  text="Create Channel"
+                  onClick={() => setDrawerOpen(true)}
+                  icon={<PlusCircleIcon size={18} />}
+                  fontSize="text-sm md:text-base"
+                />
+              )}
+            </div>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4 ">
             {subEvent.channels.map((channel) => (

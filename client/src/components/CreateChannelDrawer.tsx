@@ -124,7 +124,7 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
   }
 
   return (
-    <div className="h-[90vh] px-3 py-2 pb-8">
+    <div className="h-[90vh] px-3 py-2 pb-8 w-full md:w-2/3 mx-auto">
       <button
         onClick={toggleDrawer(false)}
         className="flex w-full justify-end "
@@ -152,7 +152,7 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
           },
         }}
       />
-      <div className="mb-3 flex justify-center w-full gap-2 px-2">
+      <div className="mb-3 flex justify-center w-full sm:w-1/2 gap-2 px-2">
         <button
           onClick={() => setFilterRole("all")}
           className={`mr-2 w-1/3 ${
@@ -225,11 +225,14 @@ const CreateChannelDrawer = ({ toggleDrawer }: Props) => {
           </ListItem>
         ))}
       </List>
-      <Button
-        text="Create Channel"
-        onClick={handleCreateChannel}
-        icon={<FaPlus />}
-      />
+      <div className="mx-auto md:w-1/2">
+        <Button
+          text="Create Channel"
+          onClick={handleCreateChannel}
+          icon={<FaPlus />}
+          wfull
+        />
+      </div>
     </div>
   )
 }
