@@ -83,14 +83,16 @@ const InviteGuests = () => {
     <div className="my-2 mb-12 flex flex-col justify-between lg:w-4/5 mx-auto p-5 bg-white rounded-2xl">
       <div>
         <div className="flex justify-between items-center">
-          <div className="text-2xl   text-zinc-800">
+          <div className="text-xl md:text-2xl   text-zinc-800">
             Invite Guests for the {subEvent?.name}
           </div>
-          <Button
-            text="Save Selected Guests"
-            onClick={handleSaveGuests}
-            icon={<FaPlusCircle />}
-          />
+          <div className="hidden md:block">
+            <Button
+              text="Save Selected Guests"
+              onClick={handleSaveGuests}
+              icon={<FaPlusCircle />}
+            />
+          </div>
         </div>
         <Input
           type="search"
@@ -136,7 +138,7 @@ const InviteGuests = () => {
           ))}
         </List>
       </div>
-      <div className="flex lg:hidden justify-center gap-2 items-center fixed w-full backdrop-blur-md  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
+      <div className="flex md:hidden justify-center gap-2 items-center fixed w-full bg-white  py-4 px-4 left-1/2 translate-x-[-50%] bottom-14">
         <Button
           text="Save Selected Guests"
           onClick={handleSaveGuests}
