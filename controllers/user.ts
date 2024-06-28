@@ -323,6 +323,18 @@ const uploadImage = async (req: Request, res: Response) => {
         msg: "Image Uploaded Successfully",
     })
 }
+const getOtherUserDetails = async (req: Request, res: Response) => {
+    const { otherUserId } = req.params
+    const user = await User.findById(otherUserId).select(
+        "name email profileImage",
+    )
+    if (!user) throw new NotFoundError("User Not Found")
+    res.status(StatusCodes.OK).json({
+        data: user,
+        success: true,
+        msg: "User Fetched Successfully",
+    })
+}
 
 export {
     getMe,
@@ -333,4 +345,5 @@ export {
     getChatMessages,
     getChannelMessages,
     uploadImage,
+    getOtherUserDetails,
 }

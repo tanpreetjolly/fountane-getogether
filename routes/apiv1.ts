@@ -9,12 +9,13 @@ import {
     acceptRejectInviteGuest,
     getUserEventDetails,
 } from "../controllers/event"
-
+import { getOtherUserDetails } from "../controllers/user"
 const router = Router()
 
 router.use("/auth", AuthRouter)
 
 router.use("/public/search", SearchRouter)
+router.get("/public/user/:otherUserId", getOtherUserDetails)
 
 router.post("/public/invite/guest/accept-reject", acceptRejectInviteGuest)
 router.post("/public/invite/guest/details", getUserEventDetails)

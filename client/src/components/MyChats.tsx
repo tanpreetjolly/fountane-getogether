@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 const MyChats = () => {
   const navigate = useNavigate()
 
-  const { user, loading } = useAppSelector((state) => state.user)
+  const { user, loading, unReadChatsId } = useAppSelector((state) => state.user)
   if (loading) return <div>Loading...</div>
   if (!user) return <div>Not logged in</div>
 
@@ -20,16 +20,22 @@ const MyChats = () => {
             className="flex items-center gap-4 p-4 rounded-xl border shadow-sm cursor-pointer"
             onClick={() => navigate(`/my-chats/${vendor._id}`)}
           >
-            <div className="aspect-square h-10 flex justify-center items-center bg-slate-200 rounded-full">
-              {vendor.name.slice(0, 1)}
-            </div>
+            <img
+              src={vendor.profileImage}
+              alt={vendor.name}
+              className="h-10 w-10 rounded-full"
+            />
 
             <div className="flex justify-between w-full">
               <div>
                 <p className="text-lg font-medium text-gray-600">
                   {vendor.name}
                 </p>
-                <p className="text-sm text-muted-foreground">{vendor.type}</p>
+                <p className="text-sm text-muted-foreground">
+                  {unReadChatsId.some((id) => id.includes(vendor._id)) && (
+                    <i>New message</i>
+                  )}
+                </p>
               </div>
             </div>
           </div>
