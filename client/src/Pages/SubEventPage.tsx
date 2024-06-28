@@ -122,7 +122,7 @@ const SubEventChannels = () => {
   return (
     <div className="px-4 flex flex-col justify-between  min-h-[65vh] lg:w-5/6 mx-auto py-2">
       <div>
-        <div className="flex flex-wrap items-center  bg-white rounded-2xl p-5 py-6  border shadow-sm w-full justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center  bg-white rounded-2xl p-5 py-6  border shadow-sm w-full justify-between">
           <div className="flex flex-col items-start">
             <div className="">
               <div className="text-[13px] bg-blueShade px-3 py-1 text-slate-800   rounded-lg flex items-center gap-1 mb-1 ">
@@ -144,10 +144,10 @@ const SubEventChannels = () => {
             </div>
           </div>
           {event.isHosted && (
-            <div className="flex justify-around gap-2 mb-1 mt-4 md:mt-2  lg:w-[25%]">
+            <div className="flex justify-around gap-1.5 mb-1 mt-4 md:mt-2  lg:w-[28%]">
               <button
                 onClick={() => navigate(`guests`)}
-                className="flex  items-center  justify-around bg-purpleShade aspect-[1.6] bg-opacity-85    text-zinc-800  rounded-2xl w-1/2 px-4 py-4 gap-3"
+                className="flex  items-center  justify-around bg-purpleShade aspect-[1.6] bg-opacity-85    text-zinc-800  rounded-2xl w-[48%] px-4 py-4 gap-3"
               >
                 <div>
                   <div className="text-slate-800 text-sm text-left">Invite</div>
@@ -160,7 +160,7 @@ const SubEventChannels = () => {
               </button>
               <button
                 onClick={() => navigate(`vendors`)}
-                className="flex  items-center  justify-around bg-dark bg-opacity-90  text-gray-50  rounded-2xl w-1/2 px-4 py-4 gap-3"
+                className="flex  items-center  justify-around bg-dark bg-opacity-90  text-gray-50  rounded-2xl w-[48%] px-4 py-4 gap-3 "
               >
                 <div>
                   <div className="text-zinc-100 text-left text-sm">Assign</div>
