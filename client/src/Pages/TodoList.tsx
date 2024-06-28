@@ -78,8 +78,8 @@ const TodoList = () => {
 
   return (
     <div className="px-5 py-4 lg:w-4/5 bg-white rounded-2xl my-4 mx-auto">
-      <div className="flex justify-between items-end border-b pb-1 mb-1">
-        <h1 className="text-2xl  font-medium my-2 text-slate-800 mb-3">
+      <div className="flex  flex-wrap justify-between items-end border-b pb-1 mb-1">
+        <h1 className="text-xl md:text-2xl  font-medium my-2 text-slate-800 mb-3">
           Event Checklist for <br />{" "}
           <span className="font-medium text-xl">{event?.name}</span>
         </h1>
@@ -127,7 +127,7 @@ const TodoList = () => {
                   {todo.name}
                 </span>
               </div>
-              <div>
+              <div className="flex">
                 <Button
                   variant="ghost"
                   onClick={() => editTodo(todo)}
