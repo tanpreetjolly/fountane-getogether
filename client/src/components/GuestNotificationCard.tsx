@@ -52,7 +52,7 @@ const GuestNotificationCard: React.FC<{ invite: NotificationsType }> = ({
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 outline w-screen bg-gray-700 bg-opacity-50">
           <div className="bg-white rounded-lg p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-medium mb-4">
               Bring Your Friends Along!{" "}
             </h2>
             <div className="mb-4 flex flex-col">
@@ -91,7 +91,7 @@ const GuestNotificationCard: React.FC<{ invite: NotificationsType }> = ({
       )}
       <Card className="rounded-lg shadow-sm">
         <CardHeader className="p-4 relative">
-          <CardTitle className="text-lg">{invite.name}</CardTitle>
+          <CardTitle className="text-lg font-medium">{invite.name}</CardTitle>
           <CardDescription className="flex flex-col ml-2">
             <span className="flex Plans-center">
               <CalendarIcon className="text-indigo-500 mr-2" size={14} />
@@ -102,7 +102,7 @@ const GuestNotificationCard: React.FC<{ invite: NotificationsType }> = ({
               <UserIcon className="text-indigo-500 mr-2" size={16} />
               <p>{invite.host.name}</p>
             </span>
-            <div className="absolute right-5 top-2.5 text-sm font-semibold capitalize border rounded-sm p-2">
+            <div className="absolute right-5 top-2.5 text-sm font-medium capitalize border rounded-sm p-2">
               {invite.userList.status}
             </div>
           </CardDescription>
@@ -113,14 +113,14 @@ const GuestNotificationCard: React.FC<{ invite: NotificationsType }> = ({
               key={subEvent._id}
               className="flex flex-col space-x-2 p-4 pb-3 border border-zinc-300 rounded-md"
             >
-              <span className="font-semibold text-base text-zinc-900 capitalize flex justify-between">
+              <span className="font-medium text-sm md:text-base text-zinc-900 capitalize flex justify-between">
                 {subEvent.name}
                 <span className="flex items-center text-xs mb-1">
                   <MapPinIcon className="mr-1" size={14} />
                   {subEvent.venue}
                 </span>
               </span>
-              <span className="flex items-center text-sm">
+              <span className="flex items-center text-xs md:text-sm">
                 <CalendarIcon className="mr-2" size={16} />
                 {formatDateShort(subEvent.startDate)} -{" "}
                 {formatDateShort(subEvent.endDate)}

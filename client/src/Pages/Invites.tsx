@@ -23,11 +23,11 @@ const Invites = () => {
     .flat()
 
   return (
-    <div className="lg:w-5/6 mx-auto bg-white my-4 p-5 rounded-2xl border shadow-sm">
-      <div className="text-2xl px-5 my-2 font-medium text-zinc-800 ">
+    <div className="lg:w-5/6 mx-auto bg-white my-4 p-3 md:p-5 rounded-2xl border shadow-sm">
+      <div className="text-2xl md:px-5 my-2 font-medium text-zinc-800 ">
         Your Invites
       </div>
-      <div className=" px-4 grid grid-cols-1 md:grid-cols-2 gap-2 ">
+      <div className=" md:px-4 grid grid-cols-1 md:grid-cols-2 gap-2 ">
         {guestNotifications.length === 0 &&
           serviceNotifications.length === 0 && (
             <span>You don't have any invites yet</span>
