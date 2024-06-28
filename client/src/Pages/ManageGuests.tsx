@@ -136,11 +136,11 @@ const ManageGuests = () => {
             </div>
           </div>
           <div className="w-fit mt-4 mx-auto sm:mx-0 md:mt-0">
-          <Button
-            text="Invite New Contact"
-            onClick={() => setIsInviteDrawerOpen(true)}
-            icon={<FaPlusCircle />}
-          />
+            <Button
+              text="Invite New Contact"
+              onClick={() => setIsInviteDrawerOpen(true)}
+              icon={<FaPlusCircle />}
+            />
           </div>
         </div>
       </div>
@@ -386,7 +386,7 @@ const ShowSelectedGuest = ({
           text="Close"
           onClick={closeDrawer}
           backgroundColor="bg-gray-200"
-          icon={<Cross1Icon/>}
+          icon={<Cross1Icon />}
         />
       </div>
       <div className="flex  items-center  justify-between">

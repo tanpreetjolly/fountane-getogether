@@ -206,7 +206,9 @@ const VendorCard = ({ service }: Props) => {
             Total Offer Amount:{" "}
             <span className="font-medium">${estimatedTotalPrice}</span>
           </div>
-          <p className="p-0.5 mt-3 md:mt-0 text-sm text-slate-800">Plans we offer:</p>
+          <p className="p-0.5 mt-3 md:mt-0 text-sm text-slate-800">
+            Plans we offer:
+          </p>
           <div className="flex flex-col md:flex-row gap-4">
             {service.items.map((item, index) => (
               <div key={item._id} className="border rounded-md p-3 flex-1">
@@ -250,7 +252,10 @@ const VendorCard = ({ service }: Props) => {
                   <div className="border pt-2 mb-2 mx-4 bg-slate-50 rounded-xl">
                     <div className="flex flex-col sm:flex-row  md:items-center justify-start ml-3   gap-1.5 md:gap-4">
                       <div className="flex gap-2 items-center bg-blueShade px-3 py-0.5 rounded-lg">
-                        <label htmlFor="estimatedGuestNo" className="text-xs  md:text-sm">
+                        <label
+                          htmlFor="estimatedGuestNo"
+                          className="text-xs  md:text-sm"
+                        >
                           Estimated Total Guests:
                         </label>
                         <input
@@ -276,7 +281,10 @@ const VendorCard = ({ service }: Props) => {
                         />
                       </div>
                       <div className="flex items-center gap-2 bg-yellowShade rounded-lg px-3 py-0.5">
-                        <label htmlFor="offerPrice" className="text-xs  md:text-sm">
+                        <label
+                          htmlFor="offerPrice"
+                          className="text-xs  md:text-sm"
+                        >
                           Offer Price ($)
                         </label>
                         <input

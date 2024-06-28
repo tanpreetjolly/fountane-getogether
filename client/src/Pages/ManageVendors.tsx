@@ -82,7 +82,7 @@ const ManageVendors = () => {
               }`}
               onClick={() => setSelectedTab("all")}
             >
-              All 
+              All
             </button>
             <button
               className={`px-4 py-2 text-xs mt-2 md:mt-0 md:text-sm rounded-full ${
