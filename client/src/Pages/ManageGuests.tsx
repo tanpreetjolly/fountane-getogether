@@ -34,6 +34,7 @@ const ManageGuests = () => {
     name: "",
     email: "",
     phoneNo: "",
+    message: "",
   })
   const [selectedSubEvents, setSelectedSubEvents] = useState<string[]>([])
 
@@ -70,6 +71,7 @@ const ManageGuests = () => {
         name: newGuest.name,
         email: newGuest.email,
         phoneNo: newGuest.phoneNo,
+        message: newGuest.message,
         subEventsIds: selectedSubEvents,
       }).finally(closeDrawer),
       {
@@ -243,6 +245,14 @@ const ManageGuests = () => {
             name="phoneNo"
             value={newGuest.phoneNo}
             onChange={handleNewGuestChange}
+            className="mb-2"
+          />
+          <Input
+            type="text"
+            placeholder="Message"
+            name="message"
+            value={newGuest.message} // Add this line
+            onChange={handleNewGuestChange} // Add this line
             className="mb-2"
           />
           <Typography variant="h6" gutterBottom>

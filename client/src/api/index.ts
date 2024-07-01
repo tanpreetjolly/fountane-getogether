@@ -177,6 +177,7 @@ export const inviteNewGuest = (
     name: string
     phoneNo: string
     email: string
+    message?: string
     subEventsIds: string[]
   },
 ) => API.post(`/event/${eventId}/guest/invite/new`, guestData)

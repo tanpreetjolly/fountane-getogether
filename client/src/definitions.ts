@@ -59,6 +59,7 @@ export interface OtherUserType {
   email: string
   profileImage: string
   phoneNo: string
+  message?: string
 }
 
 export interface ChannelType {
