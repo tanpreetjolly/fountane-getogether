@@ -33,13 +33,13 @@ const Footer = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="#" className="hover:underline me-4 md:me-6">
+              <NavLink to="/privacy-policy" className="hover:underline me-4 md:me-6">
                 Privacy Policy
               </NavLink>
             </li>
             <li>
-              <NavLink to="#" className="hover:underline me-4 md:me-6">
-                Licensing
+              <NavLink to="/terms-and-conditions" className="hover:underline me-4 md:me-6">
+                Terms and Conditions
               </NavLink>
             </li>
             <li>

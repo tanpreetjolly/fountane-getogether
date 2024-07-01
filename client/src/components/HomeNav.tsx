@@ -6,8 +6,8 @@ const HomeNav = () => {
 
   return (
     <div>
-      <nav className="bg-white fixed w-full lg:w-5/6  mx-auto z-20 top-0 left-1/2 -translate-x-[50%] border-b border-gray-200">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-3 py-4">
+      <nav className="bg-white fixed w-full   mx-auto z-20 top-0 left-1/2 -translate-x-[50%] border-b border-gray-200">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-2 py-4">
           <NavLink
             to={`${!loading && isAuthenticated ? "/events" : "/"}`}
             className="flex items-center w-fit"

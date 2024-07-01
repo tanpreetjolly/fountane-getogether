@@ -20,13 +20,15 @@ export default function SignUp() {
     password: "",
     phoneNo: "",
     isVendor: false,
+    agreeToTerms: false, // New state for checkbox
   })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
+    const { name, value, type, checked } = event.target
+    const newValue = type === "checkbox" ? checked : value
     setSignUpValues((prevValues) => ({
       ...prevValues,
-      [name]: value === "true" ? true : value === "false" ? false : value,
+      [name]: newValue,
     }))
   }
 
@@ -35,9 +37,10 @@ export default function SignUp() {
     if (
       !signUpValues.firstName ||
       !signUpValues.email ||
-      !signUpValues.password
+      !signUpValues.password ||
+      !signUpValues.agreeToTerms // Check if terms are agreed
     )
-      return alert("All fields are required")
+      return alert("All fields are required and terms must be agreed")
     dispatch(register(signUpValues))
   }
 
@@ -46,6 +49,8 @@ export default function SignUp() {
       navigate("/verify")
     }
   }, [loading, verificationRequired])
+
+  const isSignUpDisabled = !signUpValues.agreeToTerms // Disable signup button if terms are not agreed
 
   return (
     <div className="flex h-screen ">
@@ -64,9 +69,6 @@ export default function SignUp() {
           </Link>
           <h1 className="text-3xl font-semibold mb-6 text-black text-center">
             Register with us!
-          </h1>
-          <h1 className="text-sm font-semibold mb-6 text-gray-500 text-center">
-            Join to Our Community with all time access and free
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4 ">
             <div className="grid grid-cols-2 gap-3 mt-4">
@@ -160,9 +162,35 @@ export default function SignUp() {
             </div>
             <IsVendor handleChange={handleChange} signUpValues={signUpValues} />
             <div>
+              <label className=" block text-sm text-center   text-gray-700">
+                <input
+                  type="checkbox"
+                  name="agreeToTerms"
+                  checked={signUpValues.agreeToTerms}
+                  onChange={handleChange}
+                  className="mr-2 accent-blue-500"
+                />
+                I agree to the{" "}
+                <Link
+                  to="/terms-and-conditions"
+                  className="font-medium underline hover:text-blue-700"
+                >
+                  Terms and Conditions
+                </Link>{" "}
+                and{" "}
+                <Link
+                  to="/privacy-policy"
+                  className="font-medium underline hover:text-blue-700"
+                >
+                  Privacy Policy
+                </Link>
+              </label>
+            </div>
+            <div>
               <button
                 type="submit"
-                className="w-full bg-dark text-white p-2.5 px-4 font-medium rounded-3xl hover:bg-highlight focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                disabled={isSignUpDisabled} // Disable signup button if terms are not agreed
+                className="disabled:bg-gray-500 w-full bg-dark text-white p-2.5 px-4 font-medium rounded-3xl hover:bg-highlight focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
               >
                 Register
               </button>
@@ -172,7 +200,8 @@ export default function SignUp() {
             <p>OR</p>
           </div>
           <div className="mt-4 flex items-center justify-center">
-            <ContinueWithGoogleButton />
+            {/* Show google login button only if the user has agreed to terms */}
+            {signUpValues.agreeToTerms && <ContinueWithGoogleButton />}
           </div>
           <div className="mt-4 text-sm text-gray-600 text-center">
             <Link to="/sign-in" className="hover:underline">

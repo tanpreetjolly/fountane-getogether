@@ -10,6 +10,7 @@ export interface SignUpType {
   password: string
   phoneNo: string | undefined
   isVendor: boolean
+  agreeToTerms: boolean
 }
 
 export interface ForgotPasswordType {

@@ -51,6 +51,8 @@ import TodoList from "./Pages/TodoList"
 import MyChats from "./components/MyChats"
 import VendorChat from "./Pages/VendorChat"
 import InvitationPage from "./Pages/InvitationPage"
+import Terms from "./Pages/T&C"
+import PrivacyPolicy from "./Pages/PrivacyPolicy"
 
 const Layout = () => {
   const location = useLocation()
@@ -61,6 +63,9 @@ const Layout = () => {
     "/forgot-password",
     "/",
     "/invitation",
+    "/privacy-policy",
+    "/about",
+    "/terms-and-conditions",
   ]
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname)
   return (
@@ -120,6 +125,8 @@ const router = createBrowserRouter([
       { path: "verify", element: <VerifyOTP /> },
       { path: "invitation", element: <InvitationPage /> },
       { path: "about", element: <About /> },
+      { path: "privacy-policy", element: <PrivacyPolicy /> },
+      { path: "terms-and-conditions", element: <Terms /> },
       {
         path: "invites",
         element: <Invites />,
