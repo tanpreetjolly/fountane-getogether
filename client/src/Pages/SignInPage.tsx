@@ -51,7 +51,7 @@ export default function SignIn() {
             Welcome Back!
           </h1>
           <h1 className="text-sm font-semibold mb-6 text-gray-500 text-center">
-            We missed you at Getogether
+            We missed you at Planme CLub
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4 ">
             <div className=" gap-3 mt-4">

@@ -68,7 +68,7 @@ const Navbar = () => {
             onClick={() => navigate("/events") as any}
           >
             <img
-              src="https://i.imgur.com/YA68OfS.png"
+              src="https://i.imgur.com/v7Q5HwJ.png"
               alt="logo"
               className="h-10"
             />

@@ -6,14 +6,14 @@ const HomeNav = () => {
 
   return (
     <div>
-      <nav className="bg-white fixed w-full lg:w-4/5  mx-auto z-20 top-0 left-1/2 -translate-x-[50%] border-b border-gray-200">
+      <nav className="bg-white fixed w-full lg:w-5/6  mx-auto z-20 top-0 left-1/2 -translate-x-[50%] border-b border-gray-200">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-3 py-4">
           <NavLink
             to={`${!loading && isAuthenticated ? "/events" : "/"}`}
             className="flex items-center w-fit"
           >
             <img
-              src="https://i.imgur.com/YA68OfS.png"
+              src="https://i.imgur.com/v7Q5HwJ.png"
               alt="logo"
               className="w-40 lg:w-60"
             />

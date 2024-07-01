@@ -11,7 +11,7 @@ const Hero: React.FC<Props> = () => {
   const { isAuthenticated } = useAppSelector((state) => state.user)
   return (
     <section className="bg-white flex flex-col lg:flex-row  px-4 gap-3  justify-center mx-auto lg:px-12 pt-20 lg:pt-10">
-      <div className="lg:ml-10  flex flex-col  text-center lg:text-left items-center lg:items-start lg:w-[35%] pb-3 lg:pt-24">
+      <div className="lg:ml-10  flex flex-col  text-center lg:text-left items-center lg:items-start lg:w-[40%] pb-3 lg:pt-24">
         <a
           href="#"
           className="inline-flex w-fit items-center py-1 px-3 mb-4 text-sm text-white bg-highlight rounded-full  bg-indigo-500"
@@ -33,7 +33,7 @@ const Hero: React.FC<Props> = () => {
           </svg>
         </a>
         <h1 className="mb-4 text-4xl font-bold tracking-tight leading-none text-gray-900 lg:text-5xl lg:text-[3.6rem]">
-          Getogether: Stress Free Event Planning
+          Planme Club: Stress Free Event Planning
         </h1>
         <p className="mb-4  font-normal text-gray-500 text-xl">
           Create, manage and share your events with friends and family with
@@ -68,7 +68,7 @@ const Hero: React.FC<Props> = () => {
           <div className="ml-2  -space-y-1 items-center">
             <Rating name="rating" value={5} readOnly />
             <div className="ml-2    text-slate-600">
-              5000+ users plans using Getogether
+              5000+ users plans using Planme Club
             </div>
           </div>
         </div>
